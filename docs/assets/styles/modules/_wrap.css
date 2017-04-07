@@ -1,0 +1,14 @@
+.wrap {
+  text-align: center;
+  margin-bottom: 20vh;
+  font-weight: bold;
+  width: 940px;
+  overflow: hidden;
+    @mixin at1000 {
+  	width: 90%;
+  }
+      @mixin at600 {
+  	margin-bottom: 10vh;
+
+  }
+}

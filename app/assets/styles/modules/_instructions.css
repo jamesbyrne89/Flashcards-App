@@ -1,0 +1,26 @@
+/*--------- Instructions ---------
+--------------------------------- */
+
+.instructions {
+  font-size: 2rem;
+  height: 3em;
+  color: $orange;
+  text-align: center;
+  padding-top: 0.5em;
+  width: 100%;
+  font-family: 'bitter', serif;
+ -webkit-font-smoothing: antialiased;
+    @mixin at1000 {
+
+  }
+    @mixin at600 {
+    font-size: 1.25rem;
+    height: 4em;
+  }
+}
+
+.bounce {
+	animation: bounce 1.5s infinite;
+	animation-delay: 2s;	
+}
+
