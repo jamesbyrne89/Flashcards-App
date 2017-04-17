@@ -13,24 +13,42 @@
     <title>Flashcards</title>
 </head>
 <body>
-<header class="header">
-</header>
-    <main id="wrap" class="wrap">
-    <nav class="sidebar">
-      <div class="sidebar__nav__item">Categories</div>
+<ul id="slide-out" class="side-nav">
+    <li><div class="userView">
+      <div class="background">
+        <img src="images/office.jpg">
+      </div>
+        <div class="sidebar__nav__item">Categories</div>
       <div class="sidebar__nav__item">Add a category</div>
       <div class="sidebar__nav__item">Add a deck</div>
       <div class="sidebar__nav__item">Categories</div>
       <div class="sidebar__nav__item">Categories</div>
-    </nav>
-    <form class="input-bar">
+    </div></li>
+    <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+    <li><a href="#!">Second Link</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">Subheader</a></li>
+    <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+        <form class="input-bar">
     Add a card to the deck.
       <input id="input" class="input" type="text" autocomplete="off" autofocus>
       <input class="input_submit btn-submit" type="submit">
-      <div class="card">Flashcard content goes here.</div>
+      </form>
+  </ul>
+    <main id="wrap" class="wrap">
+    <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+    <div class="card">In regular Javascript, the global object is 'window'.<br><br>In NodeJS, the global object is 'global'.</div>
+    
+    <nav class="sidebar">
+    </nav>
+    
+  
+
    </main>
       <footer class="footer"><p>Created by <a class="link" href="http://jamestbyrne.com">James Byrne</a>.</footer>
 </body>
   <!-- build:js assets/scripts/app.js -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="assets/materialize/js/materialize.min.js"></script>
 <script src="assets/scripts/app.js"></script>
 <!-- endBuild -->
