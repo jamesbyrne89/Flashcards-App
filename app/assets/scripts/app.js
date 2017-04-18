@@ -10,3 +10,40 @@
       draggable: true // Choose whether you can drag to open on touch screens
     }
   );
+
+
+   // On click, add a new category
+   
+
+
+
+
+   //  Function for creating a new category. Should produce an object 
+   //  
+   //  
+function createNewcategory(input){
+
+var categoryTemplate = {
+  name: ,
+  cards: // an array of cards,
+  addCard: function (){
+    
+  }
+
+}
+
+
+let category = Object.create(category.prototype);
+newCategory.
+categories.push(newCategory);
+
+
+
+return categories;
+}
+ 
+const groupAllCards = () => {
+ var allCategories = [];
+}
+
+
