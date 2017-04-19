@@ -14,32 +14,31 @@
 
    // On click, add a new category
    
+const addCategoryBtn = document.getElementById('add-category-btn');
 
+addCategoryBtn.addEventListener('click', function(){alert('Add a category')});
 
 
 
    //  Function for creating a new category. Should produce an object 
    //  
    //  
-function createNewcategory(input){
+function createNewCategory(input){
 
 var categoryTemplate = {
-  name: ,
-  cards: // an array of cards,
+  name: input,
+  cards: 'blank',// an array of cards,
   addCard: function (){
     
   }
 
 }
 
-
 let category = Object.create(category.prototype);
 newCategory.
 categories.push(newCategory);
 
-
-
-return categories;
+//return categories;
 }
  
 const groupAllCards = () => {
