@@ -145,6 +145,7 @@ font-family: 'roboto mono';
 .wrap {
   padding: 1em;
   display: inline-block;
+  float: left;
 }
 
 
@@ -154,10 +155,11 @@ font-family: 'roboto mono';
   padding: 1em;
   display: inline-block;
   min-height: 100vh;
+  float: left;
 }
 
 .footer {
-  position: fixed;
+  position: relative;
   bottom: 0;
   right: 0;
   text-align: right;
@@ -174,8 +176,15 @@ a {
 }
 
 .card {
-  display: flex;
   align-items: center;
   font-size: 2.25rem;
-  min-height: 80vh;
+  min-height: 70vh;
+  margin: 20px;
+  p {
+    margin-top: 200px;
+  }
+}
+
+.card__number {
+  opacity: 0.5;
 }
