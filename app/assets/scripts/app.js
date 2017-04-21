@@ -16,33 +16,39 @@
    
 const addCategoryBtn = document.getElementById('add-category-btn');
 
-addCategoryBtn.addEventListener('click', function(){alert('Add a category')});
+addCategoryBtn.addEventListener('click', AddCategory});
 
 
 
    //  Function for creating a new category. Should produce an object 
-   //  
-   //  
-function createNewCategory(input){
 
-var categoryTemplate = {
-  name: input,
-  cards: 'blank',// an array of cards,
-  addCard: function (){
-    
+function AddCategory(input){
+  this.name = input;
+  this.cards = [];
+    // Code to add a new flashcard
   }
 
+// Add to localStorage
+
+function storeFlashcards (){
+
+var allFlashcards = JSON.parse(localStorage.getItem('itemsArray')) || [];
+var newObj = ;
+allFlashcards.push(newObj);
+localStorage.setItem('itemsArray', JSON.stringify(allFlashcards));
+};
+
+// Add a new card to the deck
+function AddCard (textInput){
+  this.content = textInput;
+  this.addToDOM = function () {
+    const newCard = document.createElement(div);
+    newCard.classList.add('card');
+  }
 }
 
-let category = Object.create(category.prototype);
-newCategory.
-categories.push(newCategory);
+// Search through the array of categories and add the card to the cards array within the category object
 
-//return categories;
-}
+
  
-const groupAllCards = () => {
- var allCategories = [];
-}
-
 
