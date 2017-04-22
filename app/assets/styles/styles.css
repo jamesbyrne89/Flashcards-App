@@ -202,6 +202,7 @@ a {
 
 .collapsible-body {
   background-color: black !important;
+  padding: 16px;
 }
 
 .collapsible-header {
@@ -212,9 +213,6 @@ a {
   background-color: black !important;
 }
 
-.collapsible-header--expanded {
-  padding: 0 16px !important;
-}
 
 .modal-action {
   color: #fff;
