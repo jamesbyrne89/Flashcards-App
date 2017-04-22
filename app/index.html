@@ -16,13 +16,11 @@
     <title>Flashcards</title>
 </head>
 <body>
-<ul id="slide-out" class="side-nav">
+<div id="menu-overlay" class="menu-overlay hidden">
+<nav id="main-menu" class="main-menu hidden">
       <div class="background">
       </div>
-        <div class="sidebar__nav__item">Categories</div>
-      
-      <!-- Modal Trigger -->
-  <a class="modal-trigger waves-effect waves-light btn" href="#modal1">Add a card</a>
+
   <ul class="collapsible" data-collapsible="accordion">
     <li>
       <div class="collapsible-header">Categories</div>
@@ -34,7 +32,9 @@
       <div>Node.js</div>
       </div>
     </li>
+    </div>
     <div id="add-category-btn" class="sidebar__nav__item">Add a category</div>
+
     <li><div class="divider"></div></li>
         <form class="input-bar">
     Add new card
@@ -42,38 +42,19 @@
       <input class="input_submit btn-submit" type="submit">
       </form>
   </ul>
+  </nav>
+  </div>
     <main id="wrap" class="wrap">
-    <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+    <button id="menu-btn" class="menu-btn"><i class="material-icons">menu</i></button>
     <div class="flashcard">
     <span class="flashcard__number">01</span>
     <p>In regular Javascript, the global object is 'window'.<br><br>In NodeJS, the global object is 'global'.<p></div>
     
-    <nav class="sidebar">
     </nav>
 
   
  <footer class="footer"><p>Created by <a class="link" href="http://jamestbyrne.com">James Byrne</a>.</footer>
    </main>
-     <!-- Modal Structure -->
-  <div id="modal1" class="modal modal-fixed-footer">
-    <div class="modal-content">
-      <h4>Modal Header</h4>
-      <p>A bunch of text</p>
-       <div class="row">
-    <form class="col s12">
-      <div class="row">
-        <div class="input-field col s12">
-          <textarea id="textarea1" class="materialize-textarea"></textarea>
-          <label for="textarea1">Category Name Goes Here</label>
-        </div>
-      </div>
-    </form>
-  </div>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
-    </div>
-  </div> 
 </body>
   <!-- build:js assets/scripts/app.js -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>

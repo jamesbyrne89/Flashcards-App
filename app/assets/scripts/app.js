@@ -20,10 +20,27 @@
 
   $(document).ready(function(){
     $('.collapsible').collapsible();
+    $('.collapsible-header').addClass('.collapsible-header--expanded');
   });
 
 
 
+const menuBtn = document.getElementById('menu-btn');
+const menuOverlay = document.getElementById('menu-overlay');
+
+menuBtn.addEventListener('click', showMenu);
+menuOverlay.addEventListener('click', hideMenu);
+
+
+function showMenu () {
+$('.main-menu').fadeIn('5000');
+$('.menu-overlay').fadeIn('5000');
+}
+
+function hideMenu () {
+$('.main-menu').fadeOut('1000');
+$('.menu-overlay').fadeOut('1000');
+}
 
    // On click, add a new category
    
