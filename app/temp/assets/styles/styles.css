@@ -145,6 +145,7 @@ font-family: 'roboto mono';
   padding: 1em;
   display: inline-block;
   float: left;
+  margin-left: 300px;
 }
 
 .side-nav {
@@ -173,7 +174,7 @@ a {
   margin-top: 20px;
 }
 
-.card {
+.flashcard {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -182,10 +183,44 @@ a {
   margin: 20px;
 }
 
-.card p {
+.flashcard p {
   margin-top: 200px;
 }
 
-.card__number {
+.flashcard__number {
   opacity: 0.5;
+  font-size: 6rem;
+}
+
+.modal {
+  background: #201F1A;
+}
+
+.modal .modal-footer {
+  background: #201F1A !important;
+  border-top: solid 1px #fafafa !important;
+}
+
+.collapsible-body {
+  background-color: black !important;
+}
+
+.collapsible-header {
+  transition: background-color 0.2s;
+}
+
+.collapsible-header:hover {
+  background-color: black !important;
+}
+
+.collapsible-header--expanded {
+  padding: 0 16px !important;
+}
+
+.modal-action {
+  color: #fff;
+}
+
+.modal-action:hover {
+  background-color: black;
 }

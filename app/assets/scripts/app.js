@@ -11,12 +11,25 @@
     }
   );
 
+      $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+
+// Accordion
+
+  $(document).ready(function(){
+    $('.collapsible').collapsible();
+  });
+
+
+
 
    // On click, add a new category
    
 const addCategoryBtn = document.getElementById('add-category-btn');
 
-addCategoryBtn.addEventListener('click', AddCategory});
+addCategoryBtn.addEventListener('click', AddCategory);
 
 
 
@@ -33,7 +46,7 @@ function AddCategory(input){
 function storeFlashcards (){
 
 var allFlashcards = JSON.parse(localStorage.getItem('itemsArray')) || [];
-var newObj = ;
+
 allFlashcards.push(newObj);
 localStorage.setItem('itemsArray', JSON.stringify(allFlashcards));
 };

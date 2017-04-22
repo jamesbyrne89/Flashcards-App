@@ -146,6 +146,7 @@ font-family: 'roboto mono';
   padding: 1em;
   display: inline-block;
   float: left;
+  margin-left: 300px;
 }
 
 
@@ -175,7 +176,7 @@ a {
   margin-top: 20px;
 }
 
-.card {
+.flashcard {
   align-items: center;
   font-size: 2.25rem;
   min-height: 70vh;
@@ -185,6 +186,39 @@ a {
   }
 }
 
-.card__number {
+.flashcard__number {
   opacity: 0.5;
+  font-size: 6rem;
+}
+
+.modal {
+  background: #201F1A;
+}
+
+.modal .modal-footer {
+  background: #201F1A !important;
+  border-top: solid 1px #fafafa !important;
+}
+
+.collapsible-body {
+  background-color: black !important;
+}
+
+.collapsible-header {
+  transition: background-color 0.2s;
+}
+
+.collapsible-header:hover {
+  background-color: black !important;
+}
+
+.collapsible-header--expanded {
+  padding: 0 16px !important;
+}
+
+.modal-action {
+  color: #fff;
+  &:hover {
+    background-color: black;
+  }
 }
