@@ -33,13 +33,21 @@ menuOverlay.addEventListener('click', hideMenu);
 
 
 function showMenu () {
-$('.main-menu').fadeIn('5000');
+	const menu = document.getElementById('main-menu');
+	const tl = new TimelineLite();
+tl.to(menu, 0.1, {display: 'flex'}).to(menu, 0.1, {opacity: 0.95});
 $('.menu-overlay').fadeIn('5000');
+const line = document.getElementById('vert-line');
+TweenLite.to(line, 0.7, {height: '100vh'});
 }
 
 function hideMenu () {
-$('.main-menu').fadeOut('1000');
+	const menu = document.getElementById('main-menu');
+	const tl = new TimelineLite();
+	tl.to(menu, 0.7, {opacity: 0}).to(menu, 5, {display: 'none'});
 $('.menu-overlay').fadeOut('1000');
+const line = document.getElementById('vert-line');
+TweenLite.to(line, 0.7, {height: '0px'});
 }
 
    // On click, add a new category

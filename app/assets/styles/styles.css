@@ -207,11 +207,13 @@ a {
 
 .collapsible-body div {
   border-bottom: solid 1px #201F1A;
-  padding-left: 0.5em;
+  padding: 0.5em;
 }
 
 .collapsible-header {
   transition: background-color 0.2s;
+  margin-bottom: 50px;
+  font-size: 1.75rem;
 }
 
 .collapsible-header:hover {
@@ -237,15 +239,24 @@ textarea.materialize-textarea {
 
   .menu-btn {
     background: transparent;
+    color: #fff;
   }
 
   .hidden {
     display: none;
     transition: all 3s;
+    opacity: 0;
+  }
+
+  .collapsible {
+    margin: auto;
   }
 
   .menu-overlay {
     position: absolute;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
     top: 0;
     left: 0;
     background: black;
@@ -254,4 +265,19 @@ textarea.materialize-textarea {
     opacity: 0.9;
     z-index: 100;
     transition: all 3s;
+  }
+
+  .main-menu {
+    margin: 300px auto;
+    width: 500px;
+    text-align: center;
+  }
+
+  .vert-line {
+    position: absolute;
+    left: 30vw;
+    bottom: 0px;
+    width: 1px;
+    background: #fff;
+    display: inline-block;
   }
