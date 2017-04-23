@@ -1,138 +1,5 @@
-html,
-body,
-div,
-span,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-abbr,
-code,
-em,
-img,
-small,
-strong,
-sub,
-sup,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-footer,
-header,
-nav,
-section,
-time,
-audio,
-video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font-weight: inherit;
-  vertical-align: baseline;
-  background: transparent;
-}
-
-article,
-aside,
-figure,
-footer,
-header,
-nav,
-section {
-  display: block;
-}
-
-html {
-  box-sizing: border-box;
-  overflow-y: scroll;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
-img,
-object {
-  max-width: 100%;
-}
-
-ul {
-  list-style: none;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-th {
-  font-weight: bold;
-  vertical-align: bottom;
-}
-
-td {
-  font-weight: normal;
-  vertical-align: top;
-}
-
-input,
-select {
-  vertical-align: middle;
-}
-
-input[type="radio"] {
-  vertical-align: text-bottom;
-}
-
-input[type="checkbox"] {
-  vertical-align: bottom;
-}
-
-strong {
-  font-weight: bold;
-}
-
-label,
-input[type="file"],
-button {
-  cursor: pointer;
-}
-
-button,
-input,
-select,
-textarea {
-  margin: 0;
-  border: 0;
-}
-
-button::-moz-focus-inner {
-  padding: 0;
-  border: 0
-}
+@import '/base/_global.css';
+@import '/modules/_navigation.css';
 
 
 body {
@@ -149,26 +16,26 @@ font-family: 'roboto mono';
   margin-left: 300px;
 }
 
-
-.side-nav {
-  background:  #201F1A;
-  width: 300px;
-  padding: 1em;
-  display: inline-block;
-  min-height: 100vh;
-  float: left;
-}
-
 .footer {
-  position: relative;
+  position: absolute;
   bottom: 0;
-  right: 0;
+  right: 50px;
   text-align: right;
-  padding: 1em;
+  padding: 2em 0 ;
+  color: #a9a9a9;
+  font-size: 0.75rem;
+  a {
+    color: #a9a9a9;
+    transition: all 0.5s;
+    &:hover {
+      color: white;
+  }
+}
 }
 
 a {
   color: white;
+  text-decoration: none;
 }
 
 .button-collapse {
@@ -200,33 +67,8 @@ a {
   border-top: solid 1px #fafafa !important;
 }
 
-.collapsible-body {
-  background-color: black !important;
-  padding: 16px;
-}
-
-.collapsible-body div {
-  border-bottom: solid 1px #201F1A;
-  padding: 0.5em;
-}
-
-.collapsible-header {
-  transition: background-color 0.2s;
-  margin-bottom: 50px;
-  font-size: 1.75rem;
-}
-
-.collapsible-header:hover {
-  background-color: black !important;
-}
 
 
-.modal-action {
-  color: #fff;
-  &:hover {
-    background-color: black;
-  }
-}
 
 textarea.materialize-textarea {
   border-top: 1px solid #9e9e9e;
@@ -237,47 +79,7 @@ textarea.materialize-textarea {
   top: 3.75rem !important;
   }
 
-  .menu-btn {
-    background: transparent;
-    color: #fff;
-  }
 
-  .hidden {
-    display: none;
-    transition: all 3s;
-    opacity: 0;
-  }
 
-  .collapsible {
-    margin: auto;
-  }
+ 
 
-  .menu-overlay {
-    position: absolute;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    left: 0;
-    background: black;
-    width: 100%;
-    height: 100%;
-    opacity: 0.9;
-    z-index: 100;
-    transition: all 3s;
-  }
-
-  .main-menu {
-    margin: 300px auto;
-    width: 500px;
-    text-align: center;
-  }
-
-  .vert-line {
-    position: absolute;
-    left: 30vw;
-    bottom: 0px;
-    width: 1px;
-    background: #fff;
-    display: inline-block;
-  }

@@ -3,7 +3,7 @@
 <head>
 
 <meta name=viewport content="width=device-width, initial-scale=1">
-<link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,700|Roboto+Mono" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700|Roboto+Mono" rel="stylesheet">
  <!-- Compiled and minified CSS -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- build:css assets/styles/styles.css -->
@@ -16,36 +16,41 @@
 </head>
 <body>
 <div id="menu-overlay" class="menu-overlay hidden">
-<div id="vert-line" class="vert-line"></div>
-<nav id="main-menu" class="main-menu hidden">
-      <div class="background">
-      </div>
+<div id="vert-line-1" class="vert-line line-up"></div>
+  <nav id="secondary-menu" class="secondary-menu hidden">
 
-  <ul class="collapsible" data-collapsible="accordion">
-    <li>
-      <div class="collapsible-header">Categories</div>
-      <div class="collapsible-body">
-      <div>Javascript</div>
-      <div>CSS</div>
-      <div>Design</div>
-      <div>Google Apps Script</div>
-      <div>Node.js</div>
-      </div>
-    </li>
-    </div>
-    <div id="add-category-btn" class="sidebar__nav__item">Add a category</div>
+  <ul class="categories-menu">
+  <h2 class="secondary-menu__header menu__header">Current category</h2>
+    <a href="#"><li id="addCard" class="menu__item">Add a new card</li></a>
+      <a href="#"><li id="addCategory" class="menu__item">Add a new category</li></a>
 
-    <li><div class="divider"></div></li>
-        <form class="input-bar">
-    Add new card
-      <input id="input" class="input" type="text" autocomplete="off" autofocus>
-      <input class="input_submit btn-submit" type="submit">
-      </form>
-  </ul>
+    </ul>
+    
   </nav>
+
+  <div id="vert-line-2" class="vert-line line-down"></div>
+<nav id="main-menu" class="main-menu hidden">
+  <ul class="categories-menu">
+  <h2 class="menu__header">Categories</h2>
+    <a href="#"><li class="menu__item">Javascript</li></a>
+      <a href="#"><li class="menu__item">CSS</li></a>
+      <a href="#"><li class="menu__item">Design</li></a>
+      <a href="#"><li class="menu__item">Google Apps Script</li></a>
+      <a href="#"><li class="menu__item">Node.js</li></a>
+    </ul>
+    
+  </nav>
+
+
+
+</div>
   </div>
     <main id="wrap" class="wrap">
-    <button id="menu-btn" class="menu-btn"><i class="material-icons">menu</i></button>
+    <button id="menu-btn" class="menu-btn">
+    <span id="menuBarOne" class="menu-bar-one"></span>
+    <span id="menuBarTwo" class="menu-bar-two"></span>
+    <span id="menuBarThree" class="menu-bar-three"></span>
+    </button>
     <div class="flashcard">
     <span class="flashcard__number">01</span>
     <p>In regular Javascript, the global object is 'window'.<br><br>In NodeJS, the global object is 'global'.<p></div>

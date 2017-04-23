@@ -1,0 +1,117 @@
+  .menu-overlay {
+    position: absolute;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    background: black;
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    z-index: 100;
+  }
+
+  .main-menu {
+    width: 500px;
+
+  }
+
+  .secondary-menu {
+    width: 500px;
+  }
+
+  .secondary-menu__header {
+    opacity: 0.5;
+  }
+
+  .vert-line {
+    position: relative;
+    width: 1px;
+    background: #fff;
+    display: inline-block;
+  }
+
+  .line-up {
+    margin-top: auto;
+    bottom: 0;
+  }
+
+  .line-down {
+    top: 0px;
+    margin-bottom: auto;
+  }
+
+.menu__item {
+  border-bottom: solid 1px #201F1A;
+  padding: 1em 2em;
+}
+
+.menu__header {
+  transition: background-color 0.2s;
+  margin-bottom: 100px;
+  font-size: 1.25rem;
+  font-family: 'roboto condensed';
+  text-transform: uppercase;
+  padding:  1em 1.5em;
+}
+
+.categories-menu {
+  margin: auto;
+  margin-left: 20px;
+  width: 100%;
+  min-height: 500px;
+}
+
+.categories-menu a:hover {
+  transition: all 0.5s;
+}
+
+.categories-menu:hover > a {
+  color: #a9a9a9;
+  transition: all 0.5s;
+}
+
+.categories-menu:hover > a:hover {
+  color: white;
+  transition: all 0.5s;
+}
+
+  .menu-btn {
+    position: absolute;
+    right: 50px;
+    top: 50px;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    padding: 0;
+    z-index: 200;
+  }
+
+
+
+.menu-bar-one {
+  display: block;
+  position: relative;
+  bottom: 5px;
+  height: 2px;
+  background-color: #fff;
+  right: 0px;
+  margin: auto;
+}
+
+.menu-bar-two {
+  display: block;
+  height: 2px;
+  background-color: #fff;
+  width: 30px;
+  left: 0px;
+}
+
+.menu-bar-three {
+  display: block;
+  position: relative;
+  top: 5px;
+  height: 2px;
+  background-color: #fff;
+  right: 0px;
+  margin: auto;
+}

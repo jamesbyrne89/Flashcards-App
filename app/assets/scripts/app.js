@@ -34,27 +34,49 @@ menuOverlay.addEventListener('click', hideMenu);
 
 function showMenu () {
 	const menu = document.getElementById('main-menu');
+	const menu2 = document.getElementById('secondary-menu');
+	const line1 = document.getElementById('vert-line-1');
+	const line2 = document.getElementById('vert-line-2');
+	const menuBar1 = document.getElementById('menu-bar-one');
+	const menuBar2 = document.getElementById('menu-bar-two');
+	const menuBar3 = document.getElementById('menu-bar-three');
 	const tl = new TimelineLite();
-tl.to(menu, 0.1, {display: 'flex'}).to(menu, 0.1, {opacity: 0.95});
-$('.menu-overlay').fadeIn('5000');
-const line = document.getElementById('vert-line');
-TweenLite.to(line, 0.7, {height: '100vh'});
+	const tl2 = new TimelineLite();
+
+tl.to(menuOverlay, 0, {display: 'flex', opacity: 0.95}).to(menu, 0.1, {display: 'flex'}).to(menu, 0.5, {opacity: 0.95});
+tl2.to(menu2, 0.1, {display: 'flex'}).to(menu2, 0.1, {opacity: 0.95});
+TweenLite.to(line1, 0.7, {height: '100vh'});
+TweenLite.to(line2, 0.7, {height: '100vh', delay: 0.5});
+
+TweenLite.to(menuBarOne, 0.5, {width: '0px', delay: 0.4});
+TweenLite.to(menuBarTwo, 0.5, {width: '0px', delay: 0.2});
+TweenLite.to(menuBarThree, 0.5, {width: '0px'});
+
 }
 
 function hideMenu () {
 	const menu = document.getElementById('main-menu');
+	const menu2 = document.getElementById('secondary-menu');
+	const line1 = document.getElementById('vert-line-1');
+	const line2 = document.getElementById('vert-line-2');
+	const menuBar1 = document.getElementById('menu-bar-one');
+	const menuBar2 = document.getElementById('menu-bar-two');
+	const menuBar3 = document.getElementById('menu-bar-three');	
 	const tl = new TimelineLite();
-	tl.to(menu, 0.7, {opacity: 0}).to(menu, 5, {display: 'none'});
-$('.menu-overlay').fadeOut('1000');
-const line = document.getElementById('vert-line');
-TweenLite.to(line, 0.7, {height: '0px'});
+	const tl2 = new TimelineLite();
+
+	tl.to(menu, 0.1, {opacity: 0}).to(menu, 0, {display: 'none'}).to(menuOverlay, 1, {opacity: 0}).to(menuOverlay, 0, {display: 'none'})
+	tl2.to(menu2, 0.1, {opacity: 0}).to(menu2, 0, {display: 'none'});
+TweenLite.to(line1, 0.3, {height: '0px'});
+TweenLite.to(line2, 0.3, {height: '0px', delay: 0.2});
+
+TweenLite.to(menuBarOne, 0.5, {width: '100%', delay: 0.4});
+TweenLite.to(menuBarTwo, 0.5, {width: '100%', delay: 0.2});
+TweenLite.to(menuBarThree, 0.5, {width: '100%'});
 }
 
    // On click, add a new category
    
-const addCategoryBtn = document.getElementById('add-category-btn');
-
-addCategoryBtn.addEventListener('click', AddCategory);
 
 
 

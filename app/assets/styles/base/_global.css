@@ -1,40 +1,147 @@
-
-* {
-  box-sizing: border-box;
+html,
+body,
+div,
+span,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+abbr,
+code,
+em,
+img,
+small,
+strong,
+sub,
+sup,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+footer,
+header,
+nav,
+section,
+time,
+audio,
+video {
   margin: 0;
   padding: 0;
+  border: 0;
+  font-size: 100%;
+  font-weight: inherit;
+  vertical-align: baseline;
+  background: transparent;
 }
 
-body {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  background: $paleGrey;
-  justify-content: flex-end;
-  height: 100vh;
-  font-family: 'source sans pro';
+article,
+aside,
+figure,
+footer,
+header,
+nav,
+section {
+  display: block;
 }
 
-.link {
-  position: relative;
-  text-decoration: none;
-  color: $navy;
+html {
+  box-sizing: border-box;
+  overflow-y: scroll;
 }
 
- .link::after {
-  height: 2px;
-  left: 0;
-  bottom: -2px;
-  transition-duration: 0.5s;
-  transform-origin: top left;
-  width: 100%;
-  transition: all ease-out 0.2s;
-  background: $orange;
-  content: '';
-  position: absolute;
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
 
- .link:hover::after {
-  width: 0;
-  transition: all 0.2s;
- }
+img,
+object {
+  max-width: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th {
+  font-weight: bold;
+  vertical-align: bottom;
+}
+
+td {
+  font-weight: normal;
+  vertical-align: top;
+}
+
+input,
+select {
+  vertical-align: middle;
+}
+
+input[type="radio"] {
+  vertical-align: text-bottom;
+}
+
+input[type="checkbox"] {
+  vertical-align: bottom;
+}
+
+strong {
+  font-weight: bold;
+}
+
+label,
+input[type="file"],
+button {
+  cursor: pointer;
+}
+
+button,
+input,
+select,
+textarea {
+  margin: 0;
+  border: 0;
+}
+
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+  
+}
+
+button:focus {
+  outline: #ddb271;
+}
+
+ .hidden {
+    display: none;
+    transition: all 3s;
+    opacity: 0;
+  }
+
