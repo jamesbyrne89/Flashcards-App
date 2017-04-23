@@ -139,6 +139,18 @@ button:focus {
   outline: #ddb271;
 }
 
+html {
+  overflow-x: hidden;
+}
+
+body {
+background:  #000;
+min-height: 100vh;
+color: #F8FAFA;
+font-family: 'roboto mono';
+overflow-x: none;
+}
+
 .hidden {
     display: none;
     transition: all 3s;
@@ -159,13 +171,12 @@ button:focus {
     z-index: 100;
   }
 
-.main-menu {
+.menu {
     width: 500px;
-
-  }
-
-.secondary-menu {
-    width: 500px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+     opacity: 0;
   }
 
 .secondary-menu__header {
@@ -210,6 +221,13 @@ button:focus {
   min-height: 500px;
 }
 
+.add-category-menu {
+  margin: auto;
+margin-left: 20px;
+ height: 500px;
+ width: 100%;
+}
+
 .categories-menu a:hover {
   transition: all 0.5s;
 }
@@ -242,7 +260,6 @@ button:focus {
   height: 2px;
   background-color: #fff;
   right: 0px;
-  margin: auto;
 }
 
 .menu-bar-two {
@@ -260,14 +277,15 @@ button:focus {
   height: 2px;
   background-color: #fff;
   right: 0px;
-  margin: auto;
+  text-align: right;
 }
 
-body {
-background:  #000;
-min-height: 100vh;
-color: #F8FAFA;
-font-family: 'roboto mono';
+.menu-transition {
+  height: 100vh;
+  position: absolute;
+  right: 0;
+  background-color: #ddb271;
+  z-index: 300;
 }
 
 .wrap {
@@ -342,7 +360,40 @@ textarea.materialize-textarea {
   top: 3.75rem !important;
   }
 
+.menu__item:hover {
+    cursor: pointer;
+  }
 
+.add-category__input {
+  background: transparent;
+  border: solid 1px #fff;
+  padding: 0.5em;
+  color: #fff;
+  margin-top: 20px;
+  font-family: 'roboto mono';
+}
 
- 
+.add-category__input:focus {
+  outline: none;
+  border: solid 1px #ddb271;
+}
+
+.btn-submit {
+  margin-top: 50px;
+  padding: 0.875em 1.5em;
+  border: solid 1px #a9a9a9;
+  background: transparent;
+  color: #a9a9a9;
+  font-family: 'roboto condensed';
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.btn-submit:hover {
+  color: #fff;
+  border: solid 1px #fff;
+  cursor: pointer;
+}
+
 

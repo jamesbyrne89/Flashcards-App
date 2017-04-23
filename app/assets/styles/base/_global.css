@@ -139,6 +139,17 @@ button:focus {
   outline: #ddb271;
 }
 
+html {
+  overflow-x: hidden;
+}
+body {
+background:  #000;
+min-height: 100vh;
+color: #F8FAFA;
+font-family: 'roboto mono';
+overflow-x: none;
+}
+
  .hidden {
     display: none;
     transition: all 3s;
