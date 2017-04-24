@@ -89,9 +89,9 @@ function showCategoryInput () {
   <h2 class="menu__header">Categories</h2>
     <label for="add-category">Add a new category:
      <form>
-     <input type="text" name="add-category" class="add-category__input" autofocus>
+     <input type="text" name="add-category" id="addCategoryInput" class="add-category__input" autofocus>
      </form>
-     <button class="btn-submit">Add</button>
+     <input type="submit" class="btn-submit">Add</input>
     </ul>`;
     tl.to(menu3, 0, {display: 'flex'})
     .to(menu3, 0.3, {opacity: 1, delay: 1.4});
@@ -105,7 +105,15 @@ menu3.addEventListener('click', function(e) {
 
 }
 
+const newCategoryInput = document.getElementById('addCategoryInput');
 
+newCategoryInput.addEventListener = document.getElementById('submit', function(e) {
+	if (newCategoryInput.value){
+	AddCategory(newCategoryInput.value);
+	storeFlashcards();
+};
+else return;
+});
 
    // On click, add a new category
    
