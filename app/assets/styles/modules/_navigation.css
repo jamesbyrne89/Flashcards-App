@@ -23,8 +23,9 @@
   .vert-line {
     position: relative;
     width: 1px;
-    background: #fff;
+    background: #898989;
     display: inline-block;
+    opacity: 0.7;
   }
 
   .line-up {

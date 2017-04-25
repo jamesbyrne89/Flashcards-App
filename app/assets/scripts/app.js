@@ -147,19 +147,41 @@ function showCategoryInput() {
 
 	const tl = new TimelineLite();
 
+	const addCategoryMenuEl = document.createElement('ul');
+	const inputHolder = document.createDocumentFragment();
+	const header = document.createElement('h2');
+	const input = document.createElement('input');
+	const submit = document.createElement('input');
+	
+
 	menuTransition();
+
+	addCategoryMenuEl.setAttribute('class', 'add-category-menu');
+
+	header.innerText = 'Categories';
+	header.setAttribute('class', 'menu__header');
+
+	input.setAttribute('name', 'add-category');
+	input.setAttribute('class', 'add-category__input');
+	input.setAttribute('id', 'addCategoryInput');
+
+	submit.setAttribute('type', 'submit');	
+	submit.setAttribute('class', 'btn-submit');	
+	submit.setAttribute('id', 'submitBtn');	
+	//input.setAttribute('onsubmit', 'event.preventDefault();');
+
+	inputHolder.appendChild(input);
+	inputHolder.appendChild(submit);	
+	addCategoryMenuEl.appendChild(header);
+	addCategoryMenuEl.appendChild(inputHolder);
+	
 	menuOverlay.appendChild(menu3);
 	menu3.classList.add('menu');
 	menu3.classList.add('hidden');
 	menu3.id = 'addCategoryMenu';
-	menu3.innerHTML = `<ul class="add-category-menu">
-  <h2 class="menu__header">Categories</h2>
-    <label for="add-category">Add a new category:
-     <form>
-     <input type="text" name="add-category" id="addCategoryInput" class="add-category__input" autofocus>
-     </form>
-     <input type="submit" class="btn-submit">Add</input>
-    </ul>`;
+	menu3.appendChild(addCategoryMenuEl);
+
+
 	tl.to(menu3, 0, {
 			display: 'flex'
 		})
@@ -177,18 +199,42 @@ function showCategoryInput() {
 		e.stopPropagation();
 	});
 
-
-}
-
+const submitBtn = document.getElementById('submitBtn');
 const newCategoryInput = document.getElementById('addCategoryInput');
 
-newCategoryInput.addEventListener = document.getElementById('submit', function(e) {
+function submitcategoryForm(){
+
+  	console.log(newCategoryInput.value);
+  	AddCategory(newCategoryInput.value);
+  	localStorage.setItem(AddCategory(newCategoryInput.value), AddCategory.cards);
+  	console.log(localStorage);
+    newCategoryInput.value = "";
+}
+
+document.body.onkeyup = function(e) {
+ if (e.keyCode == 13 && newCategoryInput.value !== "") {
+submitcategoryForm()
+  }
+  else {
+  	return
+  }
+}
+
+submitBtn.addEventListener = document.getElementById('click', function(e) {
+	console.log('clicked')
 	if (newCategoryInput.value) {
-		AddCategory(newCategoryInput.value);
-		storeFlashcards();
-	};
-	else return;
+	submitcategoryForm();
+	}
+	else {
+		return
+	}
+
+
 });
+}
+
+
+
 
 // On click, add a new category
 
@@ -197,8 +243,10 @@ newCategoryInput.addEventListener = document.getElementById('submit', function(e
 //  Function for creating a new category. Should produce an object 
 
 function AddCategory(input) {
-	this.name = input;
+	this.catName = input;
 	this.cards = [];
+
+	return this.catName;
 	// Code to add a new flashcard
 }
 
