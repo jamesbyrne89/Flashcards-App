@@ -416,10 +416,30 @@ textarea.materialize-textarea {
   font-size: 0.75rem;
   font-weight: thin;
   background: transparent;
-  color: #fff;
+  color: #a9a9a9;
    position: relative;
   right: 0;
- 
+  transition: all 0.7s;
+  font-family: inherit;
+  padding: 0.5em;
+}
+
+.menu__back-btn:hover {
+  color: #fff;
+  }
+
+.btn-back-arrow {
+    position: relative;
+    left: -5px;
+    transition: all 0.7s;
+    color: #a9a9a9;
+  }
+
+.menu__back-btn:hover.btn-back-arrow {
+  left: -15px;
+  -webkit-transform: translateX(-5px);
+          transform: translateX(-5px);
+  color: #fff;
 }
 
 

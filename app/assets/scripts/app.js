@@ -1,5 +1,3 @@
-
-
 const menuBtn = document.getElementById('menu-btn');
 const addCategoryBtn = document.getElementById('addCategory');
 const menuOverlay = document.getElementById('menu-overlay');
@@ -168,8 +166,9 @@ function showCategoryInput() {
 	header.innerText = 'Categories';
 	header.setAttribute('class', 'menu__header');
 
-	backBtn.innerText = '< Back to menu'
+	backBtn.innerHTML = '<i class="btn-back-arrow fa fa-long-arrow-left" aria-hidden="true"></i> Back to menu'
 	backBtn.setAttribute('class', 'menu__back-btn');
+	backBtn.setAttribute('id', 'backBtn');
 
 	label.setAttribute('for', 'add-category');
 	label.setAttribute('class', 'add-category__label');
@@ -197,6 +196,13 @@ function showCategoryInput() {
 	menu3.id = 'addCategoryMenu';
 	menu3.appendChild(addCategoryMenuEl);
 
+const backBtnEl = document.getElementById('backBtn');
+
+backBtnEl.addEventListener('click', function(e){
+	TweenLite.to(addCategoryMenuEl, 0, {display: 'none'});
+	menuTransition();
+	showMenu();
+})
 
 	tl.to(menu3, 0, {
 			display: 'flex'
@@ -224,23 +230,26 @@ function showCategoryInput() {
 			return
 		}
 	}
-function submitcategoryForm(cat) {
 
-	localStorage.setItem(AddCategory(cat.value), AddCategory.cards);
-	console.log(localStorage);
-	(function confirm() {
-		const confirmation = document.createElement('span');
-		confirmation.setAttribute('class', 'add-category__confirmation');
-		confirmation.innerText= `${cat.value} category successfully added`;
-		addCategoryMenuEl.appendChild(confirmation);
-		console.log(confirmation)
-		TweenLite.to(confirmation, 1, {y: -15, opacity: 1, ease: Power1.easeOut});
-	})();
-	cat.value = "";
-}
+	function submitcategoryForm(cat) {
+
+		localStorage.setItem(AddCategory(cat.value), AddCategory.cards);
+		console.log(localStorage);
+		(function confirm() {
+			const confirmation = document.createElement('span');
+			confirmation.setAttribute('class', 'add-category__confirmation');
+			confirmation.innerText = `${cat.value} category successfully added`;
+			addCategoryMenuEl.appendChild(confirmation);
+			console.log(confirmation)
+			TweenLite.to(confirmation, 1, {
+				y: -15,
+				opacity: 1,
+				ease: Power1.easeOut
+			});
+		})();
+		cat.value = "";
+	}
 };
-
-
 
 
 
@@ -286,83 +295,81 @@ function AddCard(textInput) {
  */
 
 const flashcardsDB = (function() {
-  const fcDB = {};
-  const datastore = null;
+	const fcDB = {};
+	const datastore = null;
 
-  // TODO: Add methods for interacting with the database here.
+	// TODO: Add methods for interacting with the database here.
 
-  // Export the fcDB object.
-  return fcDB;
+	// Export the fcDB object.
+	return fcDB;
 }());
 
 /**
  * Open a connection to the datastore.
  */
 fcDB.open = function(callback) {
-  // Database version.
-  const version = 1;
+		// Database version.
+		const version = 1;
 
-  // Open a connection to the datastore.
-  const request = indexedDB.open('flashcards', version);
+		// Open a connection to the datastore.
+		const request = indexedDB.open('flashcards', version);
 
-  // Handle datastore upgrades.
-  request.onupgradeneeded = function(e) {
-    const db = e.target.result;
+		// Handle datastore upgrades.
+		request.onupgradeneeded = function(e) {
+			const db = e.target.result;
 
-    e.target.transaction.onerror = fcDB.onerror;
+			e.target.transaction.onerror = fcDB.onerror;
 
-    // Delete the old datastore.
-    if (db.objectStoreNames.contains('flashcard')) {
-      db.deleteObjectStore('flashcard');
-    }
+			// Delete the old datastore.
+			if (db.objectStoreNames.contains('flashcard')) {
+				db.deleteObjectStore('flashcard');
+			}
 
-    // Create a new datastore.
-    const store = db.createObjectStore('flashcard', {
-      keyPath: 'timestamp'
-    });
-  };
+			// Create a new datastore.
+			const store = db.createObjectStore('flashcard', {
+				keyPath: 'timestamp'
+			});
+		};
 
-  // Handle successful datastore access.
-  request.onsuccess = function(e) {
-    // Get a reference to the DB.
-    datastore = e.target.result;
+		// Handle successful datastore access.
+		request.onsuccess = function(e) {
+			// Get a reference to the DB.
+			datastore = e.target.result;
 
-    // Execute the callback.
-    callback();
-  };
+			// Execute the callback.
+			callback();
+		};
 
-/**
- * Fetch all of the items in the datastore.
- */
-fcDB.fetchflashcards = function(callback) {
-  var db = datastore;
-  var transaction = db.transaction(['flashcard'], 'readwrite');
-  var objStore = transaction.objectStore('flashcard');
+		/**
+		 * Fetch all of the items in the datastore.
+		 */
+		fcDB.fetchflashcards = function(callback) {
+			var db = datastore;
+			var transaction = db.transaction(['flashcard'], 'readwrite');
+			var objStore = transaction.objectStore('flashcard');
 
-  var keyRange = IDBKeyRange.lowerBound(0);
-  var cursorRequest = objStore.openCursor(keyRange);
+			var keyRange = IDBKeyRange.lowerBound(0);
+			var cursorRequest = objStore.openCursor(keyRange);
 
-  var flashcards = [];
+			var flashcards = [];
 
-  transaction.oncomplete = function(e) {
-    // Execute the callback function.
-    callback(flashcards);
-  };
+			transaction.oncomplete = function(e) {
+				// Execute the callback function.
+				callback(flashcards);
+			};
 
-  cursorRequest.onsuccess = function(e) {
-    var result = e.target.result;
+			cursorRequest.onsuccess = function(e) {
+				var result = e.target.result;
 
-    if (!!result == false) {
-      return;
-    }
+				if (!!result == false) {
+					return;
+				}
 
-    flashcards.push(result.value);
+				flashcards.push(result.value);
 
-    result.continue();
-  };
+				result.continue();
+			};
 
-  cursorRequest.onerror = fcDB.onerror;
-};
-
-
-
+			cursorRequest.onerror = fcDB.onerror;
+		};
+	};
