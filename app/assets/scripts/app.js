@@ -372,4 +372,45 @@ fcDB.open = function(callback) {
 
 			cursorRequest.onerror = fcDB.onerror;
 		};
-	};
+	/**
+ * Delete a todo item.
+ */
+tDB.deleteTodo = function(id, callback) {
+  var db = datastore;
+  var transaction = db.transaction(['todo'], 'readwrite');
+  var objStore = transaction.objectStore('todo');
+
+  var request = objStore.delete(id);
+
+  request.onsuccess = function(e) {
+    callback();
+  }
+
+  request.onerror = function(e) {
+    console.log(e);
+  }
+};
+
+
+
+
+
+// Handle new todo item form submissions.
+newTodoForm.onsubmit = function() {
+  // Get the todo text.
+  var text = newTodoInput.value;
+
+  // Check to make sure the text is not blank (or just spaces).
+  if (text.replace(/ /g,'') != '') {
+    // Create the todo item.
+    todoDB.createTodo(text, function(todo) {
+      refreshTodos();
+    });
+  }
+
+  // Reset the input field.
+  newTodoInput.value = '';
+
+  // Don't send the form.
+  return false;
+};
