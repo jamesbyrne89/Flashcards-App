@@ -1,3 +1,5 @@
+
+
 const menuBtn = document.getElementById('menu-btn');
 const addCategoryBtn = document.getElementById('addCategory');
 const menuOverlay = document.getElementById('menu-overlay');
@@ -150,9 +152,10 @@ function showCategoryInput() {
 	const addCategoryMenuEl = document.createElement('ul');
 	const inputHolder = document.createDocumentFragment();
 	const header = document.createElement('h2');
+	const label = document.createElement('label');
 	const input = document.createElement('input');
 	const submit = document.createElement('input');
-	
+
 
 	menuTransition();
 
@@ -161,20 +164,25 @@ function showCategoryInput() {
 	header.innerText = 'Categories';
 	header.setAttribute('class', 'menu__header');
 
+	label.setAttribute('for', 'add-category');
+	label.setAttribute('class', 'add-category__label');
+	label.innerText = 'Add a new category:';
+
 	input.setAttribute('name', 'add-category');
 	input.setAttribute('class', 'add-category__input');
 	input.setAttribute('id', 'addCategoryInput');
 
-	submit.setAttribute('type', 'submit');	
-	submit.setAttribute('class', 'btn-submit');	
-	submit.setAttribute('id', 'submitBtn');	
+	submit.setAttribute('type', 'submit');
+	submit.setAttribute('class', 'btn-submit');
+	submit.setAttribute('id', 'submitBtn');
 	//input.setAttribute('onsubmit', 'event.preventDefault();');
 
+	inputHolder.appendChild(label);
 	inputHolder.appendChild(input);
-	inputHolder.appendChild(submit);	
+	inputHolder.appendChild(submit);
 	addCategoryMenuEl.appendChild(header);
 	addCategoryMenuEl.appendChild(inputHolder);
-	
+
 	menuOverlay.appendChild(menu3);
 	menu3.classList.add('menu');
 	menu3.classList.add('hidden');
@@ -199,39 +207,31 @@ function showCategoryInput() {
 		e.stopPropagation();
 	});
 
-const submitBtn = document.getElementById('submitBtn');
-const newCategoryInput = document.getElementById('addCategoryInput');
 
-function submitcategoryForm(){
-
-  	console.log(newCategoryInput.value);
-  	AddCategory(newCategoryInput.value);
-  	localStorage.setItem(AddCategory(newCategoryInput.value), AddCategory.cards);
-  	console.log(localStorage);
-    newCategoryInput.value = "";
-}
-
-document.body.onkeyup = function(e) {
- if (e.keyCode == 13 && newCategoryInput.value !== "") {
-submitcategoryForm()
-  }
-  else {
-  	return
-  }
-}
-
-submitBtn.addEventListener = document.getElementById('click', function(e) {
-	console.log('clicked')
-	if (newCategoryInput.value) {
-	submitcategoryForm();
+	document.body.onkeyup = function(e) {
+		const newCategoryInput = document.getElementById('addCategoryInput');
+		if (e.keyCode == 13 && newCategoryInput.value !== "") {
+			submitcategoryForm(newCategoryInput);
+		} else {
+			return
+		}
 	}
-	else {
-		return
-	}
+function submitcategoryForm(cat) {
 
-
-});
+	localStorage.setItem(AddCategory(cat.value), AddCategory.cards);
+	console.log(localStorage);
+	(function confirm() {
+		const confirmation = document.createElement('span');
+		confirmation.setAttribute('class', 'add-category__confirmation');
+		confirmation.innerText= `${cat.value} category successfully added`;
+		addCategoryMenuEl.appendChild(confirmation);
+		console.log(confirmation)
+		TweenLite.to(confirmation, 1, {y: -10, opacity: 1, ease: Power1.easeInOut});
+	})();
+	cat.value = "";
 }
+};
+
 
 
 

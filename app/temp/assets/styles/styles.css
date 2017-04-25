@@ -372,6 +372,7 @@ textarea.materialize-textarea {
   color: #fff;
   margin-top: 20px;
   font-family: 'roboto mono';
+  width: 200px;
 }
 
 .add-category__input:focus {
@@ -389,12 +390,24 @@ textarea.materialize-textarea {
   text-transform: uppercase;
   font-weight: bold;
   transition: all 0.3s;
+  display: block;
 }
 
 .btn-submit:hover {
   color: #fff;
   border: solid 1px #fff;
   cursor: pointer;
+}
+
+.add-category__label {
+  display: block;
+}
+
+.add-category__confirmation {
+  position: relative;
+  display: block;
+  opacity: 0;
+  margin-top: 30px;
 }
 
 
