@@ -410,10 +410,3 @@ tDB.deleteTodo = function(id, callback) {
 
 
 
-
-
-// Handle new todo item form submissions.
-newTodoForm.onsubmit = function() {
-  // Get the todo text.
-
-};
