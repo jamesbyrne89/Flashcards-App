@@ -233,10 +233,26 @@ backBtnEl.addEventListener('click', function(e){
 
 	function submitcategoryForm(cat) {
 
-		localStorage.setItem(AddCategory(cat.value), AddCategory.cards);
-		console.log(localStorage);
+  var text = cat.value;
+
+  // Check to make sure the text is not blank (or just spaces).
+  if (text.replace(/ /g,'') != '') {
+    // Create the todo item.
+    fcDB.createTodo(text, function(flashcard) {
+      refreshFlashcards();
+    });
+  }
+
+  // Reset the input field.
+  newTodoInput.value = '';
+
+  // Don't send the form.
+  return false;
+
 		(function confirm() {
+
 			const confirmation = document.createElement('span');
+
 			confirmation.setAttribute('class', 'add-category__confirmation');
 			confirmation.innerText = `${cat.value} category successfully added`;
 			addCategoryMenuEl.appendChild(confirmation);
@@ -247,6 +263,7 @@ backBtnEl.addEventListener('click', function(e){
 				ease: Power1.easeOut
 			});
 		})();
+
 		cat.value = "";
 	}
 };
@@ -398,19 +415,5 @@ tDB.deleteTodo = function(id, callback) {
 // Handle new todo item form submissions.
 newTodoForm.onsubmit = function() {
   // Get the todo text.
-  var text = newTodoInput.value;
 
-  // Check to make sure the text is not blank (or just spaces).
-  if (text.replace(/ /g,'') != '') {
-    // Create the todo item.
-    todoDB.createTodo(text, function(todo) {
-      refreshTodos();
-    });
-  }
-
-  // Reset the input field.
-  newTodoInput.value = '';
-
-  // Don't send the form.
-  return false;
 };
