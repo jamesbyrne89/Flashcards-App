@@ -262,7 +262,7 @@ function AddCategory(input) {
 
 function storeFlashcards() {
 
-	var allFlashcards = JSON.parse(localStorage.getItem('itemsArray')) || [];
+	const allFlashcards = JSON.parse(localStorage.getItem('itemsArray')) || [];
 
 	allFlashcards.push(newObj);
 	localStorage.setItem('itemsArray', JSON.stringify(allFlashcards));
@@ -278,3 +278,91 @@ function AddCard(textInput) {
 }
 
 // Search through the array of categories and add the card to the cards array within the category object
+
+
+
+/**
+ * Code to create the database that will store the decks
+ */
+
+const flashcardsDB = (function() {
+  const fcDB = {};
+  const datastore = null;
+
+  // TODO: Add methods for interacting with the database here.
+
+  // Export the fcDB object.
+  return fcDB;
+}());
+
+/**
+ * Open a connection to the datastore.
+ */
+fcDB.open = function(callback) {
+  // Database version.
+  const version = 1;
+
+  // Open a connection to the datastore.
+  const request = indexedDB.open('flashcards', version);
+
+  // Handle datastore upgrades.
+  request.onupgradeneeded = function(e) {
+    const db = e.target.result;
+
+    e.target.transaction.onerror = fcDB.onerror;
+
+    // Delete the old datastore.
+    if (db.objectStoreNames.contains('flashcard')) {
+      db.deleteObjectStore('flashcard');
+    }
+
+    // Create a new datastore.
+    const store = db.createObjectStore('flashcard', {
+      keyPath: 'timestamp'
+    });
+  };
+
+  // Handle successful datastore access.
+  request.onsuccess = function(e) {
+    // Get a reference to the DB.
+    datastore = e.target.result;
+
+    // Execute the callback.
+    callback();
+  };
+
+/**
+ * Fetch all of the items in the datastore.
+ */
+fcDB.fetchflashcards = function(callback) {
+  var db = datastore;
+  var transaction = db.transaction(['flashcard'], 'readwrite');
+  var objStore = transaction.objectStore('flashcard');
+
+  var keyRange = IDBKeyRange.lowerBound(0);
+  var cursorRequest = objStore.openCursor(keyRange);
+
+  var flashcards = [];
+
+  transaction.oncomplete = function(e) {
+    // Execute the callback function.
+    callback(flashcards);
+  };
+
+  cursorRequest.onsuccess = function(e) {
+    var result = e.target.result;
+
+    if (!!result == false) {
+      return;
+    }
+
+    flashcards.push(result.value);
+
+    result.continue();
+  };
+
+  cursorRequest.onerror = fcDB.onerror;
+};
+
+
+
