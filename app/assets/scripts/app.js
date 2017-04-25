@@ -34,11 +34,13 @@ function showMenu() {
 	}).to(menu, 0.1, {
 		display: 'flex'
 	}).to(menu, 0.5, {
+		y: -15,
 		opacity: 0.95
 	});
 	tl2.to(menu2, 0.1, {
 		display: 'flex'
 	}).to(menu2, 0.1, {
+		y: -15,
 		opacity: 0.95
 	});
 	TweenLite.to(line1, 0.7, {
@@ -151,6 +153,7 @@ function showCategoryInput() {
 
 	const addCategoryMenuEl = document.createElement('ul');
 	const inputHolder = document.createDocumentFragment();
+	const backBtn = document.createElement('button');
 	const header = document.createElement('h2');
 	const label = document.createElement('label');
 	const input = document.createElement('input');
@@ -161,8 +164,12 @@ function showCategoryInput() {
 
 	addCategoryMenuEl.setAttribute('class', 'add-category-menu');
 
+
 	header.innerText = 'Categories';
 	header.setAttribute('class', 'menu__header');
+
+	backBtn.innerText = '< Back to menu'
+	backBtn.setAttribute('class', 'menu__back-btn');
 
 	label.setAttribute('for', 'add-category');
 	label.setAttribute('class', 'add-category__label');
@@ -177,6 +184,7 @@ function showCategoryInput() {
 	submit.setAttribute('id', 'submitBtn');
 	//input.setAttribute('onsubmit', 'event.preventDefault();');
 
+	inputHolder.appendChild(backBtn);
 	inputHolder.appendChild(label);
 	inputHolder.appendChild(input);
 	inputHolder.appendChild(submit);
@@ -226,7 +234,7 @@ function submitcategoryForm(cat) {
 		confirmation.innerText= `${cat.value} category successfully added`;
 		addCategoryMenuEl.appendChild(confirmation);
 		console.log(confirmation)
-		TweenLite.to(confirmation, 1, {y: -10, opacity: 1, ease: Power1.easeInOut});
+		TweenLite.to(confirmation, 1, {y: -15, opacity: 1, ease: Power1.easeOut});
 	})();
 	cat.value = "";
 }

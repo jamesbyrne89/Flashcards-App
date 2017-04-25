@@ -84,7 +84,7 @@ textarea.materialize-textarea {
   color: #fff;
   margin-top: 20px;
   font-family: 'roboto mono';
-  width: 200px;
+  width: 200px; 
 }
 
 .add-category__input:focus {
@@ -113,6 +113,7 @@ textarea.materialize-textarea {
 
 .add-category__label {
   display: block;
+  margin-top: 50px;
 }
 
 .add-category__confirmation {
@@ -121,5 +122,17 @@ textarea.materialize-textarea {
   opacity: 0;
   margin-top: 30px;
 }
+
+.menu__back-btn {
+  font-size: 0.75rem;
+  font-weight: thin;
+  background: transparent;
+  color: #fff;
+   position: relative;
+  right: 0;
+ 
+}
+
+
 
 
