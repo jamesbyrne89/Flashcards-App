@@ -16,12 +16,14 @@ addCategoryBtn.addEventListener('click', function(e) {
 
 const menu = document.getElementById('main-menu');
 const menu2 = document.getElementById('secondary-menu');
-const menu3 = document.createElement('nav');
+const menu3 = document.getElementById('tertiary-menu-one');
 const line1 = document.getElementById('vert-line-1');
 const line2 = document.getElementById('vert-line-2');
 const menuBar1 = document.getElementById('menu-bar-one');
 const menuBar2 = document.getElementById('menu-bar-two');
 const menuBar3 = document.getElementById('menu-bar-three');
+const backBtn = document.getElementById('backBtn');
+const newCategoryInput = document.getElementById('addCategoryInput');
 
 function showMenu() {
 
@@ -150,57 +152,16 @@ function menuTransition() {
 function showCategoryInput() {
 
 	const tl = new TimelineLite();
-
-	const addCategoryMenuEl = document.createElement('ul');
-	const inputHolder = document.createDocumentFragment();
-	const backBtn = document.createElement('button');
-	const header = document.createElement('h2');
-	const label = document.createElement('label');
-	const input = document.createElement('input');
-	const submit = document.createElement('input');
-
+	const addCategoryMenu = document.getElementById("add-category-menu");
 
 	menuTransition();
 
-	addCategoryMenuEl.setAttribute('class', 'add-category-menu');
 
-
-	header.innerText = 'Categories';
-	header.setAttribute('class', 'menu__header');
-
-	backBtn.innerHTML = '<i class="btn-back-arrow fa fa-long-arrow-left" aria-hidden="true"></i> Back to menu'
-	backBtn.setAttribute('class', 'menu__back-btn');
-	backBtn.setAttribute('id', 'backBtn');
-
-	label.setAttribute('for', 'add-category');
-	label.setAttribute('class', 'add-category__label');
-	label.innerText = 'Add a new category:';
-
-	input.setAttribute('name', 'add-category');
-	input.setAttribute('class', 'add-category__input');
-	input.setAttribute('id', 'addCategoryInput');
-
-	submit.setAttribute('type', 'submit');
-	submit.setAttribute('class', 'btn-submit');
-	submit.setAttribute('id', 'submitBtn');
 	//input.setAttribute('onsubmit', 'event.preventDefault();');
 
-	inputHolder.appendChild(backBtn);
-	inputHolder.appendChild(label);
-	inputHolder.appendChild(input);
-	inputHolder.appendChild(submit);
-	addCategoryMenuEl.appendChild(header);
-	addCategoryMenuEl.appendChild(inputHolder);
 
-	menuOverlay.appendChild(menu3);
-	menu3.classList.add('menu');
-	menu3.classList.add('hidden');
-	menu3.id = 'addCategoryMenu';
-	menu3.appendChild(addCategoryMenuEl);
 
-	const backBtnEl = document.getElementById('backBtn');
-
-	backBtnEl.addEventListener('click', function(e) {
+	backBtn.addEventListener('click', function(e) {
 		TweenLite.to(addCategoryMenuEl, 0, {
 			display: 'none'
 		});
@@ -225,16 +186,17 @@ function showCategoryInput() {
 		e.stopPropagation();
 	});
 
-	newCategoryInput = document.getElementById('addCategoryInput');
+	
 
-	//	document.body.onkeyup = function(e) {
+		document.body.onkeyup = function(e) {
 
-	//		if (e.keyCode == 13 && newCategoryInput.value !== "") {
-	//			submitcategoryForm(newCategoryInput);
-	//		} else {
-	//		return
-	//	}
-	//}
+			if (e.keyCode == 13 && newCategoryInput.value !== "") {
+			//	submitcategoryForm(newCategoryInput);
+			alert('submitted!')
+			} else {
+			return
+		}
+	}
 
 	//function submitcategoryForm(cat) {
 

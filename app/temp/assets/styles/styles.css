@@ -173,9 +173,6 @@ overflow-x: none;
 
 .menu {
     width: 500px;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
      opacity: 0;
      margin-top: 15px;
   }
@@ -190,6 +187,7 @@ overflow-x: none;
     background: #898989;
     display: inline-block;
     opacity: 0.7;
+    margin: auto;
   }
 
 .line-up {
@@ -225,9 +223,13 @@ overflow-x: none;
 
 .add-category-menu {
   margin: auto;
-margin-left: 20px;
+
  height: 500px;
- width: 100%;
+}
+
+.new-category-menu {
+  width: 100%;
+  margin-left: 20px;
 }
 
 .categories-menu a:hover {
