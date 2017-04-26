@@ -136,7 +136,8 @@ function menuTransition() {
 			display: 'none'
 		});
 	TweenLite.to(line1, 0.2, {
-		height: '0'
+		height: '0',
+		display: 'none'
 	});
 	TweenLite.to(line2, 0.2, {
 		height: '0'
