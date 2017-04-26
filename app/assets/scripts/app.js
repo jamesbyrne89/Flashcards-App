@@ -1,3 +1,85 @@
+/**
+ * Code to create the database that will store the decks
+ */
+var fcDatabase = (function() {
+	var fcDatabase = {};
+	var datastore = null;
+
+	// TODO: Add methods for interacting with the database here.
+
+	// Export the tDB object.
+	return fcDatabase;
+}());
+
+var db;
+
+fcDatabase.checkDB = function() {
+	return "indexedDB" in window;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+	//No support? Go in the corner and pout.
+	if (!indexedDBOk) return;
+
+	var openRequest = indexedDB.open("idarticle_people", 1);
+
+	openRequest.onupgradeneeded = function(e) {
+		var thisDB = e.target.result;
+
+		if (!thisDB.objectStoreNames.contains("people")) {
+			thisDB.createObjectStore("people");
+		}
+	}
+
+	openRequest.onsuccess = function(e) {
+		console.log("running onsuccess");
+
+		db = e.target.result;
+
+		//Listen for add clicks
+		newCategoryInput = document.getElementById('addCategoryInput');
+		newCategoryInput.addEventListener("submit", addPerson, false);
+	}
+
+	openRequest.onerror = function(e) {
+		//Do something for the error
+	}
+
+}, false);
+
+
+fcDatabase.addCategory = function(e) {
+	var name = document.querySelector("#name").value;
+	var email = document.querySelector("#email").value;
+
+	console.log("About to add " + name + "/" + email);
+
+	var transaction = db.transaction(["people"], "readwrite");
+	var store = transaction.objectStore("people");
+
+	//Define a person
+	var person = {
+		name: name,
+		email: email,
+		created: new Date()
+	}
+
+	//Perform the add
+	var request = store.add(person, 1);
+
+	request.onerror = function(e) {
+		console.log("Error", e.target.error.name);
+		//some type of error handler
+	}
+
+	request.onsuccess = function(e) {
+		console.log("Woot! Did it");
+	}
+}
+
+// Declare global variables
+
 const menuBtn = document.getElementById('menu-btn');
 const addCategoryBtn = document.getElementById('addCategory');
 const menuOverlay = document.getElementById('menu-overlay');
@@ -196,13 +278,15 @@ function showCategoryInput() {
 	menu3.id = 'addCategoryMenu';
 	menu3.appendChild(addCategoryMenuEl);
 
-const backBtnEl = document.getElementById('backBtn');
+	const backBtnEl = document.getElementById('backBtn');
 
-backBtnEl.addEventListener('click', function(e){
-	TweenLite.to(addCategoryMenuEl, 0, {display: 'none'});
-	menuTransition();
-	showMenu();
-})
+	backBtnEl.addEventListener('click', function(e) {
+		TweenLite.to(addCategoryMenuEl, 0, {
+			display: 'none'
+		});
+		menuTransition();
+		showMenu();
+	})
 
 	tl.to(menu3, 0, {
 			display: 'flex'
@@ -221,9 +305,10 @@ backBtnEl.addEventListener('click', function(e){
 		e.stopPropagation();
 	});
 
+	newCategoryInput = document.getElementById('addCategoryInput');
 
 	document.body.onkeyup = function(e) {
-		const newCategoryInput = document.getElementById('addCategoryInput');
+
 		if (e.keyCode == 13 && newCategoryInput.value !== "") {
 			submitcategoryForm(newCategoryInput);
 		} else {
@@ -233,21 +318,22 @@ backBtnEl.addEventListener('click', function(e){
 
 	function submitcategoryForm(cat) {
 
-  var text = cat.value;
+		var text = cat.value;
 
-  // Check to make sure the text is not blank (or just spaces).
-  if (text.replace(/ /g,'') != '') {
-    // Create the todo item.
-    fcDB.createTodo(text, function(flashcard) {
-      refreshFlashcards();
-    });
-  }
+		// Check to make sure the text is not blank (or just spaces).
+		if (text.replace(/ /g, '') != '') {
+			// Create the category object.
+			fcDB.createCategory(text, function(flashcard) {
 
-  // Reset the input field.
-  newTodoInput.value = '';
+				addPerson();
+			});
+		}
 
-  // Don't send the form.
-  return false;
+		// Reset the input field.
+		newCategoryInput.value = '';
+
+		// Don't send the form.
+		return false;
 
 		(function confirm() {
 
@@ -284,15 +370,7 @@ function AddCategory(input) {
 	// Code to add a new flashcard
 }
 
-// Add to localStorage
 
-function storeFlashcards() {
-
-	const allFlashcards = JSON.parse(localStorage.getItem('itemsArray')) || [];
-
-	allFlashcards.push(newObj);
-	localStorage.setItem('itemsArray', JSON.stringify(allFlashcards));
-};
 
 // Add a new card to the deck
 function AddCard(textInput) {
@@ -304,109 +382,6 @@ function AddCard(textInput) {
 }
 
 // Search through the array of categories and add the card to the cards array within the category object
-
-
-
-/**
- * Code to create the database that will store the decks
- */
-
-const flashcardsDB = (function() {
-	const fcDB = {};
-	const datastore = null;
-
-	// TODO: Add methods for interacting with the database here.
-
-	// Export the fcDB object.
-	return fcDB;
-}());
-
-/**
- * Open a connection to the datastore.
- */
-fcDB.open = function(callback) {
-		// Database version.
-		const version = 1;
-
-		// Open a connection to the datastore.
-		const request = indexedDB.open('flashcards', version);
-
-		// Handle datastore upgrades.
-		request.onupgradeneeded = function(e) {
-			const db = e.target.result;
-
-			e.target.transaction.onerror = fcDB.onerror;
-
-			// Delete the old datastore.
-			if (db.objectStoreNames.contains('flashcard')) {
-				db.deleteObjectStore('flashcard');
-			}
-
-			// Create a new datastore.
-			const store = db.createObjectStore('flashcard', {
-				keyPath: 'timestamp'
-			});
-		};
-
-		// Handle successful datastore access.
-		request.onsuccess = function(e) {
-			// Get a reference to the DB.
-			datastore = e.target.result;
-
-			// Execute the callback.
-			callback();
-		};
-
-		/**
-		 * Fetch all of the items in the datastore.
-		 */
-		fcDB.fetchflashcards = function(callback) {
-			var db = datastore;
-			var transaction = db.transaction(['flashcard'], 'readwrite');
-			var objStore = transaction.objectStore('flashcard');
-
-			var keyRange = IDBKeyRange.lowerBound(0);
-			var cursorRequest = objStore.openCursor(keyRange);
-
-			var flashcards = [];
-
-			transaction.oncomplete = function(e) {
-				// Execute the callback function.
-				callback(flashcards);
-			};
-
-			cursorRequest.onsuccess = function(e) {
-				var result = e.target.result;
-
-				if (!!result == false) {
-					return;
-				}
-
-				flashcards.push(result.value);
-
-				result.continue();
-			};
-
-			cursorRequest.onerror = fcDB.onerror;
-		};
-	/**
- * Delete a todo item.
- */
-tDB.deleteTodo = function(id, callback) {
-  var db = datastore;
-  var transaction = db.transaction(['todo'], 'readwrite');
-  var objStore = transaction.objectStore('todo');
-
-  var request = objStore.delete(id);
-
-  request.onsuccess = function(e) {
-    callback();
-  }
-
-  request.onerror = function(e) {
-    console.log(e);
-  }
-};
 
 
 
