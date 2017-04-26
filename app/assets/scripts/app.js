@@ -347,6 +347,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		db = e.target.result;
 
 		//Listen for add clicks
+		const newCategoryInput = document.getElementById('addCategoryInput');
 		document.querySelector("#addButton").addEventListener("click", addPerson, false);
 	}
 
@@ -358,9 +359,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function addPerson(e) {
 	var name = document.querySelector("#name").value;
-	var email = document.querySelector("#email").value;
 
-	console.log("About to add " + name + "/" + email);
+	console.log("About to add " + name);
 
 	var transaction = db.transaction(["people"], "readwrite");
 	var store = transaction.objectStore("people");
@@ -368,7 +368,6 @@ function addPerson(e) {
 	//Define a person
 	var person = {
 		name: name,
-		email: email,
 		created: new Date()
 	}
 
