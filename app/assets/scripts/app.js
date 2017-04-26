@@ -1,83 +1,3 @@
-/**
- * Code to create the database that will store the decks
- */
-var fcDatabase = (function() {
-	var fcDatabase = {};
-	var datastore = null;
-
-	// TODO: Add methods for interacting with the database here.
-
-	// Export the tDB object.
-	return fcDatabase;
-}());
-
-var db;
-
-fcDatabase.checkDB = function() {
-	return "indexedDB" in window;
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-
-	//No support? Go in the corner and pout.
-	if (!indexedDBOk) return;
-
-	var openRequest = indexedDB.open("idarticle_people", 1);
-
-	openRequest.onupgradeneeded = function(e) {
-		var thisDB = e.target.result;
-
-		if (!thisDB.objectStoreNames.contains("people")) {
-			thisDB.createObjectStore("people");
-		}
-	}
-
-	openRequest.onsuccess = function(e) {
-		console.log("running onsuccess");
-
-		db = e.target.result;
-
-		//Listen for add clicks
-		newCategoryInput = document.getElementById('addCategoryInput');
-		newCategoryInput.addEventListener("submit", addPerson, false);
-	}
-
-	openRequest.onerror = function(e) {
-		//Do something for the error
-	}
-
-}, false);
-
-
-fcDatabase.addCategory = function(e) {
-	var name = document.querySelector("#name").value;
-	var email = document.querySelector("#email").value;
-
-	console.log("About to add " + name + "/" + email);
-
-	var transaction = db.transaction(["people"], "readwrite");
-	var store = transaction.objectStore("people");
-
-	//Define a person
-	var person = {
-		name: name,
-		email: email,
-		created: new Date()
-	}
-
-	//Perform the add
-	var request = store.add(person, 1);
-
-	request.onerror = function(e) {
-		console.log("Error", e.target.error.name);
-		//some type of error handler
-	}
-
-	request.onsuccess = function(e) {
-		console.log("Woot! Did it");
-	}
-}
-
 // Declare global variables
 
 const menuBtn = document.getElementById('menu-btn');
@@ -307,51 +227,51 @@ function showCategoryInput() {
 
 	newCategoryInput = document.getElementById('addCategoryInput');
 
-	document.body.onkeyup = function(e) {
+	//	document.body.onkeyup = function(e) {
 
-		if (e.keyCode == 13 && newCategoryInput.value !== "") {
-			submitcategoryForm(newCategoryInput);
-		} else {
-			return
-		}
-	}
+	//		if (e.keyCode == 13 && newCategoryInput.value !== "") {
+	//			submitcategoryForm(newCategoryInput);
+	//		} else {
+	//		return
+	//	}
+	//}
 
-	function submitcategoryForm(cat) {
+	//function submitcategoryForm(cat) {
 
-		var text = cat.value;
+	//	var text = cat.value;
 
-		// Check to make sure the text is not blank (or just spaces).
-		if (text.replace(/ /g, '') != '') {
-			// Create the category object.
-			fcDB.createCategory(text, function(flashcard) {
+	// Check to make sure the text is not blank (or just spaces).
+	//	if (text.replace(/ /g, '') != '') {
+	// Create the category object.
+	//		fcDB.createCategory(text, function(flashcard) {
 
-				addPerson();
-			});
-		}
+	//			addPerson();
+	//		});
+	//	}
 
-		// Reset the input field.
-		newCategoryInput.value = '';
+	// Reset the input field.
+	//	newCategoryInput.value = '';
 
-		// Don't send the form.
-		return false;
+	// Don't send the form.
+	//	return false;
 
-		(function confirm() {
+	//	(function confirm() {
 
-			const confirmation = document.createElement('span');
+	//		const confirmation = document.createElement('span');
 
-			confirmation.setAttribute('class', 'add-category__confirmation');
-			confirmation.innerText = `${cat.value} category successfully added`;
-			addCategoryMenuEl.appendChild(confirmation);
-			console.log(confirmation)
-			TweenLite.to(confirmation, 1, {
-				y: -15,
-				opacity: 1,
-				ease: Power1.easeOut
-			});
-		})();
+	//		confirmation.setAttribute('class', 'add-category__confirmation');
+	//		confirmation.innerText = `${cat.value} category successfully added`;
+	//		addCategoryMenuEl.appendChild(confirmation);
+	//		console.log(confirmation)
+	//		TweenLite.to(confirmation, 1, {
+	//			y: -15,
+	//			opacity: 1,
+	//			ease: Power1.easeOut
+	//		});
+	//	})();
 
-		cat.value = "";
-	}
+	//	cat.value = "";
+	//}
 };
 
 
@@ -385,3 +305,82 @@ function AddCard(textInput) {
 
 
 
+/**
+ * Code to create the database that will store the decks
+ */
+
+var flashcardsDB = (function() {
+	var flashcardsDB = {};
+	var datastore = null;
+
+	// flashcards: Add methods for interacting with the database here.
+
+	// Export the tDB object.
+	return flashcardsDB;
+}());
+
+
+var db;
+
+flashcardsDB.indexedDBOk = function() {
+	return "indexedDB" in window;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+	//No support? Go in the corner and pout.
+	if (!flashcardsDB.indexedDBOk) return;
+
+	var openRequest = indexedDB.open("idarticle_people", 1);
+
+	openRequest.onupgradeneeded = function(e) {
+		var thisDB = e.target.result;
+
+		if (!thisDB.objectStoreNames.contains("people")) {
+			thisDB.createObjectStore("people");
+		}
+	}
+
+	openRequest.onsuccess = function(e) {
+		console.log("running onsuccess");
+
+		db = e.target.result;
+
+		//Listen for add clicks
+		document.querySelector("#addButton").addEventListener("click", addPerson, false);
+	}
+
+	openRequest.onerror = function(e) {
+		//Do something for the error
+	}
+
+}, false);
+
+function addPerson(e) {
+	var name = document.querySelector("#name").value;
+	var email = document.querySelector("#email").value;
+
+	console.log("About to add " + name + "/" + email);
+
+	var transaction = db.transaction(["people"], "readwrite");
+	var store = transaction.objectStore("people");
+
+	//Define a person
+	var person = {
+		name: name,
+		email: email,
+		created: new Date()
+	}
+
+	//Perform the add
+	var request = store.add(person, 1);
+
+	request.onerror = function(e) {
+		console.log("Error", e.target.error.name);
+		//some type of error handler
+	}
+
+	request.onsuccess = function(e) {
+		console.log("Woot! Did it");
+	}
+}
