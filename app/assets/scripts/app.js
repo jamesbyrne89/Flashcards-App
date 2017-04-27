@@ -140,7 +140,8 @@ function menuTransition() {
 		display: 'none'
 	});
 	TweenLite.to(line2, 0.2, {
-		height: '0'
+		height: '0',
+		display: 'none'
 	});
 	TweenLite.to(menu, 0, {
 		display: 'none'
@@ -179,6 +180,7 @@ function showCategoryInput() {
 		});
 	// Fade out main menu
 	TweenLite.to(line1, 0.7, {
+		display: 'inline-block',
 		height: '100vh',
 		delay: 1.2
 	});
@@ -189,15 +191,7 @@ function showCategoryInput() {
 
 	
 
-		document.body.onkeyup = function(e) {
 
-			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-			//	submitcategoryForm(newCategoryInput);
-			alert('submitted!')
-			} else {
-			return
-		}
-	}
 
 	//function submitcategoryForm(cat) {
 
@@ -310,9 +304,15 @@ document.addEventListener("DOMContentLoaded", function() {
 		db = e.target.result;
 
 		//Listen for add clicks
+		console.log('added event listener')
 		const newCategoryInput = document.getElementById('addCategoryInput');
-		document.querySelector("#addButton").addEventListener("click", addPerson, false);
+		newCategoryInput.onkeyup = function(e) {
+
+			if (e.keyCode == 13 && newCategoryInput.value !== "") {
+				addPerson()
+			} 
 	}
+}
 
 	openRequest.onerror = function(e) {
 		//Do something for the error

@@ -60,13 +60,13 @@
 }
 
 .add-category-menu {
-  margin: auto;
 
  height: 500px;
 }
 
 .new-category-menu {
   width: 100%;
+  margin: auto;
   margin-left: 20px;
 }
 
