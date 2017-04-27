@@ -202,7 +202,7 @@ function showCategoryInput() {
 	// Create the category object.
 	//		fcDB.createCategory(text, function(flashcard) {
 
-	//			addPerson();
+	//			addNewCategory();
 	//		});
 	//	}
 
@@ -305,11 +305,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		//Listen for add clicks
 		console.log('added event listener')
-		const newCategoryInput = document.getElementById('addCategoryInput');
+		
 		newCategoryInput.onkeyup = function(e) {
 
 			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-				addPerson()
+				addNewCategory()
 			} 
 	}
 }
@@ -320,22 +320,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
 }, false);
 
-function addPerson(e) {
-	var name = document.querySelector("#name").value;
+function addNewCategory(e) {
+	var name = newCategoryInput.value;
 
 	console.log("About to add " + name);
 
 	var transaction = db.transaction(["people"], "readwrite");
 	var store = transaction.objectStore("people");
 
-	//Define a person
-	var person = {
+	//Define a category object
+	var category = {
 		name: name,
-		created: new Date()
+		created: 'new'
 	}
 
 	//Perform the add
-	var request = store.add(person, 1);
+	var request = store.add(category, 1);
 
 	request.onerror = function(e) {
 		console.log("Error", e.target.error.name);
