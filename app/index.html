@@ -16,8 +16,6 @@
     <title>Flashcards</title>
 </head>
 <body>
-<input type="text" id="name" placeholder="Name"><br/>
-<button id="addButton">Add Data</button>
 <div id="menu-overlay" class="menu-overlay hidden">
 <div id="vert-line-1" class="vert-line line-up"></div>
   <nav id="secondary-menu" class="secondary-menu menu hidden">
@@ -40,15 +38,21 @@
   </nav>
 
 <nav id="tertiary-menu-one" class="add-category-menu menu hidden">
-  <div class="new-category-menu">
+  <div id="newCategoryInner" class="new-category-menu">
   <button id="backBtn" class="menu__back-btn"><i class="btn-back-arrow fa fa-long-arrow-left" aria-hidden="true"></i> Back to menu</button>
   <h2 class="menu__header">New Category</h2>
   <label class= for='add-category'>Add a new category:</label>
     <input id='addCategoryInput' class="add-category__input" name="add-category">
+    </div> 
+  </nav>
 
-    </div>
-
-    
+  <nav id="tertiary-menu-two" class="add-category-menu menu hidden">
+  <div class="new-category-menu">
+  <button id="backBtn" class="menu__back-btn"><i class="btn-back-arrow fa fa-long-arrow-left" aria-hidden="true"></i> Back to menu</button>
+  <h2 class="menu__header">New Category</h2>
+  <label class= for='add-category'>Add a new card to the deck:</label>
+    <input id='addCategoryInput' class="add-category__input" name="add-category">
+    </div> 
   </nav>
 
 </div>
@@ -59,7 +63,7 @@
     <span id="menuBarTwo" class="menu-bar-two"></span>
     <span id="menuBarThree" class="menu-bar-three"></span>
     </button>
-    <div class="flashcard">
+    <div id="flashcard" class="flashcard">
     <span class="flashcard__number">01</span>
    <!-- <p>In regular Javascript, the global object is 'window'.<br><br>In NodeJS, the global object is 'global'.<p></div>-->
     

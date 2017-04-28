@@ -3,17 +3,6 @@
 const menuBtn = document.getElementById('menu-btn');
 const addCategoryBtn = document.getElementById('addCategory');
 const menuOverlay = document.getElementById('menu-overlay');
-
-menuBtn.addEventListener('click', showMenu);
-menuOverlay.addEventListener('click', hideMenu, false);
-addCategoryBtn.addEventListener('click', function(e) {
-
-	e.stopPropagation();
-	showCategoryInput();
-
-});
-
-
 const menu = document.getElementById('main-menu');
 const menu2 = document.getElementById('secondary-menu');
 const menu3 = document.getElementById('tertiary-menu-one');
@@ -25,10 +14,253 @@ const menuBar2 = document.getElementById('menu-bar-two');
 const menuBar3 = document.getElementById('menu-bar-three');
 const backBtn = document.getElementById('backBtn');
 const newCategoryInput = document.getElementById('addCategoryInput');
+const card = document.getElementById('flashcard');
+
+/**
+ * Code to create the database that will store the decks
+ */
+
+var flashcardsDB = (function() {
+	var flashcardsDB = {};
+	var datastore = null;
+
+	// flashcards: Add methods for interacting with the database here.
+
+	// Export the tDB object.
+	return flashcardsDB;
+}());
+
+
+var db;
+
+flashcardsDB.indexedDBOk = function() {
+	return "indexedDB" in window;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+	//No support? Go in the corner and pout.
+	if (!flashcardsDB.indexedDBOk) return;
+
+	var openRequest = indexedDB.open("idarticle_categories", 1);
+
+	openRequest.onupgradeneeded = function(e) {
+		var thisDB = e.target.result;
+
+		if (!thisDB.objectStoreNames.contains("categories")) {
+			thisDB.createObjectStore("categories", {
+				autoIncrement: true
+			});
+			// I want to be able to search categories by name later
+			os.createIndex("categoryNames", "name", {
+				unique: false
+			});
+		}
+	}
+
+
+	function appendcardContent(c) {
+		// c is the variable for the content (may need to search through the database to find that item)
+		card.innerText = c
+	}
+
+	openRequest.onsuccess = function(e) {
+		console.log("running onsuccess");
+
+		db = e.target.result;
+
+		flashcardsDB.getCards(function(items) {
+
+			let frag = document.createDocumentFragment();
+			for (let i = 0; i < items.length; i++) {
+				let a = document.createElement('a');
+				let li = document.createElement('li');
+				li.setAttribute('class', 'menu__item');
+				li.innerText = items[i].name;
+				a.appendChild(li);
+				frag.appendChild(a)
+				li.addEventListener('click', function() {
+					hideMenu();
+					// Run a function that takes the category name you clicked on as a parameter
+					appendcardContent(items[0].created)
+				});
+				catMenu.appendChild(frag);
+			}
+		});
+
+
+		// Listen for submission of new category
+		newCategoryInput.onkeyup = function(e) {
+
+			if (e.keyCode == 13 && newCategoryInput.value !== "") {
+				flashcardsDB.addNewCategory();
+				flashcardsDB.getCards(function(items) {
+
+					let frag = document.createDocumentFragment();
+					for (let i = 0; i < items.length; i++) {
+						let a = document.createElement('a');
+						let li = document.createElement('li');
+						li.setAttribute('class', 'menu__item');
+						li.innerText = items[i].name;
+						a.appendChild(li);
+						frag.appendChild(a)
+						li.addEventListener('click', function() {
+							hideMenu();
+							// Run a function that takes the category name you clicked on as a parameter
+							appendcardContent(items[0].created)
+						});
+						catMenu.appendChild(frag);
+					}
+				});
+					(function confirm() {
+			const newCatMenuInner = document.getElementById('newCategoryInner');
+			const confirmation = document.createElement('span');
+			confirmation.setAttribute('class', 'add-category__confirmation');
+			confirmation.innerText = `${newCategoryInput.value} category successfully added`;
+			newCatMenuInner.appendChild(confirmation);
+			const tl = new TimelineLite();
+			tl.to(newCategoryInput, 0.05, {
+				opacity: 0
+			}).to(newCategoryInput, 0.1, {
+				opacity: 1,
+				delay: 0.1
+			});
+			TweenLite.to(confirmation, 1, {
+				y: -15,
+				opacity: 1,
+				ease: Power1.easeOut
+			});
+			newCategoryInput.value = "";
+		})();
+			}
+		}
+	}
+
+	openRequest.onerror = function(e) {
+		//Do something for the error
+	}
+
+}, false);
+
+flashcardsDB.addNewCategory = function(e) {
+	var name = newCategoryInput.value;
+
+	console.log("About to add " + name);
+
+	var transaction = db.transaction(["categories"], "readwrite");
+	var store = transaction.objectStore("categories");
+
+	//Define a category object
+	var category = {
+		name: name,
+		created: new Date(),
+		cards: []
+	}
+
+	//Perform the add
+	var request = store.add(category);
+
+	request.onerror = function(e) {
+		console.log("Error", e.target.error.name);
+		//some type of error handler
+	}
+
+	request.onsuccess = function(e) {
+		console.log("Woot! Did it");
+	}
+}
+
+// Get all cards in the database (not filtered)
+flashcardsDB.getCards = function(callback) {
+	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
+	var store = transaction.objectStore("categories");
+	var items = [];
+
+	transaction.oncomplete = function(evt) {
+		callback(items);
+		console.log(items)
+	};
+
+	var cursorRequest = store.openCursor();
+
+	cursorRequest.onerror = function(error) {
+		console.log(error);
+	};
+
+	cursorRequest.onsuccess = function(evt) {
+		var cursor = evt.target.result;
+		if (cursor) {
+			items.push(cursor.value);
+			cursor.continue();
+
+		}
+
+	};
+
+}
+
+flashcardsDB.deleteEverything = function() {
+	// open a read/write db transaction, ready for deleting the data
+	var transaction = db.transaction(["categories"], "readwrite");
+
+	// report on the success of opening the transaction
+	transaction.oncomplete = function(event) {
+		console.log('Transaction completed: database modification finished.');
+	};
+
+
+	transaction.onerror = function(event) {
+		console.log('Transaction not opened due to error: ' + transaction.error);
+	};
+
+	// create an object store on the transaction
+	var objectStore = transaction.objectStore("categories");
+
+	// Delete the specified record out of the object store
+	var objectStoreRequest = objectStore.clear();
+
+	objectStoreRequest.onsuccess = function(event) {
+		// report the success of our delete operation
+		console.log('Record deleted.');
+	};
+};
+
+flashcardsDB.deleteRecord = function(variable) {
+	// open a read/write db transaction, ready for deleting the data
+	var transaction = db.transaction(["categories"], "readwrite");
+
+	// report on the success of opening the transaction
+	transaction.oncomplete = function(event) {
+		console.log('Transaction completed: database modification finished.');
+	};
+
+
+	transaction.onerror = function(event) {
+		console.log('Transaction not opened due to error: ' + transaction.error);
+	};
+
+	// create an object store on the transaction
+	var objectStore = transaction.objectStore("categories");
+
+	// Delete the specified record out of the object store
+	var objectStoreRequest = objectStore.delete(variable);
+
+	objectStoreRequest.onsuccess = function(event) {
+		// report the success of our delete operation
+		console.log('Record deleted.');
+	};
+};
 
 
 
+menuBtn.addEventListener('click', showMenu);
+menuOverlay.addEventListener('click', hideMenu, false);
+addCategoryBtn.addEventListener('click', function(e) {
 
+	e.stopPropagation();
+	showCategoryInput();
+
+});
 
 function showMenu() {
 
@@ -185,6 +417,7 @@ function showCategoryInput() {
 	menu3.addEventListener('click', function(e) {
 		e.stopPropagation();
 	});
+}
 
 
 
@@ -207,189 +440,16 @@ function showCategoryInput() {
 	// Don't send the form.
 	//	return false;
 
-//	function confirm() {
 
-	//		const confirmation = document.createElement('span');
 
-	//		confirmation.setAttribute('class', 'add-category__confirmation');
-	//		confirmation.innerText = `${cat.value} category successfully added`;
-	//		addCategoryMenuEl.appendChild(confirmation);
-	//		console.log(confirmation)
-	//		TweenLite.to(confirmation, 1, {
-	//			y: -15,
-	//			opacity: 1,
-	//			ease: Power1.easeOut
-	//		});
-	//	})();
-
-	//	cat.value = "";
-	//}
-};
+	// On click, add a new category
 
 
 
-// On click, add a new category
+	//  Function for creating a new category. Should produce an object 
 
 
 
-//  Function for creating a new category. Should produce an object 
-
-function AddCategory(input) {
-	this.catName = input;
-	this.cards = [];
-
-	return this.catName;
-	// Code to add a new flashcard
-}
 
 
-
-// Add a new card to the deck
-function AddCard(textInput) {
-	this.content = textInput;
-	this.addToDOM = function() {
-		const newCard = document.createElement(div);
-		newCard.classList.add('card');
-	}
-}
-
-// Search through the array of categories and add the card to the cards array within the category object
-
-
-
-/**
- * Code to create the database that will store the decks
- */
-
-var flashcardsDB = (function() {
-	var flashcardsDB = {};
-	var datastore = null;
-
-	// flashcards: Add methods for interacting with the database here.
-
-	// Export the tDB object.
-	return flashcardsDB;
-}());
-
-
-var db;
-
-flashcardsDB.indexedDBOk = function() {
-	return "indexedDB" in window;
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-
-	//No support? Go in the corner and pout.
-	if (!flashcardsDB.indexedDBOk) return;
-
-	var openRequest = indexedDB.open("idarticle_categories", 1);
-
-	openRequest.onupgradeneeded = function(e) {
-		var thisDB = e.target.result;
-
-		if (!thisDB.objectStoreNames.contains("categories")) {
-			thisDB.createObjectStore("categories", {
-				autoIncrement: true
-			});
-			// I want to be able to search categories by name later
-			os.createIndex("categoryNames", "name", {
-				unique: false
-			});
-		}
-	}
-
-	openRequest.onsuccess = function(e) {
-		console.log("running onsuccess");
-
-		db = e.target.result;
-		
-getCards(function (items) {
-	for (let i=0; i < items.length; i++ ) {
-	let li = `<a href="#"><li class="menu__item">${items[i].name}</li></a>`;
-	catMenu.innerHTML += li;
-	console.log('building menu...')
-}
-    });
-
-
-		// Listen for submission of new category
-		newCategoryInput.onkeyup = function(e) {
-
-			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-				flashcardsDB.addNewCategory();
-				
-			}
-		}
-	}
-
-	openRequest.onerror = function(e) {
-		//Do something for the error
-	}
-
-}, false);
-
-flashcardsDB.addNewCategory = function(e) {
-	var name = newCategoryInput.value;
-
-	console.log("About to add " + name);
-
-	var transaction = db.transaction(["categories"], "readwrite");
-	var store = transaction.objectStore("categories");
-
-	//Define a category object
-	var category = {
-		name: name,
-		created: new Date(),
-		cards: []
-	}
-
-	//Perform the add
-	var request = store.add(category);
-
-	request.onerror = function(e) {
-		console.log("Error", e.target.error.name);
-		//some type of error handler
-	}
-
-	request.onsuccess = function(e) {
-		console.log("Woot! Did it");
-	}
-}
-
-// Get all cards in the database (not filtered)
-function getCards(callback) {
-	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
-	var store = transaction.objectStore("categories");
-	var items = [];
-
-	transaction.oncomplete = function(evt) {
-		callback(items);
-		console.log(items)
-	};
-
-	var cursorRequest = store.openCursor();
-
-	cursorRequest.onerror = function(error) {
-		console.log(error);
-	};
-
-	cursorRequest.onsuccess = function(evt) {
-		var cursor = evt.target.result;
-		if (cursor) {
-			items.push(cursor.value);
-			cursor.continue();
-
-		}
-		
-	};
-
-}
-
-const addButton = document.getElementById('addButton');
-addButton.addEventListener('click', function(){
-
-});
-
-
-
+	// Search through the array of categories and add the card to the cards array within the category object
