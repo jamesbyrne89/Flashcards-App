@@ -41,6 +41,7 @@
 .menu__item {
   border-bottom: solid 1px #201F1A;
   padding: 1em 2em;
+  list-style: none;
 }
 
 .menu__header {

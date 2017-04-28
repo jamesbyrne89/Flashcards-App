@@ -17,6 +17,7 @@ addCategoryBtn.addEventListener('click', function(e) {
 const menu = document.getElementById('main-menu');
 const menu2 = document.getElementById('secondary-menu');
 const menu3 = document.getElementById('tertiary-menu-one');
+const catMenu = document.getElementById('categories-menu');
 const line1 = document.getElementById('vert-line-1');
 const line2 = document.getElementById('vert-line-2');
 const menuBar1 = document.getElementById('menu-bar-one');
@@ -25,10 +26,15 @@ const menuBar3 = document.getElementById('menu-bar-three');
 const backBtn = document.getElementById('backBtn');
 const newCategoryInput = document.getElementById('addCategoryInput');
 
+
+
+
+
 function showMenu() {
 
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
+
 
 	tl.to(menuOverlay, 0, {
 		display: 'flex',
@@ -71,7 +77,7 @@ function hideMenu() {
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
 	const tl3 = new TimelineLite();
-	const addCategoryMenu = document.getElementById("add-category-menu");
+	const addCategoryMenu = document.getElementById("tertiary-menu-one");
 
 	tl.to(menu, 0.1, {
 		opacity: 0
@@ -87,14 +93,11 @@ function hideMenu() {
 	}).to(menu2, 0, {
 		display: 'none'
 	});
-	if (menu3 !== '') {
-
-		tl3.to(menu3, 0.1, {
-			opacity: 0
-		}).to(menu3, 0, {
-			display: 'none'
-		});
-	}
+	tl3.to(menu3, 0.1, {
+		opacity: 0
+	}).to(menu3, 0, {
+		display: 'none'
+	});
 	TweenLite.to(line1, 0.3, {
 		height: '0px',
 		x: 0
@@ -137,11 +140,9 @@ function menuTransition() {
 		});
 	TweenLite.to(line1, 0.2, {
 		height: '0',
-		display: 'none'
 	});
 	TweenLite.to(line2, 0.2, {
 		height: '0',
-		display: 'none'
 	});
 	TweenLite.to(menu, 0, {
 		display: 'none'
@@ -154,22 +155,18 @@ function menuTransition() {
 function showCategoryInput() {
 
 	const tl = new TimelineLite();
-	const addCategoryMenu = document.getElementById("add-category-menu");
-
-	menuTransition();
-
-
-	//input.setAttribute('onsubmit', 'event.preventDefault();');
-
-
+	const addCategoryMenu = document.getElementById("tertiary-menu-one");
 
 	backBtn.addEventListener('click', function(e) {
-		TweenLite.to(addCategoryMenuEl, 0, {
+		TweenLite.to(addCategoryMenu, 0, {
 			display: 'none'
 		});
 		menuTransition();
-		showMenu();
+		setTimeout(showMenu, 1500);
+
 	})
+
+	menuTransition();
 
 	tl.to(menu3, 0, {
 			display: 'flex'
@@ -210,7 +207,7 @@ function showCategoryInput() {
 	// Don't send the form.
 	//	return false;
 
-	//	(function confirm() {
+//	function confirm() {
 
 	//		const confirmation = document.createElement('span');
 
@@ -292,9 +289,13 @@ document.addEventListener("DOMContentLoaded", function() {
 		var thisDB = e.target.result;
 
 		if (!thisDB.objectStoreNames.contains("categories")) {
-			thisDB.createObjectStore("categories", {autoIncrement:true});
-			//I want to be able to search categories by name later
-			os.createIndex("categoryNames", "name", {unique:false});		
+			thisDB.createObjectStore("categories", {
+				autoIncrement: true
+			});
+			// I want to be able to search categories by name later
+			os.createIndex("categoryNames", "name", {
+				unique: false
+			});
 		}
 	}
 
@@ -302,15 +303,22 @@ document.addEventListener("DOMContentLoaded", function() {
 		console.log("running onsuccess");
 
 		db = e.target.result;
+		
+getCards(function (items) {
+	for (let i=0; i < items.length; i++ ) {
+	let li = `<a href="#"><li class="menu__item">${items[i].name}</li></a>`;
+	catMenu.innerHTML += li;
+	console.log('building menu...')
+}
+    });
 
-		//Listen for add clicks
-		console.log('added event listener')
 
+		// Listen for submission of new category
 		newCategoryInput.onkeyup = function(e) {
 
 			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-				flashcardsDB.addNewCategory()
-
+				flashcardsDB.addNewCategory();
+				
 			}
 		}
 	}
@@ -318,7 +326,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	openRequest.onerror = function(e) {
 		//Do something for the error
 	}
-
 
 }, false);
 
@@ -333,7 +340,8 @@ flashcardsDB.addNewCategory = function(e) {
 	//Define a category object
 	var category = {
 		name: name,
-		created: 'new'
+		created: new Date(),
+		cards: []
 	}
 
 	//Perform the add
@@ -350,31 +358,38 @@ flashcardsDB.addNewCategory = function(e) {
 }
 
 // Get all cards in the database (not filtered)
-function getCards(e) {
-    var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
-    var store = transaction.objectStore("categories");
-    var items = [];
- 
-    transaction.oncomplete = function(evt) {  
-        callback(items);
-    };
- 
-    var cursorRequest = store.openCursor();
- 
-    cursorRequest.onerror = function(error) {
-        console.log(error);
-    };
- 
-    cursorRequest.onsuccess = function(evt) {                    
-        var cursor = evt.target.result;
-        if (cursor) {
-            items.push(cursor.value);
-            cursor.continue();
-        }
-        console.log(items)
-    };
+function getCards(callback) {
+	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
+	var store = transaction.objectStore("categories");
+	var items = [];
+
+	transaction.oncomplete = function(evt) {
+		callback(items);
+		console.log(items)
+	};
+
+	var cursorRequest = store.openCursor();
+
+	cursorRequest.onerror = function(error) {
+		console.log(error);
+	};
+
+	cursorRequest.onsuccess = function(evt) {
+		var cursor = evt.target.result;
+		if (cursor) {
+			items.push(cursor.value);
+			cursor.continue();
+
+		}
+		
+	};
+
 }
 
 const addButton = document.getElementById('addButton');
-addButton.addEventListener('click', getCards);
+addButton.addEventListener('click', function(){
+
+});
+
+
 
