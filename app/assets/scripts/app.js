@@ -189,8 +189,6 @@ function showCategoryInput() {
 		e.stopPropagation();
 	});
 
-	
-
 
 
 	//function submitcategoryForm(cat) {
@@ -288,13 +286,15 @@ document.addEventListener("DOMContentLoaded", function() {
 	//No support? Go in the corner and pout.
 	if (!flashcardsDB.indexedDBOk) return;
 
-	var openRequest = indexedDB.open("idarticle_people", 1);
+	var openRequest = indexedDB.open("idarticle_categories", 1);
 
 	openRequest.onupgradeneeded = function(e) {
 		var thisDB = e.target.result;
 
-		if (!thisDB.objectStoreNames.contains("people")) {
-			thisDB.createObjectStore("people");
+		if (!thisDB.objectStoreNames.contains("categories")) {
+			thisDB.createObjectStore("categories", {autoIncrement:true});
+			//I want to be able to search categories by name later
+			os.createIndex("categoryNames", "name", {unique:false});		
 		}
 	}
 
@@ -305,28 +305,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		//Listen for add clicks
 		console.log('added event listener')
-		
+
 		newCategoryInput.onkeyup = function(e) {
 
 			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-				addNewCategory()
-			} 
+				flashcardsDB.addNewCategory()
+
+			}
+		}
 	}
-}
 
 	openRequest.onerror = function(e) {
 		//Do something for the error
 	}
 
+
 }, false);
 
-function addNewCategory(e) {
+flashcardsDB.addNewCategory = function(e) {
 	var name = newCategoryInput.value;
 
 	console.log("About to add " + name);
 
-	var transaction = db.transaction(["people"], "readwrite");
-	var store = transaction.objectStore("people");
+	var transaction = db.transaction(["categories"], "readwrite");
+	var store = transaction.objectStore("categories");
 
 	//Define a category object
 	var category = {
@@ -335,7 +337,7 @@ function addNewCategory(e) {
 	}
 
 	//Perform the add
-	var request = store.add(category, 1);
+	var request = store.add(category);
 
 	request.onerror = function(e) {
 		console.log("Error", e.target.error.name);
@@ -346,3 +348,33 @@ function addNewCategory(e) {
 		console.log("Woot! Did it");
 	}
 }
+
+// Get all cards in the database (not filtered)
+function getCards(e) {
+    var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
+    var store = transaction.objectStore("categories");
+    var items = [];
+ 
+    transaction.oncomplete = function(evt) {  
+        callback(items);
+    };
+ 
+    var cursorRequest = store.openCursor();
+ 
+    cursorRequest.onerror = function(error) {
+        console.log(error);
+    };
+ 
+    cursorRequest.onsuccess = function(evt) {                    
+        var cursor = evt.target.result;
+        if (cursor) {
+            items.push(cursor.value);
+            cursor.continue();
+        }
+        console.log(items)
+    };
+}
+
+const addButton = document.getElementById('addButton');
+addButton.addEventListener('click', getCards);
+
