@@ -53,34 +53,30 @@
   padding:  1em 1.5em;
 }
 
-.categories-menu {
+.relational-menu {
   margin: auto;
   margin-left: 20px;
   width: 100%;
   min-height: 500px;
 }
 
-.add-category-menu {
 
- height: 500px;
-}
-
-.new-category-menu {
+.top-level-menu {
   width: 100%;
   margin: auto;
   margin-left: 20px;
 }
 
-.categories-menu a:hover {
+.menu-inner a:hover {
   transition: all 0.5s;
 }
 
-.categories-menu:hover > a {
+.menu-inner:hover > a {
   color: #a9a9a9;
   transition: all 0.5s;
 }
 
-.categories-menu:hover > a:hover {
+.menu-inner:hover > a:hover {
   color: white;
   transition: all 0.5s;
 }
@@ -129,7 +125,9 @@
   height: 100vh;
   position: absolute;
   right: 0;
-  background-color: #ddb271;
+  background-color: #5DE2A1;
   z-index: 300;
 }
+
+
 

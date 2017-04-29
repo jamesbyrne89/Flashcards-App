@@ -1,80 +1,72 @@
 <!DOCTYPE html>
-
+<html>
 <head>
-
-<meta name=viewport content="width=device-width, initial-scale=1">
-<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700|Roboto+Mono" rel="stylesheet">
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
- <!-- Compiled and minified CSS -->
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700|Roboto+Mono" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- Compiled and minified CSS -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- build:css assets/styles/styles.css -->
-    <link rel="stylesheet" href="/temp/assets/styles/styles.css">
-    <!-- endBuild -->
-    <link href="/assets/images/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png" />
-    <link href="/assets/images/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" />
-    <script src="https://use.fontawesome.com/a697955832.js"></script>
-    <title>Flashcards</title>
+  <!-- build:css assets/styles/styles.css -->
+  <link href="/temp/assets/styles/styles.css" rel="stylesheet"><!-- endBuild -->
+  <link href="/assets/images/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+  <link href="/assets/images/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+  <script src="https://use.fontawesome.com/a697955832.js">
+  </script>
+  <title>Flashcards</title>
 </head>
 <body>
-<div id="menu-overlay" class="menu-overlay hidden">
-<div id="vert-line-1" class="vert-line line-up"></div>
-  <nav id="secondary-menu" class="secondary-menu menu hidden">
-
-  <ul class="categories-menu">
-  <h2 class="secondary-menu__header menu__header">Current category</h2>
-    <a href="#"><li id="addCard" class="menu__item">Add a new card</li></a>
-      <li id="addCategory" class="menu__item">Add a new category</li>
-
-    </ul>
-    
-  </nav>
-
-  <div id="vert-line-2" class="vert-line line-down"></div>
-<nav id="main-menu" class="main-menu menu hidden">
-  <div id="categories-menu" class="categories-menu">
-  <h2 class="menu__header">All Categories</h2>
-    <div>
-    
-  </nav>
-
-<nav id="tertiary-menu-one" class="add-category-menu menu hidden">
-  <div id="newCategoryInner" class="new-category-menu">
-  <button id="backBtn" class="menu__back-btn"><i class="btn-back-arrow fa fa-long-arrow-left" aria-hidden="true"></i> Back to menu</button>
-  <h2 class="menu__header">New Category</h2>
-  <label class= for='add-category'>Add a new category:</label>
-    <input id='addCategoryInput' class="add-category__input" name="add-category">
-    </div> 
-  </nav>
-
-  <nav id="tertiary-menu-two" class="add-category-menu menu hidden">
-  <div class="new-category-menu">
-  <button id="backBtn" class="menu__back-btn"><i class="btn-back-arrow fa fa-long-arrow-left" aria-hidden="true"></i> Back to menu</button>
-  <h2 class="menu__header">New Category</h2>
-  <label class= for='add-category'>Add a new card to the deck:</label>
-    <input id='addCategoryInput' class="add-category__input" name="add-category">
-    </div> 
-  </nav>
-
-</div>
-  </div>
-    <main id="wrap" class="wrap">
-    <button id="menu-btn" class="menu-btn">
-    <span id="menuBarOne" class="menu-bar-one"></span>
-    <span id="menuBarTwo" class="menu-bar-two"></span>
-    <span id="menuBarThree" class="menu-bar-three"></span>
-    </button>
-    <div id="flashcard" class="flashcard">
-    <span class="flashcard__number">01</span>
-   <!-- <p>In regular Javascript, the global object is 'window'.<br><br>In NodeJS, the global object is 'global'.<p></div>-->
-    
+  <div class="menu-overlay hidden" id="menu-overlay">
+    <div class="vert-line line-up" id="vert-line-1"></div>
+    <nav class="secondary-menu menu hidden" id="secondary-menu">
+      <div class="relational-menu" style="margin-left: 2em">
+        <h2 id="currentCat" class="secondary-menu__header menu__header">Current category</h2>
+        <ul class="menu-inner">
+         <a href="#"> <li class="menu__item" id="addCard">Add a new card</li></a>
+        <a href="#"><li class="menu__item" id="addCategory">Add a new category</li></a>
+        </ul>
+      </div>
     </nav>
-
-  
- <footer class="footer"><p>Created by <a class="link" href="http://jamestbyrne.com">James Byrne</a>.</footer>
-   </main>
+    <div class="vert-line line-down" id="vert-line-2"></div>
+    <nav class="main-menu menu hidden" id="main-menu">
+      <div class="relational-menu" id="categories-menu">
+        <h2 class="menu__header">All Categories</h2>
+        <div></div>
+      </div>
+    </nav>
+    <nav class="add-category-menu menu hidden" id="tertiary-menu-one">
+      <div class="relational-menu" id="newCategoryInner">
+        <button class="menu__back-btn" id="backBtn"><i aria-hidden="true" class="btn-back-arrow fa fa-long-arrow-left"></i> Back to menu</button>
+        <h2 class="menu__header">New Category</h2><label class="for='add-category'">Add a new category:</label> <input class="add-category__input input" id='addCategoryInput' name="add-category">
+      </div>
+    </nav>
+    <nav class="add-card-menu menu hidden" id="tertiary-menu-two">
+      <div class="relational-menu">
+        <button class="menu__back-btn" id="backBtn2"><i aria-hidden="true" class="btn-back-arrow fa fa-long-arrow-left"></i> Back to menu</button>
+        <h2 class="menu__header">New Card</h2><label class="for='add-card'">Add a new card to the deck:</label> <input class="add-card__input input" id='addCardInput' name="add-card">
+      </div>
+    </nav>    
+  </div>
+  <main class="wrap" id="wrap">
+    <button class="menu-btn" id="menu-btn"><span class="menu-bar-one" id="menuBarOne"></span> <span class="menu-bar-two" id="menuBarTwo"></span> <span class="menu-bar-three" id="menuBarThree"></span></button>
+    <div class="flashcard" id="flashcard">
+      <span id="flashcard-num" class="flashcard__number">01</span>
+      <p>In regular Javascript, the global object is 'window'.<br>
+      <br>
+      In NodeJS, the global object is 'global'.</p>
+    </div>
+    <div class="btn-wrapper">
+      <button class="directional-btn"><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</button>
+      <button class="directional-btn">»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»</button>
+      </div>
+    <footer class="footer">
+      <p>Created by <a class="link" href="http://jamestbyrne.com">James Byrne</a>.</p>
+    </footer>
+  </main><!-- build:js assets/scripts/app.js -->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript">
+  </script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js">
+  </script> 
+  <script src="assets/scripts/app.js">
+  </script> <!-- endBuild -->
 </body>
-  <!-- build:js assets/scripts/app.js -->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
-<script src="assets/scripts/app.js"></script>
-<!-- endBuild -->
+</html>

@@ -136,7 +136,7 @@ button::-moz-focus-inner {
 }
 
 button:focus {
-  outline: #ddb271;
+  outline: #5DE2A1;
 }
 
 html {
@@ -156,3 +156,6 @@ overflow-x: none;
     opacity: 0;
   }
 
+::selection {
+  background-color: #5DE2A1;
+}

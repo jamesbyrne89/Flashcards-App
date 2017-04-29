@@ -9,6 +9,7 @@
   display: inline-block;
   float: left;
   margin-left: 300px;
+  height: 100vh;
 }
 
 .footer {
@@ -39,7 +40,6 @@ a {
 }
 
 .flashcard {
-  align-items: center;
   font-size: 2.25rem;
   min-height: 70vh;
   margin: 20px;
@@ -77,7 +77,7 @@ textarea.materialize-textarea {
   }
 
 
-.add-category__input {
+.input {
   background: transparent;
   border: solid 1px #fff;
   padding: 0.5em;
@@ -85,11 +85,12 @@ textarea.materialize-textarea {
   margin-top: 20px;
   font-family: 'roboto mono';
   width: 200px; 
+  display: block;
 }
 
-.add-category__input:focus {
+.input:focus {
   outline: none;
-  border: solid 1px #ddb271;
+  border: solid 1px #5DE2A1;
 }
 
 .btn-submit {
@@ -152,6 +153,22 @@ textarea.materialize-textarea {
   color: #fff;
 }
 
+.directional-btn {
+  align-items: center;
+  font-size: 1.25rem;
+  background: none;
+  color: #a9a9a9;
+  transition: all 0.7s;
+  width: 50%;
+  display: inline-block;
+  padding: 2em;
+}
 
+.directional-btn:hover {
+  color: #fff;
+}
 
-
+.btn-wrapper {
+  display: flex;
+  margin-top: 100px;
+}

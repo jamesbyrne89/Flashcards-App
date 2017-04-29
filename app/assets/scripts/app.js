@@ -2,10 +2,12 @@
 
 const menuBtn = document.getElementById('menu-btn');
 const addCategoryBtn = document.getElementById('addCategory');
+const addCardBtn = document.getElementById('addCard');
 const menuOverlay = document.getElementById('menu-overlay');
 const menu = document.getElementById('main-menu');
 const menu2 = document.getElementById('secondary-menu');
 const menu3 = document.getElementById('tertiary-menu-one');
+const menu4 = document.getElementById('tertiary-menu-two');
 const catMenu = document.getElementById('categories-menu');
 const line1 = document.getElementById('vert-line-1');
 const line2 = document.getElementById('vert-line-2');
@@ -15,6 +17,8 @@ const menuBar3 = document.getElementById('menu-bar-three');
 const backBtn = document.getElementById('backBtn');
 const newCategoryInput = document.getElementById('addCategoryInput');
 const card = document.getElementById('flashcard');
+const fcNum = document.getElementById('flashcard-num');
+const currentCat = document.getElementById('currentCat');
 
 /**
  * Code to create the database that will store the decks
@@ -52,16 +56,18 @@ document.addEventListener("DOMContentLoaded", function() {
 				autoIncrement: true
 			});
 			// I want to be able to search categories by name later
-			os.createIndex("categoryNames", "name", {
-				unique: false
-			});
+			//os.createIndex("categoryNames", "name", {
+			//	unique: false
+			//});
 		}
 	}
 
 
-	function appendcardContent(c) {
+	function appendCardContent(c, n) {
 		// c is the variable for the content (may need to search through the database to find that item)
-		card.innerText = c
+		card.innerHTML += c;
+		currentCat.innerText = n;
+	//	fcNum.innerText = n;
 	}
 
 	openRequest.onsuccess = function(e) {
@@ -72,19 +78,24 @@ document.addEventListener("DOMContentLoaded", function() {
 		flashcardsDB.getCards(function(items) {
 
 			let frag = document.createDocumentFragment();
+			let ul = document.createElement('ul');
+				ul.setAttribute('class', 'menu-inner');
 			for (let i = 0; i < items.length; i++) {
 				let a = document.createElement('a');
 				let li = document.createElement('li');
 				li.setAttribute('class', 'menu__item');
 				li.innerText = items[i].name;
 				a.appendChild(li);
-				frag.appendChild(a)
+				ul.appendChild(a);
+				frag.appendChild(ul);
 				li.addEventListener('click', function() {
 					hideMenu();
 					// Run a function that takes the category name you clicked on as a parameter
-					appendcardContent(items[0].created)
+					appendCardContent(items[0].created, items[0].name)
 				});
 				catMenu.appendChild(frag);
+				catMenu.setAttribute('class', 'relational-menu')
+				
 			}
 		});
 
@@ -107,11 +118,13 @@ document.addEventListener("DOMContentLoaded", function() {
 						li.addEventListener('click', function() {
 							hideMenu();
 							// Run a function that takes the category name you clicked on as a parameter
-							appendcardContent(items[0].created)
+							appendCardContent(items[0].created)
 						});
 						catMenu.appendChild(frag);
 					}
 				});
+
+
 					(function confirm() {
 			const newCatMenuInner = document.getElementById('newCategoryInner');
 			const confirmation = document.createElement('span');
@@ -252,6 +265,10 @@ flashcardsDB.deleteRecord = function(variable) {
 };
 
 
+/**
+ * Menu opening and transition
+ */
+
 
 menuBtn.addEventListener('click', showMenu);
 menuOverlay.addEventListener('click', hideMenu, false);
@@ -259,6 +276,13 @@ addCategoryBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
 	showCategoryInput();
+
+});
+
+addCardBtn.addEventListener('click', function(e) {
+
+	e.stopPropagation();
+	showCardInput();
 
 });
 
@@ -415,6 +439,41 @@ function showCategoryInput() {
 	});
 
 	menu3.addEventListener('click', function(e) {
+		e.stopPropagation();
+	});
+}
+
+function showCardInput() {
+
+	const tl = new TimelineLite();
+	const addCardMenu = document.getElementById("tertiary-menu-two");
+
+	backBtn2.addEventListener('click', function(e) {
+		TweenLite.to(addCardMenu, 0, {
+			display: 'none'
+		});
+		menuTransition();
+		setTimeout(showMenu, 1500);
+
+	})
+
+	menuTransition();
+
+	tl.to(menu4, 0, {
+			display: 'flex'
+		})
+		.to(menu4, 0.3, {
+			opacity: 1,
+			delay: 1.4
+		});
+	// Fade out main menu
+	TweenLite.to(line1, 0.7, {
+		display: 'inline-block',
+		height: '100vh',
+		delay: 1.2
+	});
+
+	menu4.addEventListener('click', function(e) {
 		e.stopPropagation();
 	});
 }
