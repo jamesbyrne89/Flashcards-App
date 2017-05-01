@@ -88,9 +88,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			// Display initial content
 
 			if (items[0].cards.length > 0) {
-				let content = items[0].cards;
+				let content = items[0].cards[0];
 				let cardsArr = items[0].cards;
-
 
 				card.innerHTML += `<p>${content}</p>`;
 				fcNum.innerText = cardsArr.indexOf(items[0].cards[0]) + 1;
@@ -124,12 +123,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		// Listen for submission of new category
 		newCategoryInput.onkeyup = function(e) {
-
 			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-				console.log(items)
+				
 				flashcardsDB.addNewCategory();
 				flashcardsDB.getCards(function(items) {
-
+					console.log(items)
 					let frag = document.createDocumentFragment();
 					for (let i = 0; i < items.length; i++) {
 						let a = document.createElement('a');
@@ -177,11 +175,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		newCardInput.onkeyup = function(e) {
 
 			if (e.keyCode == 13 && newCardInput.value !== "") {
-					console.log(items)
-				
+				flashcardsDB.addNewCard();
 				flashcardsDB.getCards(function(items) {
 					console.log(items)
-				//flashcardsDB.addNewCard(items);
+						//flashcardsDB.addNewCard(items);
 				});
 
 			}
@@ -225,12 +222,17 @@ flashcardsDB.addNewCategory = function(e) {
 
 
 flashcardsDB.addNewCard = function(items) {
+	flashcardsDB.getCards(function(items) {
 	let current = currentCat.innerText
 		// Get the current category depending on which menu item was clicked
+		flashcardsDB.addNewCategory
 	let result = items.filter(function(obj) {
 		return obj.name === current;
 	})[0];
 	console.log(current);
+	result.cards.push(addCardInput.value)
+	console.log(result.cards)
+})
 
 }
 
