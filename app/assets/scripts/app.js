@@ -80,21 +80,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	openRequest.onsuccess = function(e) {
 		console.log("running onsuccess");
-
 		db = e.target.result;
-
 		flashcardsDB.getCards(function(items) {
-
+			console.log('First declaration of getCards')
 			// Display initial content
+			console.log(items)
+		//	if (items[0].cards.length > 0) {
+		//		let content = items[0].cards[0];
+		//		let cardsArr = items[0].cards;
 
-			if (items[0].cards.length > 0) {
-				let content = items[0].cards[0];
-				let cardsArr = items[0].cards;
-
-				card.innerHTML += `<p>${content}</p>`;
-				fcNum.innerText = cardsArr.indexOf(items[0].cards[0]) + 1;
-			}
-			currentCat.innerText = items[0].name;
+		//		card.innerHTML += `<p>${content}</p>`;
+		//		fcNum.innerText = cardsArr.indexOf(items[0].cards[0]) + 1;
+		//	}
+		//	currentCat.innerText = items[0].name;
 
 			let frag = document.createDocumentFragment();
 			let ul = document.createElement('ul');
@@ -127,6 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				
 				flashcardsDB.addNewCategory();
 				flashcardsDB.getCards(function(items) {
+					console.log('Second declaration of getCards')
 					console.log(items)
 					let frag = document.createDocumentFragment();
 					for (let i = 0; i < items.length; i++) {
@@ -180,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					console.log(items)
 						//flashcardsDB.addNewCard(items);
 				});
-
+				newcardInput.value = '';
 			}
 
 		}
@@ -223,17 +222,46 @@ flashcardsDB.addNewCategory = function(e) {
 
 flashcardsDB.addNewCard = function(items) {
 	flashcardsDB.getCards(function(items) {
+		console.log(items)
 	let current = currentCat.innerText
 		// Get the current category depending on which menu item was clicked
 		flashcardsDB.addNewCategory
 	let result = items.filter(function(obj) {
 		return obj.name === current;
 	})[0];
-	console.log(current);
 	result.cards.push(addCardInput.value)
 	console.log(result.cards)
-})
+console.log('Before database updates')
+var title = result.name;
 
+(function updateResult() {
+  var transaction = db.transaction(['categories'], 'readwrite');
+  var objectStore = transaction.objectStore('categories');
+
+  objectStore.openCursor().onsuccess = function(event) {
+    var cursor = event.target.result;
+    if(cursor) {
+      if(cursor.value.albumTitle === 'A farewell to kings') {
+        var updateData = cursor.value;
+          
+        updateData.year = 2050;
+        var request = cursor.update(updateData);
+        request.onsuccess = function() {
+          console.log('A better album year?');
+        };
+      };
+
+      var listItem = document.createElement('li');
+      listItem.innerHTML = '<strong>' + cursor.value.albumTitle + '</strong>, ' + cursor.value.year;
+      list.appendChild(listItem);   
+      cursor.continue();        
+    } else {
+      console.log('Entries displayed.');         
+    }
+  };
+};
+
+})
 }
 
 
@@ -242,10 +270,11 @@ flashcardsDB.getCards = function(callback) {
 	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
 	var store = transaction.objectStore("categories");
 	var items = [];
-
+	console.log('Running getCards')
 	transaction.oncomplete = function(evt) {
+
 		callback(items);
-		console.log(items)
+		console.log('Completed. items = ' + items)
 	};
 
 	var cursorRequest = store.openCursor();
@@ -259,7 +288,6 @@ flashcardsDB.getCards = function(callback) {
 		if (cursor) {
 			items.push(cursor.value);
 			cursor.continue();
-
 		}
 
 	};
