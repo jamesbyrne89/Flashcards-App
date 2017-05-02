@@ -25,9 +25,9 @@ const currentCat = document.getElementById('currentCat');
  * Code to create the database that will store the decks
  */
 
-var flashcardsDB = (function() {
-	var flashcardsDB = {};
-	var datastore = null;
+let flashcardsDB = (function() {
+	let flashcardsDB = {};
+	let datastore = null;
 
 	// flashcards: Add methods for interacting with the database here.
 
@@ -65,14 +65,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 	function appendCardContent(clicked, items) {
+		let content = items[0].cards[0];
 		currentCat.innerText = clicked;
 		// Get the current category depending on which menu item was clicked
-		let result = items.filter(function(obj) {
-			return obj.name === clicked;
-		})[0];
+		
 
 		// c is the variable for the content (may need to search through the database to find that item)
-		//	card.innerHTML += c;
+		if (items[0].cards.length > 0) {
+			card.innerHTML += content;
+		}
 		//	currentCat.innerText = n;
 
 		//	fcNum.innerText = n;
@@ -81,10 +82,11 @@ document.addEventListener("DOMContentLoaded", function() {
 	openRequest.onsuccess = function(e) {
 		console.log("running onsuccess");
 		db = e.target.result;
+
 		flashcardsDB.getCards(function(items) {
-			console.log('First declaration of getCards')
 			// Display initial content
 			console.log(items)
+			appendCardContent(items[0].name, items)
 		//	if (items[0].cards.length > 0) {
 		//		let content = items[0].cards[0];
 		//		let cardsArr = items[0].cards;
@@ -235,6 +237,9 @@ flashcardsDB.addNewCard = function(items) {
 	};
 
 	cardsArr.push(newCardInput.value);
+
+
+// Updates the database with the new input
 
 let title = current;
 
