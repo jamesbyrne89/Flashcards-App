@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 				(function confirm() {
 					const newCatMenuInner = document.getElementById('newCategoryInner');
-					const confirmation = document.createElement('span');
+					let confirmation = document.createElement('span');
 					confirmation.setAttribute('class', 'add-category__confirmation');
 					confirmation.innerText = `${newCategoryInput.value} category successfully added`;
 					newCatMenuInner.appendChild(confirmation);
@@ -182,6 +182,26 @@ document.addEventListener("DOMContentLoaded", function() {
 						flashcardsDB.addNewCard(items);
 						
 				});
+					(function confirm() {
+					const newCardMenuInner = document.getElementById('newCardInner');
+					let confirmation = document.createElement('span');
+					confirmation.setAttribute('class', 'add-card__confirmation');
+					confirmation.innerText = `${newCardInput.value} card successfully added`;
+					newCardMenuInner.appendChild(confirmation);
+					const tl = new TimelineLite();
+					tl.to(newCategoryInput, 0.05, {
+						opacity: 0
+					}).to(newCategoryInput, 0.1, {
+						opacity: 1,
+						delay: 0.1
+					});
+					TweenLite.to(confirmation, 1, {
+						y: -15,
+						opacity: 1,
+						ease: Power1.easeOut
+					});
+					newCardInput.value = "";
+				})();
 				
 			}
 
