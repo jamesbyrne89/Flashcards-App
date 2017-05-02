@@ -174,12 +174,13 @@ document.addEventListener("DOMContentLoaded", function() {
 		newCardInput.onkeyup = function(e) {
 
 			if (e.keyCode == 13 && newCardInput.value !== "") {
-				flashcardsDB.addNewCard();
+				//flashcardsDB.addNewCard(items);
 				flashcardsDB.getCards(function(items) {
 					console.log(items)
-						//flashcardsDB.addNewCard(items);
+						flashcardsDB.addNewCard(items);
+						
 				});
-				newcardInput.value = '';
+				
 			}
 
 		}
@@ -221,47 +222,43 @@ flashcardsDB.addNewCategory = function(e) {
 
 
 flashcardsDB.addNewCard = function(items) {
-	flashcardsDB.getCards(function(items) {
-		console.log(items)
+		
 	let current = currentCat.innerText
+	let cardsArr;
 		// Get the current category depending on which menu item was clicked
-		flashcardsDB.addNewCategory
-	let result = items.filter(function(obj) {
-		return obj.name === current;
-	})[0];
-	result.cards.push(addCardInput.value)
-	console.log(result.cards)
-console.log('Before database updates')
-var title = result.name;
+		console.log('Unfiltered: ' + items)
+	for (let i=0; i<items.length; i++) {
+		if (items[i].name === current) {
+		cardsArr = items[i].cards
+		console.log(cardsArr)
+	}
+	};
 
-(function updateResult() {
-  var transaction = db.transaction(['categories'], 'readwrite');
-  var objectStore = transaction.objectStore('categories');
+	cardsArr.push(newCardInput.value);
+
+let title = current;
+
+  let transaction = db.transaction(['categories'], 'readwrite');
+  let objectStore = transaction.objectStore('categories');
 
   objectStore.openCursor().onsuccess = function(event) {
-    var cursor = event.target.result;
+    let cursor = event.target.result;
     if(cursor) {
-      if(cursor.value.albumTitle === 'A farewell to kings') {
-        var updateData = cursor.value;
+      if(cursor.value.name === current) {
+        let updateData = cursor.value;
           
-        updateData.year = 2050;
-        var request = cursor.update(updateData);
+        updateData.cards = cardsArr;
+        let request = cursor.update(updateData);
         request.onsuccess = function() {
           console.log('A better album year?');
         };
       };
-
-      var listItem = document.createElement('li');
-      listItem.innerHTML = '<strong>' + cursor.value.albumTitle + '</strong>, ' + cursor.value.year;
-      list.appendChild(listItem);   
       cursor.continue();        
     } else {
       console.log('Entries displayed.');         
     }
   };
-};
 
-})
 }
 
 
@@ -270,11 +267,10 @@ flashcardsDB.getCards = function(callback) {
 	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
 	var store = transaction.objectStore("categories");
 	var items = [];
-	console.log('Running getCards')
+	console.log('Running getCards');
 	transaction.oncomplete = function(evt) {
 
 		callback(items);
-		console.log('Completed. items = ' + items)
 	};
 
 	var cursorRequest = store.openCursor();
