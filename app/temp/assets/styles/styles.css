@@ -302,13 +302,13 @@ overflow-x: none;
   height: 100vh;
   position: absolute;
   right: 0;
-  background-color: #5DE2A1;
+  background-color: #d4ff0c;
   z-index: 300;
 }
 
 .menu-inner {
   max-height: 50vh;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 .grid-btn {
@@ -351,9 +351,10 @@ overflow-x: none;
   float: left;
   margin-left: 300px;
   height: 100vh;
-    -webkit-box-flex: 0;
-        -ms-flex: 0 1 50vw;
-            flex: 0 1 50vw;
+  min-width: 70vw;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 
 .footer {
@@ -435,7 +436,7 @@ textarea.materialize-textarea {
 
 .input:focus {
   outline: none;
-  border: solid 1px #5DE2A1;
+  border: solid 1px #c9ff0c;
 }
 
 .btn-submit {

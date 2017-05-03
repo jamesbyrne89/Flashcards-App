@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				frag.appendChild(a);		
 				li.addEventListener('click', function(e) {
 					let clicked = e.target.innerText;
-					hideMenu();
+					menuAnim.show();
 					// Run a function that takes the category name you clicked on as a parameter
 					//appendCardContent(clicked, items)
 					showCardsGrid();
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function() {
 						a.appendChild(li);
 						frag.appendChild(a);
 						li.addEventListener('click', function(e) {
-							hideMenu();
+							menuAnim.show();
 							let clicked = e.target.innerText;
 							currentCat.innerText = clicked;
 							// Append the content to the DOM
@@ -386,26 +386,14 @@ flashcardsDB.deleteRecord = function(variable) {
  */
 
 
-menuBtn.addEventListener('click', showMenu);
-menuOverlay.addEventListener('click', hideMenu, false);
-grid.addEventListener('click', hideCardsGrid, false);
-addCategoryBtn.addEventListener('click', function(e) {
 
-	e.stopPropagation();
-	showCategoryInput();
 
-});
+let menuAnim = (function() {
+	let menuAnim = {};
+	return menuAnim;
+}());
 
-addCardBtn.addEventListener('click', function(e) {
-
-	e.stopPropagation();
-	showCardInput();
-
-});
-
-gridBtn.addEventListener('click', showCardsGrid);
-
-function showMenu() {
+menuAnim.show = function () {
 
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
@@ -431,7 +419,7 @@ function showMenu() {
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
 				let clicked = e.target.innerText;
-				hideMenu();
+				menuAnim.show();
 				// Run a function that takes the category name you clicked on as a parameter
 				appendCardContent(clicked, items)
 			});
@@ -480,7 +468,7 @@ function showMenu() {
 
 }
 
-function hideMenu() {
+menuAnim.hide = function () {
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
 	const tl3 = new TimelineLite();
@@ -534,7 +522,7 @@ function hideMenu() {
 	});
 }
 
-function menuTransition() {
+menuAnim.transition = function () {
 
 	const slider = document.createElement('div');
 	const tl = new TimelineLite();
@@ -575,12 +563,12 @@ function showCategoryInput() {
 		TweenLite.to(addCategoryMenu, 0, {
 			display: 'none'
 		});
-		menuTransition();
-		setTimeout(showMenu, 1500);
+		menuAnim.transition();
+		setTimeout(menuAnim.show, 1500);
 
 	})
 
-	menuTransition();
+	menuAnim.transition();
 
 	tl.to(menu3, 0, {
 			display: 'flex'
@@ -610,12 +598,12 @@ function showCardInput() {
 		TweenLite.to(addCardMenu, 0, {
 			display: 'none'
 		});
-		menuTransition();
-		setTimeout(showMenu, 1500);
+		menuAnim.transition();
+		setTimeout(menuAnim.show, 1500);
 
 	})
 
-	menuTransition();
+	menuAnim.transition();
 
 	tl.to(menu4, 0, {
 			display: 'flex'
@@ -663,6 +651,27 @@ const noCardsMsg = document.getElementById('noCardsMsg');
 
 }
 
+
+// Event listeners
+
+menuBtn.addEventListener('click', menuAnim.show);
+menuOverlay.addEventListener('click', menuAnim.show, false);
+grid.addEventListener('click', hideCardsGrid, false);
+addCategoryBtn.addEventListener('click', function(e) {
+
+	e.stopPropagation();
+	showCategoryInput();
+
+});
+
+addCardBtn.addEventListener('click', function(e) {
+
+	e.stopPropagation();
+	showCardInput();
+
+});
+
+gridBtn.addEventListener('click', showCardsGrid);
 
 
 //function submitcategoryForm(cat) {

@@ -10,7 +10,8 @@
   float: left;
   margin-left: 300px;
   height: 100vh;
-    flex: 0 1 50vw;
+  min-width: 70vw;
+  flex-grow: 1;
 }
 
 .footer {
@@ -91,7 +92,7 @@ textarea.materialize-textarea {
 
 .input:focus {
   outline: none;
-  border: solid 1px #5DE2A1;
+  border: solid 1px #c9ff0c;
 }
 
 .btn-submit {

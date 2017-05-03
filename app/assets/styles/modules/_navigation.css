@@ -131,13 +131,13 @@
   height: 100vh;
   position: absolute;
   right: 0;
-  background-color: #5DE2A1;
+  background-color: #d4ff0c;
   z-index: 300;
 }
 
 .menu-inner {
   max-height: 50vh;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
   .grid-btn {
