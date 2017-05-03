@@ -388,6 +388,7 @@ flashcardsDB.deleteRecord = function(variable) {
 
 menuBtn.addEventListener('click', showMenu);
 menuOverlay.addEventListener('click', hideMenu, false);
+grid.addEventListener('click', hideCardsGrid, false);
 addCategoryBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
@@ -636,9 +637,28 @@ function showCardInput() {
 }
 
 function showCardsGrid() {
-grid.innerHTML = '<span>No cards to show currently.</span>';
-	TweenLite.to(grid, 1, {
+
+const noCardsMsg = document.getElementById('noCardsMsg');
+console.log(noCardsMsg)
+	TweenLite.to(grid, 0.7, {
 		height: '100vh'
+	});
+	TweenLite.to(noCardsMsg, 1, {
+		y: -15,
+		opacity: 0.95,
+		delay: 1
+	});
+
+}
+
+function hideCardsGrid() {
+
+const noCardsMsg = document.getElementById('noCardsMsg');
+	TweenLite.to(grid, 0.7, {
+		height: '0'
+	});
+	TweenLite.to(noCardsMsg, 0.2, {
+		opacity: 0,
 	});
 
 }

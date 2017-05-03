@@ -179,4 +179,7 @@ textarea.materialize-textarea {
   height: 80px;
 }
 
+.message {
+  opacity: 0;
+}
 
