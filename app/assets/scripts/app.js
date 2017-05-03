@@ -17,9 +17,10 @@ const menuBar3 = document.getElementById('menu-bar-three');
 const backBtn = document.getElementById('backBtn');
 const newCategoryInput = document.getElementById('addCategoryInput');
 const newCardInput = document.getElementById('addCardInput');
-const card = document.getElementById('flashcard');
+const cardContent = document.getElementById('card-content');
 const fcNum = document.getElementById('flashcard-num');
 const currentCat = document.getElementById('currentCat');
+const addCardLabel = document.getElementById('addCardLabel');
 
 /**
  * Code to create the database that will store the decks
@@ -65,14 +66,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 	function appendCardContent(clicked, items) {
-		let content = items[0].cards[0];
+		cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
+		if (clicked){
 		currentCat.innerText = clicked;
+	}
+	else {
+		currentCat.innerText = '*';
+	}
 		// Get the current category depending on which menu item was clicked
 		
 
 		// c is the variable for the content (may need to search through the database to find that item)
 		if (items[0].cards.length > 0) {
-			card.innerHTML += content;
+			let content = items[0].cards[0];
+			cardContent.innerHTML = content;
+		}
+		else {
+			cardContent.innerHTML = "There's nothing here."; 
 		}
 		//	currentCat.innerText = n;
 
@@ -84,17 +94,9 @@ document.addEventListener("DOMContentLoaded", function() {
 		db = e.target.result;
 
 		flashcardsDB.getCards(function(items) {
-			// Display initial content
-			console.log(items)
-			appendCardContent(items[0].name, items)
-		//	if (items[0].cards.length > 0) {
-		//		let content = items[0].cards[0];
-		//		let cardsArr = items[0].cards;
+			// Display initial conten
+			appendCardContent()
 
-		//		card.innerHTML += `<p>${content}</p>`;
-		//		fcNum.innerText = cardsArr.indexOf(items[0].cards[0]) + 1;
-		//	}
-		//	currentCat.innerText = items[0].name;
 
 			let frag = document.createDocumentFragment();
 			let ul = document.createElement('ul');
@@ -127,8 +129,6 @@ document.addEventListener("DOMContentLoaded", function() {
 				
 				flashcardsDB.addNewCategory();
 				flashcardsDB.getCards(function(items) {
-					console.log('Second declaration of getCards')
-					console.log(items)
 					let frag = document.createDocumentFragment();
 					for (let i = 0; i < items.length; i++) {
 						let a = document.createElement('a');
@@ -139,12 +139,11 @@ document.addEventListener("DOMContentLoaded", function() {
 						a.appendChild(li);
 						frag.appendChild(a)
 						li.addEventListener('click', function(e) {
-							hideMenu();
-							let clicked = e.target.innerText;
-							currentCat.innerText = clicked;
-							console.log('clicked ' + e.target.innerText)
-								// Append the content to the DOM
-							appendCardContent(clicked, items)
+						hideMenu();
+						let clicked = e.target.innerText;
+						currentCat.innerText = clicked;
+						// Append the content to the DOM
+						appendCardContent(clicked, items)
 						});
 						catMenu.appendChild(frag);
 					}
@@ -547,10 +546,10 @@ function showCategoryInput() {
 }
 
 function showCardInput() {
-
+	let current = currentCat.innerText;
 	const tl = new TimelineLite();
 	const addCardMenu = document.getElementById("tertiary-menu-two");
-
+	addCardLabel.innerText = `Add a new card to ${current}:`;
 	backBtn2.addEventListener('click', function(e) {
 		TweenLite.to(addCardMenu, 0, {
 			display: 'none'

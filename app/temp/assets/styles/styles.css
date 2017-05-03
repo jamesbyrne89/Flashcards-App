@@ -469,3 +469,8 @@ textarea.materialize-textarea {
   display: flex;
   margin-top: 100px;
 }
+
+.add-card__input {
+  width: 300px;
+  height: 80px;
+}
