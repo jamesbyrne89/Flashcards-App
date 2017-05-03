@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					menuAnim.show();
 					// Run a function that takes the category name you clicked on as a parameter
 					//appendCardContent(clicked, items)
-					showCardsGrid();
+					menuAnim.cardsGrid.show();
 				});
 				menuInner.appendChild(frag);
 				catMenu.setAttribute('class', 'relational-menu')
@@ -393,6 +393,10 @@ let menuAnim = (function() {
 	return menuAnim;
 }());
 
+menuAnim.categoryInput = {};
+menuAnim.cardInput = {};
+menuAnim.cardsGrid = {};
+
 menuAnim.show = function () {
 
 	const tl = new TimelineLite();
@@ -554,7 +558,7 @@ menuAnim.transition = function () {
 	});
 }
 
-function showCategoryInput() {
+menuAnim.categoryInput.show = function () {
 
 	const tl = new TimelineLite();
 	const addCategoryMenu = document.getElementById("tertiary-menu-one");
@@ -589,7 +593,7 @@ function showCategoryInput() {
 	});
 }
 
-function showCardInput() {
+menuAnim.cardInput.show = function () {
 	let current = currentCat.innerText;
 	const tl = new TimelineLite();
 	const addCardMenu = document.getElementById("tertiary-menu-two");
@@ -624,7 +628,7 @@ function showCardInput() {
 	});
 }
 
-function showCardsGrid() {
+menuAnim.cardsGrid.show = function () {
 
 const noCardsMsg = document.getElementById('noCardsMsg');
 console.log(noCardsMsg)
@@ -639,7 +643,7 @@ console.log(noCardsMsg)
 
 }
 
-function hideCardsGrid() {
+menuAnim.cardsGrid.hide = function () {
 
 const noCardsMsg = document.getElementById('noCardsMsg');
 	TweenLite.to(grid, 0.7, {
@@ -656,22 +660,22 @@ const noCardsMsg = document.getElementById('noCardsMsg');
 
 menuBtn.addEventListener('click', menuAnim.show);
 menuOverlay.addEventListener('click', menuAnim.show, false);
-grid.addEventListener('click', hideCardsGrid, false);
+grid.addEventListener('click', menuAnim.cardsGrid.hide, false);
 addCategoryBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
-	showCategoryInput();
+	menuAnim.categoryInput.show();
 
 });
 
 addCardBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
-	showCardInput();
+	menuAnim.cardInput.show();
 
 });
 
-gridBtn.addEventListener('click', showCardsGrid);
+gridBtn.addEventListener('click', menuAnim.cardsGrid.show);
 
 
 //function submitcategoryForm(cat) {
