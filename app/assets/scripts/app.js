@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			// Display initial conten
 			appendCardContent()
 
-
+			console.log('Ran getCards')
 			let frag = document.createDocumentFragment();
 			let ul = document.createElement('ul');
 			ul.setAttribute('class', 'menu-inner');
@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			}
 		});
+
 
 
 		// Listen for submission of new category
@@ -393,6 +394,47 @@ function showMenu() {
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
 
+			flashcardsDB.getCards(function(items) {
+
+			let frag = document.createDocumentFragment();
+			let ul = document.createElement('ul');
+			console.log(ul.innerHTML.length)
+
+			ul.setAttribute('class', 'menu-inner');
+			for (let i = 0; i < items.length; i++) {
+				let a = document.createElement('a');
+				let li = document.createElement('li');
+				li.setAttribute('class', 'menu__item');
+				a.setAttribute('data-category', items[i].name);
+				a.setAttribute('data-length', items[i].cards.length);
+				if (a.getAttribute('data-length')) {
+				let length = 0;
+				}
+				else {
+				let length = a.getAttribute('data-length');
+				};
+				let tooltip = document.createElement('span');
+				tooltip.setAttribute('class', 'menu-tooltip');
+				tooltip.innerText = `${length} cards`;
+				li.appendChild(tooltip);
+				li.innerText = items[i].name;
+				a.appendChild(li);
+				ul.appendChild(a);
+				ul.id = 'menu-inner';
+				frag.appendChild(ul);
+				li.addEventListener('click', function(e) {
+					let clicked = e.target.innerText;
+					hideMenu();
+					// Run a function that takes the category name you clicked on as a parameter
+					appendCardContent(clicked, items)
+				});
+				li.addEventListener('mouseover', function(e){
+
+				});
+				catMenu.appendChild(frag);
+			}
+			});
+
 
 	tl.to(menuOverlay, 0, {
 		display: 'flex',
@@ -436,6 +478,13 @@ function hideMenu() {
 	const tl2 = new TimelineLite();
 	const tl3 = new TimelineLite();
 	const addCategoryMenu = document.getElementById("tertiary-menu-one");
+	const menuInner = document.getElementById('menu-inner')
+
+
+	catMenu.removeChild(menuInner);
+	
+
+	// Animation
 
 	tl.to(menu, 0.1, {
 		opacity: 0

@@ -60,7 +60,6 @@
   min-height: 500px;
 }
 
-
 .top-level-menu {
   width: 100%;
   margin: auto;
@@ -127,6 +126,11 @@
   right: 0;
   background-color: #5DE2A1;
   z-index: 300;
+}
+
+.menu-inner {
+  max-height: 50vh;
+  overflow: scroll;
 }
 
 

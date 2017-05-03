@@ -295,12 +295,20 @@ overflow-x: none;
   z-index: 300;
 }
 
+.menu-inner {
+  max-height: 50vh;
+  overflow: scroll;
+}
+
 .wrap {
   padding: 1em;
   display: inline-block;
   float: left;
   margin-left: 300px;
   height: 100vh;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 1 50vw;
+            flex: 0 1 50vw;
 }
 
 .footer {
