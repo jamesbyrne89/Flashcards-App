@@ -3,6 +3,7 @@
 const menuBtn = document.getElementById('menu-btn');
 const addCategoryBtn = document.getElementById('addCategory');
 const addCardBtn = document.getElementById('addCard');
+const submitCardBtn = document.getElementById('submitCard');
 const menuOverlay = document.getElementById('menu-overlay');
 const menu = document.getElementById('main-menu');
 const menu2 = document.getElementById('secondary-menu');
@@ -21,6 +22,8 @@ const cardContent = document.getElementById('card-content');
 const fcNum = document.getElementById('flashcard-num');
 const currentCat = document.getElementById('currentCat');
 const addCardLabel = document.getElementById('addCardLabel');
+const grid = document.getElementById('gridOverlay');
+const gridBtn = document.getElementById('grid-btn');
 
 /**
  * Code to create the database that will store the decks
@@ -67,22 +70,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	function appendCardContent(clicked, items) {
 		cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
-		if (clicked){
-		currentCat.innerText = clicked;
-	}
-	else {
-		currentCat.innerText = '*';
-	}
-		// Get the current category depending on which menu item was clicked
-		
-
+		if (clicked) {
+			currentCat.innerText = clicked;
+		} else {
+			currentCat.innerText = '*';
+		}
 		// c is the variable for the content (may need to search through the database to find that item)
-		if (items[0].cards.length > 0) {
+		if (!items) {
+			cardContent.innerHTML = "There's nothing here.";
+		} else {
 			let content = items[0].cards[0];
 			cardContent.innerHTML = content;
-		}
-		else {
-			cardContent.innerHTML = "There's nothing here."; 
 		}
 		//	currentCat.innerText = n;
 
@@ -97,26 +95,32 @@ document.addEventListener("DOMContentLoaded", function() {
 			// Display initial conten
 			appendCardContent()
 
-			console.log('Ran getCards')
+			let menuInner = document.getElementById('menu-inner');
 			let frag = document.createDocumentFragment();
-			let ul = document.createElement('ul');
-			ul.setAttribute('class', 'menu-inner');
 			for (let i = 0; i < items.length; i++) {
 				let a = document.createElement('a');
 				let li = document.createElement('li');
+				let length;
 				li.setAttribute('class', 'menu__item');
 				a.setAttribute('data-category', items[i].name);
-				li.innerText = items[i].name;
+				if (items[i].cards.length) {
+				length = 0;
+				}
+				else {
+				length = items[i].cards.length;
+				};
+				li.innerHTML = `<span>${items[i].name}</span>
+				<span class="menu__item__num">${length} cards</span>`;
 				a.appendChild(li);
-				ul.appendChild(a);
-				frag.appendChild(ul);
+				frag.appendChild(a);		
 				li.addEventListener('click', function(e) {
 					let clicked = e.target.innerText;
 					hideMenu();
 					// Run a function that takes the category name you clicked on as a parameter
-					appendCardContent(clicked, items)
+					//appendCardContent(clicked, items)
+					showCardsGrid();
 				});
-				catMenu.appendChild(frag);
+				menuInner.appendChild(frag);
 				catMenu.setAttribute('class', 'relational-menu')
 
 			}
@@ -127,26 +131,34 @@ document.addEventListener("DOMContentLoaded", function() {
 		// Listen for submission of new category
 		newCategoryInput.onkeyup = function(e) {
 			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-				
+
 				flashcardsDB.addNewCategory();
 				flashcardsDB.getCards(function(items) {
 					let frag = document.createDocumentFragment();
 					for (let i = 0; i < items.length; i++) {
 						let a = document.createElement('a');
 						let li = document.createElement('li');
+						let length;
 						li.setAttribute('class', 'menu__item');
 						a.setAttribute('data-category', items[i].name);
-						li.innerText = items[i].name;
+						if (items[i].cards.length) {
+							length = 0;
+						} else {
+							length = items[i].cards.length;
+						};
+						li.innerHTML = `<span>${items[i].name}</span>
+				<span class="menu__item__num">${length} cards</span>`;
 						a.appendChild(li);
-						frag.appendChild(a)
+						frag.appendChild(a);
 						li.addEventListener('click', function(e) {
-						hideMenu();
-						let clicked = e.target.innerText;
-						currentCat.innerText = clicked;
-						// Append the content to the DOM
-						appendCardContent(clicked, items)
+							hideMenu();
+							let clicked = e.target.innerText;
+							currentCat.innerText = clicked;
+							// Append the content to the DOM
+						
+						//	appendCardContent(clicked, items)
 						});
-						catMenu.appendChild(frag);
+						menuInner.appendChild(frag);
 					}
 				});
 
@@ -173,39 +185,39 @@ document.addEventListener("DOMContentLoaded", function() {
 				})();
 			}
 		}
-		newCardInput.onkeyup = function(e) {
+		submitCardBtn.addEventListener('click', function(e) {
 
-			if (e.keyCode == 13 && newCardInput.value !== "") {
-				//flashcardsDB.addNewCard(items);
-				flashcardsDB.getCards(function(items) {
-					console.log(items)
-						flashcardsDB.addNewCard(items);
-						
+
+			//flashcardsDB.addNewCard(items);
+			flashcardsDB.getCards(function(items) {
+				console.log(items)
+				flashcardsDB.addNewCard(items);
+
+			});
+			(function confirm() {
+				const newCardMenuInner = document.getElementById('newCardInner');
+				let confirmation = document.createElement('span');
+				confirmation.setAttribute('class', 'add-card__confirmation');
+				confirmation.innerText = `New card successfully added`;
+				newCardMenuInner.appendChild(confirmation);
+				const tl = new TimelineLite();
+				tl.to(newCategoryInput, 0.05, {
+					opacity: 0
+				}).to(newCategoryInput, 0.1, {
+					opacity: 1,
+					delay: 0.1
 				});
-					(function confirm() {
-					const newCardMenuInner = document.getElementById('newCardInner');
-					let confirmation = document.createElement('span');
-					confirmation.setAttribute('class', 'add-card__confirmation');
-					confirmation.innerText = `${newCardInput.value} card successfully added`;
-					newCardMenuInner.appendChild(confirmation);
-					const tl = new TimelineLite();
-					tl.to(newCategoryInput, 0.05, {
-						opacity: 0
-					}).to(newCategoryInput, 0.1, {
-						opacity: 1,
-						delay: 0.1
-					});
-					TweenLite.to(confirmation, 1, {
-						y: -15,
-						opacity: 1,
-						ease: Power1.easeOut
-					});
-					newCardInput.value = "";
-				})();
-				
-			}
+				TweenLite.to(confirmation, 1, {
+					y: -15,
+					opacity: 1,
+					ease: Power1.easeOut
+				});
+				//newCardInput.value = "";
+			})();
 
-		}
+
+
+		});
 	}
 
 	openRequest.onerror = function(e) {
@@ -244,45 +256,46 @@ flashcardsDB.addNewCategory = function(e) {
 
 
 flashcardsDB.addNewCard = function(items) {
-		
+
 	let current = currentCat.innerText
 	let cardsArr;
-		// Get the current category depending on which menu item was clicked
-		console.log('Unfiltered: ' + items)
-	for (let i=0; i<items.length; i++) {
+	// Get the current category depending on which menu item was clicked
+	console.log('Unfiltered: ' + items)
+	for (let i = 0; i < items.length; i++) {
 		if (items[i].name === current) {
-		cardsArr = items[i].cards
-		console.log(cardsArr)
-	}
+			cardsArr = items[i].cards;
+			console.log(cardsArr)
+		}
 	};
+	let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
+	cardsArr.push(lb);
+	newCardInput.value = '';
 
-	cardsArr.push(newCardInput.value);
 
+	// Updates the database with the new input
 
-// Updates the database with the new input
+	let title = current;
 
-let title = current;
+	let transaction = db.transaction(['categories'], 'readwrite');
+	let objectStore = transaction.objectStore('categories');
 
-  let transaction = db.transaction(['categories'], 'readwrite');
-  let objectStore = transaction.objectStore('categories');
+	objectStore.openCursor().onsuccess = function(event) {
+		let cursor = event.target.result;
+		if (cursor) {
+			if (cursor.value.name === current) {
+				let updateData = cursor.value;
 
-  objectStore.openCursor().onsuccess = function(event) {
-    let cursor = event.target.result;
-    if(cursor) {
-      if(cursor.value.name === current) {
-        let updateData = cursor.value;
-          
-        updateData.cards = cardsArr;
-        let request = cursor.update(updateData);
-        request.onsuccess = function() {
-          console.log('A better album year?');
-        };
-      };
-      cursor.continue();        
-    } else {
-      console.log('Entries displayed.');         
-    }
-  };
+				updateData.cards = cardsArr;
+				let request = cursor.update(updateData);
+				request.onsuccess = function() {
+					console.log('A better album year?');
+				};
+			};
+			cursor.continue();
+		} else {
+			console.log('Entries displayed.');
+		}
+	};
 
 }
 
@@ -389,51 +402,44 @@ addCardBtn.addEventListener('click', function(e) {
 
 });
 
+gridBtn.addEventListener('click', showCardsGrid);
+
 function showMenu() {
 
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
 
-			flashcardsDB.getCards(function(items) {
+	flashcardsDB.getCards(function(items) {
 
-			let frag = document.createDocumentFragment();
-			let ul = document.createElement('ul');
-			console.log(ul.innerHTML.length)
-
-			ul.setAttribute('class', 'menu-inner');
-			for (let i = 0; i < items.length; i++) {
-				let a = document.createElement('a');
-				let li = document.createElement('li');
-				li.setAttribute('class', 'menu__item');
-				a.setAttribute('data-category', items[i].name);
-				a.setAttribute('data-length', items[i].cards.length);
-				if (a.getAttribute('data-length')) {
-				let length = 0;
-				}
-				else {
-				let length = a.getAttribute('data-length');
-				};
-				let tooltip = document.createElement('span');
-				tooltip.setAttribute('class', 'menu-tooltip');
-				tooltip.innerText = `${length} cards`;
-				li.appendChild(tooltip);
-				li.innerText = items[i].name;
-				a.appendChild(li);
-				ul.appendChild(a);
-				ul.id = 'menu-inner';
-				frag.appendChild(ul);
-				li.addEventListener('click', function(e) {
-					let clicked = e.target.innerText;
-					hideMenu();
-					// Run a function that takes the category name you clicked on as a parameter
-					appendCardContent(clicked, items)
-				});
-				li.addEventListener('mouseover', function(e){
-
-				});
-				catMenu.appendChild(frag);
-			}
+		let frag = document.createDocumentFragment();
+		let menuInner = document.getElementById('menu-inner');
+		for (let i = 0; i < items.length; i++) {
+			let a = document.createElement('a');
+			let li = document.createElement('li');
+			let length;
+			li.setAttribute('class', 'menu__item');
+			a.setAttribute('data-category', items[i].name);
+			if (items[i].cards.length) {
+				length = 0;
+			} else {
+				length = items[i].cards.length;
+			};
+			li.innerHTML = `<span>${items[i].name}</span>
+				<span class="menu__item__num">${length} cards</span>`;
+			a.appendChild(li);
+			frag.appendChild(a);
+			li.addEventListener('click', function(e) {
+				let clicked = e.target.innerText;
+				hideMenu();
+				// Run a function that takes the category name you clicked on as a parameter
+				appendCardContent(clicked, items)
 			});
+			li.addEventListener('mouseover', function(e) {
+				console.log(items[i].cards.length)
+			});
+			menuInner.appendChild(frag);
+		}
+	});
 
 
 	tl.to(menuOverlay, 0, {
@@ -480,9 +486,9 @@ function hideMenu() {
 	const addCategoryMenu = document.getElementById("tertiary-menu-one");
 	const menuInner = document.getElementById('menu-inner')
 
+	menuInner.innerHTML = '';
+	console.log(menuInner.innerHTML)
 
-	catMenu.removeChild(menuInner);
-	
 
 	// Animation
 
@@ -627,6 +633,14 @@ function showCardInput() {
 	menu4.addEventListener('click', function(e) {
 		e.stopPropagation();
 	});
+}
+
+function showCardsGrid() {
+grid.innerHTML = '<span>No cards to show currently.</span>';
+	TweenLite.to(grid, 1, {
+		height: '100vh'
+	});
+
 }
 
 

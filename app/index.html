@@ -30,7 +30,7 @@
     <nav class="main-menu menu hidden" id="main-menu">
       <div class="relational-menu" id="categories-menu">
         <h2 class="menu__header">All Categories</h2>
-        <div></div>
+        <ul class="menu-inner" id="menu-inner"></ul>
       </div>
     </nav>
     <nav class="add-category-menu menu hidden" id="tertiary-menu-one">
@@ -43,10 +43,12 @@
       <div class="relational-menu" id="newCardInner">
         <button class="menu__back-btn" id="backBtn2"><i aria-hidden="true" class="btn-back-arrow fa fa-long-arrow-left"></i> Back to menu</button>
         <h2 class="menu__header">New Card</h2><label class="for='add-card'" id="addCardLabel">Add a new card to the deck:</label> <textarea class="add-card__input input" id='addCardInput' name="add-card" autofocus></textarea>
+        <button class="btn-submit" id="submitCard">Add</button>
       </div>
     </nav>    
   </div>
   <main class="wrap" id="wrap">
+  <button class='grid-btn' id='grid-btn'>View as grid</button>
     <button class="menu-btn" id="menu-btn"><span class="menu-bar-one" id="menuBarOne"></span> <span class="menu-bar-two" id="menuBarTwo"></span> <span class="menu-bar-three" id="menuBarThree"></span></button>
     <div class="flashcard" id="flashcard">
       <span id="flashcard-num" class="flashcard__number">01</span>
@@ -59,7 +61,10 @@
     <footer class="footer">
       <p>Created by <a class="link" href="http://jamestbyrne.com">James Byrne</a>.</p>
     </footer>
-  </main><!-- build:js assets/scripts/app.js -->
+  </main>
+  <div class="grid-overlay" id="gridOverlay">
+  </div>
+  <!-- build:js assets/scripts/app.js -->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript">
   </script> 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js">

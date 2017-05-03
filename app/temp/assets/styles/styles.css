@@ -211,6 +211,16 @@ overflow-x: none;
   border-bottom: solid 1px #201F1A;
   padding: 1em 2em;
   list-style: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.menu__item__num {
+  opacity: 0.3;
 }
 
 .menu__header {
@@ -247,6 +257,7 @@ overflow-x: none;
 .menu-inner:hover > a:hover {
   color: white;
   transition: all 0.5s;
+  opacity: 1;
 }
 
 .menu-btn {
@@ -298,6 +309,40 @@ overflow-x: none;
 .menu-inner {
   max-height: 50vh;
   overflow: scroll;
+}
+
+.grid-btn {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+    height: 30px;
+    background-color: transparent;
+    padding: 0;
+    z-index: 200;
+    color: #fff;
+    font-family: 'roboto mono';
+  }
+
+.grid-overlay {
+    position: absolute;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    top: 0;
+    left: 0;
+    background: black;
+    color: #fff;
+    width: 100%;
+    height: 0%;
+    opacity: 0.9;
+    z-index: 100;
+    text-align: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
 }
 
 .wrap {
@@ -482,3 +527,5 @@ textarea.materialize-textarea {
   width: 300px;
   height: 80px;
 }
+
+
