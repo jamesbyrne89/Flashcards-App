@@ -93,8 +93,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		flashcardsDB.getCards(function(items) {
 			// Display initial conten
-			appendCardContent()
-
+			appendCardContent();
 			let menuInner = document.getElementById('menu-inner');
 			let frag = document.createDocumentFragment();
 			for (let i = 0; i < items.length; i++) {
@@ -115,10 +114,9 @@ document.addEventListener("DOMContentLoaded", function() {
 				frag.appendChild(a);		
 				li.addEventListener('click', function(e) {
 					let clicked = e.target.innerText;
-					menuAnim.show();
+					menuAnim.hide();
 					// Run a function that takes the category name you clicked on as a parameter
-					//appendCardContent(clicked, items)
-					menuAnim.cardsGrid.show();
+					appendCardContent(clicked, items)
 				});
 				menuInner.appendChild(frag);
 				catMenu.setAttribute('class', 'relational-menu')
@@ -309,6 +307,7 @@ flashcardsDB.getCards = function(callback) {
 	transaction.oncomplete = function(evt) {
 
 		callback(items);
+		console.log(items);
 	};
 
 	var cursorRequest = store.openCursor();
