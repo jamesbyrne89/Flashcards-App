@@ -67,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	}
 
-
 	function appendCardContent(clicked, items) {
 		console.log('Running appendCardContent')
 		cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
@@ -84,6 +83,41 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	}
 
+	function showCardsGrid(items) {
+	console.log('Running  showCardsGrid')
+	let tl = new TimelineLite();
+	let frag = document.createDocumentFragment();
+	let menuInner = document.getElementById('menu-inner');
+	for (let i = 0; i < 9; i++) {
+		let a = document.createElement('a');
+		let li = document.createElement('li');
+		li.setAttribute('class', 'grid__item');
+
+		if (i < items.length) {
+			console.log(items.length)
+			li.innerText = items[i].name;
+				a.addEventListener('click', function(e) {
+			let clicked = e.target.innerText;
+			currentCat.innerText = clicked;
+			console.log('clicked: ' + clicked)
+			menuTransition();
+			// Append the content to the DOM
+			
+			//	appendCardContent(clicked, items)
+		});
+		}
+		a.appendChild(li);
+		frag.appendChild(a);
+	}
+	gridOverlay.appendChild(frag);
+
+
+	TweenLite.to(grid, 0.7, {
+		y: -20,
+		ease: Power1.easeOut
+	});
+}
+
 	openRequest.onsuccess = function(e) {
 		console.log("running onsuccess");
 		db = e.target.result;
@@ -92,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			console.log('Running getCards callback');
 			// Display initial content
 			appendCardContent();
-			showCardsGrid(items)
+			showCardsGrid(items);
 			let menuInner = document.getElementById('menu-inner');
 			menuInner.innerHTML = '';
 			let frag = document.createDocumentFragment();
@@ -521,12 +555,12 @@ function menuTransition() {
 	slider.classList.add('menu-transition');
 	document.body.appendChild(slider);
 
-	tl.to(slider, 0.5, {
+	tl.to(slider, 0.3, {
 			width: '100vw'
 		})
 		.to(slider, 0.7, {
 			opacity: 0,
-			delay: 0.3
+			delay: 0.2
 		})
 		.to(slider, 0, {
 			display: 'none'
@@ -615,43 +649,16 @@ function showCardInput() {
 	});
 }
 
-function showCardsGrid(items) {
-	console.log('Running  showCardsGrid')
-	const noCardsMsg = document.getElementById('noCardsMsg');
 
-	let frag = document.createDocumentFragment();
-	let menuInner = document.getElementById('menu-inner');
-	for (let i = 0; i < 9; i++) {
-		let a = document.createElement('a');
-		let li = document.createElement('li');
-		li.setAttribute('class', 'grid__item');
-
-		if (i < items.length) {
-			console.log(items.length)
-			console.log(items[i])
-			li.innerText = items[i].name;
-		}
-		a.appendChild(li);
-		frag.appendChild(a);
-	}
-	gridOverlay.appendChild(frag);
-
-	TweenLite.to(grid, 0.7, {
-		height: '100vh'
-	});
-//	TweenLite.to(noCardsMsg, 1, {
-	//	y: -15,
-	//	display: 'none',
-	//	delay: 1
-	//});
-
-}
 
 function hideCardsGrid() {
-
+	let tl = new TimelineLite();
 	const noCardsMsg = document.getElementById('noCardsMsg');
-	TweenLite.to(grid, 0.7, {
-		height: '0'
+	tl.to(grid, 0.7, {
+		opacity: 0
+	})
+	.to(grid, 0, {
+		display: 'none'
 	});
 	TweenLite.to(noCardsMsg, 0.2, {
 		opacity: 0,

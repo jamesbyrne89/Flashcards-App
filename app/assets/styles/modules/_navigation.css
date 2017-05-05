@@ -95,7 +95,7 @@
     height: 30px;
     background-color: transparent;
     padding: 0;
-    z-index: 200;
+    z-index: 180;
   }
 
 
@@ -147,7 +147,7 @@
     height: 30px;
     background-color: transparent;
     padding: 0;
-    z-index: 200;
+    z-index: 180;
     color: #fff;
     font-family: 'roboto mono';
   }
@@ -160,11 +160,33 @@
     background: black;
     color: #fff;
     width: 100%;
-    height: 0%;
-    opacity: 0.9;
+    height: 100vh;
+    opacity: 1;
     z-index: 300;
     text-align: center;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    padding-top: 15px;
+}
+
+.grid-overlay a {
+  width: 25vw;
+  height: 50vh;
+  transition: all 0.7s;
+  display: flex;
+  flex: 0 0 25vw;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid-overlay a:hover {
+  background: #c9ff0c;
+  color: #000;
+  cursor: pointer;
+}
+
+.grid__item {
+  list-style: none;
 }
 
