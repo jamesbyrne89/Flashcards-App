@@ -181,6 +181,31 @@ textarea.materialize-textarea {
 }
 
 .message {
+  display: none;
   opacity: 0;
+}
+
+.grid-overlay {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.grid-overlay a {
+  width: 25vw;
+  height: 50vh;
+  transition: all 0.7s;
+  display: flex;
+  flex: 0 0 25vw;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid-overlay a:hover {
+  background: #c9ff0c;
+  color: #000;
+}
+
+.grid__item {
+  list-style: none;
 }
 

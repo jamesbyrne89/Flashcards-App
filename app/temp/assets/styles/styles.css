@@ -530,6 +530,42 @@ textarea.materialize-textarea {
 }
 
 .message {
+  display: none;
   opacity: 0;
+}
+
+.grid-overlay {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.grid-overlay a {
+  width: 25vw;
+  height: 50vh;
+  transition: all 0.7s;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 25vw;
+          flex: 0 0 25vw;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.grid-overlay a:hover {
+  background: #c9ff0c;
+  color: #000;
+}
+
+.grid__item {
+  list-style: none;
 }
 

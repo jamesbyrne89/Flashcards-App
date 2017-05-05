@@ -69,22 +69,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 	function appendCardContent(clicked, items) {
+		console.log('Running appendCardContent')
 		cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
 		if (clicked) {
 			currentCat.innerText = clicked;
 		} else {
 			currentCat.innerText = '*';
 		}
-		// c is the variable for the content (may need to search through the database to find that item)
-		if  (!items){
+		if (!items) {
 			cardContent.innerHTML = "There's nothing here.";
 		} else if (items[0].cards[0]) {
 			let content = items[0].cards[0];
 			cardContent.innerHTML = content;
 		}
-		//	currentCat.innerText = n;
-
-		//	fcNum.innerText = n;
 	}
 
 	openRequest.onsuccess = function(e) {
@@ -92,8 +89,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		db = e.target.result;
 
 		flashcardsDB.getCards(function(items) {
-			// Display initial conten
+			console.log('Running getCards callback');
+			// Display initial content
 			appendCardContent();
+			showCardsGrid(items)
 			let menuInner = document.getElementById('menu-inner');
 			menuInner.innerHTML = '';
 			let frag = document.createDocumentFragment();
@@ -104,20 +103,20 @@ document.addEventListener("DOMContentLoaded", function() {
 				li.setAttribute('class', 'menu__item');
 				a.setAttribute('data-category', items[i].name);
 				if (items[i].cards.length) {
-				length = 0;
-				}
-				else {
-				length = items[i].cards.length;
+					length = 0;
+				} else {
+					length = items[i].cards.length;
 				};
 				li.innerHTML = `<span>${items[i].name}</span>
 				<span class="menu__item__num">${length} cards</span>`;
 				a.appendChild(li);
-				frag.appendChild(a);		
+				frag.appendChild(a);
 				li.addEventListener('click', function(e) {
 					let clicked = e.target.innerText;
-					hideMenus();
+
 					// Run a function that takes the category name you clicked on as a parameter
 					appendCardContent(clicked, items)
+					hideMenus();
 				});
 				menuInner.appendChild(frag);
 				catMenu.setAttribute('class', 'relational-menu')
@@ -133,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 				flashcardsDB.addNewCategory();
 				flashcardsDB.getCards(function(items) {
+					console.log('Running getCards callback');
 					let frag = document.createDocumentFragment();
 					for (let i = 0; i < items.length; i++) {
 						let a = document.createElement('a');
@@ -150,12 +150,12 @@ document.addEventListener("DOMContentLoaded", function() {
 						a.appendChild(li);
 						frag.appendChild(a);
 						li.addEventListener('click', function(e) {
-							showMenus();
+							hideMenus();
 							let clicked = e.target.innerText;
 							currentCat.innerText = clicked;
 							// Append the content to the DOM
-						
-						//	appendCardContent(clicked, items)
+
+							//	appendCardContent(clicked, items)
 						});
 						menuInner.appendChild(frag);
 					}
@@ -301,10 +301,11 @@ flashcardsDB.addNewCard = function(items) {
 
 // Get all cards in the database (not filtered)
 flashcardsDB.getCards = function(callback) {
+	console.log('Running getCards');
 	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
 	var store = transaction.objectStore("categories");
 	var items = [];
-	console.log('Running getCards');
+
 	transaction.oncomplete = function(evt) {
 
 		callback(items);
@@ -387,8 +388,7 @@ flashcardsDB.deleteRecord = function(variable) {
 
 
 
-
-function showMenus () {
+function showMenus() {
 
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
@@ -414,12 +414,9 @@ function showMenus () {
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
 				let clicked = e.target.innerText;
-				showMenus();
+				hideMenus();
 				// Run a function that takes the category name you clicked on as a parameter
 				appendCardContent(clicked, items)
-			});
-			li.addEventListener('mouseover', function(e) {
-				console.log(items[i].cards.length)
 			});
 			menuInner.appendChild(frag);
 		}
@@ -462,7 +459,8 @@ function showMenus () {
 
 }
 
-function hideMenus  () {
+function hideMenus() {
+	console.log('Running hideMenus')
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
 	const tl3 = new TimelineLite();
@@ -470,7 +468,7 @@ function hideMenus  () {
 	const menuInner = document.getElementById('menu-inner')
 
 	menuInner.innerHTML = '';
-	console.log(menuInner.innerHTML)
+
 
 
 	// Animation
@@ -502,12 +500,10 @@ function hideMenus  () {
 		height: '0px',
 		delay: 0.2
 	});
-	console.log('menu bar before: ' + menuBarOne)
 	TweenLite.to(menuBarOne, 0.5, {
 		width: '100%',
 		delay: 0.4
 	});
-	console.log('menu bar before: ' + menuBarOne.width)
 	TweenLite.to(menuBarTwo, 0.5, {
 		width: '100%',
 		delay: 0.2
@@ -517,7 +513,7 @@ function hideMenus  () {
 	});
 }
 
-function menuTransition () {
+function menuTransition() {
 
 	const slider = document.createElement('div');
 	const tl = new TimelineLite();
@@ -549,7 +545,7 @@ function menuTransition () {
 	});
 }
 
-function showCategoryInput () {
+function showCategoryInput() {
 
 	const tl = new TimelineLite();
 	const addCategoryMenu = document.getElementById("tertiary-menu-one");
@@ -584,7 +580,7 @@ function showCategoryInput () {
 	});
 }
 
-function showCardInput () {
+function showCardInput() {
 	let current = currentCat.innerText;
 	const tl = new TimelineLite();
 	const addCardMenu = document.getElementById("tertiary-menu-two");
@@ -619,24 +615,41 @@ function showCardInput () {
 	});
 }
 
-function showCardsGrid () {
+function showCardsGrid(items) {
+	console.log('Running  showCardsGrid')
+	const noCardsMsg = document.getElementById('noCardsMsg');
 
-const noCardsMsg = document.getElementById('noCardsMsg');
-console.log(noCardsMsg)
+	let frag = document.createDocumentFragment();
+	let menuInner = document.getElementById('menu-inner');
+	for (let i = 0; i < 9; i++) {
+		let a = document.createElement('a');
+		let li = document.createElement('li');
+		li.setAttribute('class', 'grid__item');
+
+		if (i < items.length) {
+			console.log(items.length)
+			console.log(items[i])
+			li.innerText = items[i].name;
+		}
+		a.appendChild(li);
+		frag.appendChild(a);
+	}
+	gridOverlay.appendChild(frag);
+
 	TweenLite.to(grid, 0.7, {
 		height: '100vh'
 	});
-	TweenLite.to(noCardsMsg, 1, {
-		y: -15,
-		opacity: 0.95,
-		delay: 1
-	});
+//	TweenLite.to(noCardsMsg, 1, {
+	//	y: -15,
+	//	display: 'none',
+	//	delay: 1
+	//});
 
 }
 
-function hideCardsGrid () {
+function hideCardsGrid() {
 
-const noCardsMsg = document.getElementById('noCardsMsg');
+	const noCardsMsg = document.getElementById('noCardsMsg');
 	TweenLite.to(grid, 0.7, {
 		height: '0'
 	});
