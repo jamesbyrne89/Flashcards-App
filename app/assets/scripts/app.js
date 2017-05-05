@@ -76,9 +76,9 @@ document.addEventListener("DOMContentLoaded", function() {
 			currentCat.innerText = '*';
 		}
 		// c is the variable for the content (may need to search through the database to find that item)
-		if (!items) {
+		if  (!items){
 			cardContent.innerHTML = "There's nothing here.";
-		} else {
+		} else if (items[0].cards[0]) {
 			let content = items[0].cards[0];
 			cardContent.innerHTML = content;
 		}
@@ -95,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			// Display initial conten
 			appendCardContent();
 			let menuInner = document.getElementById('menu-inner');
+			menuInner.innerHTML = '';
 			let frag = document.createDocumentFragment();
 			for (let i = 0; i < items.length; i++) {
 				let a = document.createElement('a');
@@ -114,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				frag.appendChild(a);		
 				li.addEventListener('click', function(e) {
 					let clicked = e.target.innerText;
-					menuAnim.hide();
+					hideMenus();
 					// Run a function that takes the category name you clicked on as a parameter
 					appendCardContent(clicked, items)
 				});
@@ -149,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function() {
 						a.appendChild(li);
 						frag.appendChild(a);
 						li.addEventListener('click', function(e) {
-							menuAnim.show();
+							showMenus();
 							let clicked = e.target.innerText;
 							currentCat.innerText = clicked;
 							// Append the content to the DOM
@@ -387,16 +388,7 @@ flashcardsDB.deleteRecord = function(variable) {
 
 
 
-let menuAnim = (function() {
-	let menuAnim = {};
-	return menuAnim;
-}());
-
-menuAnim.categoryInput = {};
-menuAnim.cardInput = {};
-menuAnim.cardsGrid = {};
-
-menuAnim.show = function () {
+function showMenus () {
 
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
@@ -422,7 +414,7 @@ menuAnim.show = function () {
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
 				let clicked = e.target.innerText;
-				menuAnim.show();
+				showMenus();
 				// Run a function that takes the category name you clicked on as a parameter
 				appendCardContent(clicked, items)
 			});
@@ -456,7 +448,6 @@ menuAnim.show = function () {
 		height: '100vh',
 		delay: 0.5
 	});
-
 	TweenLite.to(menuBarOne, 0.5, {
 		width: '0px',
 		delay: 0.4
@@ -471,7 +462,7 @@ menuAnim.show = function () {
 
 }
 
-menuAnim.hide = function () {
+function hideMenus  () {
 	const tl = new TimelineLite();
 	const tl2 = new TimelineLite();
 	const tl3 = new TimelineLite();
@@ -511,11 +502,12 @@ menuAnim.hide = function () {
 		height: '0px',
 		delay: 0.2
 	});
-
+	console.log('menu bar before: ' + menuBarOne)
 	TweenLite.to(menuBarOne, 0.5, {
 		width: '100%',
 		delay: 0.4
 	});
+	console.log('menu bar before: ' + menuBarOne.width)
 	TweenLite.to(menuBarTwo, 0.5, {
 		width: '100%',
 		delay: 0.2
@@ -525,7 +517,7 @@ menuAnim.hide = function () {
 	});
 }
 
-menuAnim.transition = function () {
+function menuTransition () {
 
 	const slider = document.createElement('div');
 	const tl = new TimelineLite();
@@ -557,7 +549,7 @@ menuAnim.transition = function () {
 	});
 }
 
-menuAnim.categoryInput.show = function () {
+function showCategoryInput () {
 
 	const tl = new TimelineLite();
 	const addCategoryMenu = document.getElementById("tertiary-menu-one");
@@ -566,12 +558,12 @@ menuAnim.categoryInput.show = function () {
 		TweenLite.to(addCategoryMenu, 0, {
 			display: 'none'
 		});
-		menuAnim.transition();
-		setTimeout(menuAnim.show, 1500);
+		menuTransition();
+		setTimeout(showMenus, 1500);
 
 	})
 
-	menuAnim.transition();
+	menuTransition();
 
 	tl.to(menu3, 0, {
 			display: 'flex'
@@ -592,7 +584,7 @@ menuAnim.categoryInput.show = function () {
 	});
 }
 
-menuAnim.cardInput.show = function () {
+function showCardInput () {
 	let current = currentCat.innerText;
 	const tl = new TimelineLite();
 	const addCardMenu = document.getElementById("tertiary-menu-two");
@@ -601,12 +593,12 @@ menuAnim.cardInput.show = function () {
 		TweenLite.to(addCardMenu, 0, {
 			display: 'none'
 		});
-		menuAnim.transition();
-		setTimeout(menuAnim.show, 1500);
+		menuTransition();
+		setTimeout(showMenus, 1500);
 
 	})
 
-	menuAnim.transition();
+	menuTransition();
 
 	tl.to(menu4, 0, {
 			display: 'flex'
@@ -627,7 +619,7 @@ menuAnim.cardInput.show = function () {
 	});
 }
 
-menuAnim.cardsGrid.show = function () {
+function showCardsGrid () {
 
 const noCardsMsg = document.getElementById('noCardsMsg');
 console.log(noCardsMsg)
@@ -642,7 +634,7 @@ console.log(noCardsMsg)
 
 }
 
-menuAnim.cardsGrid.hide = function () {
+function hideCardsGrid () {
 
 const noCardsMsg = document.getElementById('noCardsMsg');
 	TweenLite.to(grid, 0.7, {
@@ -657,24 +649,24 @@ const noCardsMsg = document.getElementById('noCardsMsg');
 
 // Event listeners
 
-menuBtn.addEventListener('click', menuAnim.show);
-menuOverlay.addEventListener('click', menuAnim.show, false);
-grid.addEventListener('click', menuAnim.cardsGrid.hide, false);
+menuBtn.addEventListener('click', showMenus);
+menuOverlay.addEventListener('click', showMenus, false);
+grid.addEventListener('click', hideCardsGrid, false);
 addCategoryBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
-	menuAnim.categoryInput.show();
+	showCategoryInput();
 
 });
 
 addCardBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
-	menuAnim.cardInput.show();
+	showCardInput();
 
 });
 
-gridBtn.addEventListener('click', menuAnim.cardsGrid.show);
+gridBtn.addEventListener('click', showCardsGrid);
 
 
 //function submitcategoryForm(cat) {
