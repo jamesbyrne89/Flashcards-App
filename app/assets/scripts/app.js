@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			currentCat.innerText = clicked;
 			console.log('clicked: ' + clicked)
 			menuTransition();
+			appendCardContent(clicked, items)
 			// Append the content to the DOM
 			
 			//	appendCardContent(clicked, items)
@@ -136,13 +137,19 @@ document.addEventListener("DOMContentLoaded", function() {
 				let length;
 				li.setAttribute('class', 'menu__item');
 				a.setAttribute('data-category', items[i].name);
-				if (items[i].cards.length) {
+				if (!items[i].cards.length) {
 					length = 0;
 				} else {
 					length = items[i].cards.length;
 				};
+				if (length === 1) {
+				li.innerHTML = `<span>${items[i].name}</span>
+				<span class="menu__item__num">${length} card</span>`	
+				}
+				else {
 				li.innerHTML = `<span>${items[i].name}</span>
 				<span class="menu__item__num">${length} cards</span>`;
+			}
 				a.appendChild(li);
 				frag.appendChild(a);
 				li.addEventListener('click', function(e) {
@@ -670,7 +677,7 @@ function hideCardsGrid() {
 // Event listeners
 
 menuBtn.addEventListener('click', showMenus);
-menuOverlay.addEventListener('click', showMenus, false);
+menuOverlay.addEventListener('click', hideMenus, false);
 grid.addEventListener('click', hideCardsGrid, false);
 addCategoryBtn.addEventListener('click', function(e) {
 
@@ -686,38 +693,6 @@ addCardBtn.addEventListener('click', function(e) {
 
 });
 
-gridBtn.addEventListener('click', showCardsGrid);
+// gridBtn.addEventListener('click', showCardsGrid);
 
 
-//function submitcategoryForm(cat) {
-
-//	var text = cat.value;
-
-// Check to make sure the text is not blank (or just spaces).
-//	if (text.replace(/ /g, '') != '') {
-// Create the category object.
-//		fcDB.createCategory(text, function(flashcard) {
-
-//			addNewCategory();
-//		});
-//	}
-
-// Reset the input field.
-//	newCategoryInput.value = '';
-
-// Don't send the form.
-//	return false;
-
-
-
-// On click, add a new category
-
-
-
-//  Function for creating a new category. Should produce an object 
-
-
-
-// Search through the array of categories and add the card to the cards array within the category object
-// 
-//
