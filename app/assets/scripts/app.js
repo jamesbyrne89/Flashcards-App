@@ -71,57 +71,71 @@ document.addEventListener("DOMContentLoaded", function() {
 	function appendCardContent(clicked, items) {
 		console.log('Running appendCardContent')
 		let random;
-		cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
+		console.log(items)
+	
 		if (clicked) {
-			currentCat.innerText = clicked;
-			random = getRandomInt(0, items[0].cards.length)
-			let content = items[0].cards[random];
-			cardContent.innerHTML = content;
+		currentCat.innerText = clicked;
+		
+			
+		items.forEach(function(i) {
+			var x = i.name;
+			console.log('clicked = ',clicked)
+			console.log(x == clicked)
+			if (x == clicked) {
+				console.log('matching x = ',x)
+				random = getRandomInt(0, i.cards.length)
+				console.log('random: ',random)
+				let content = i.cards[random];
+				
+				cardContent.innerHTML = content;
+			}
+		});	
+			
 		} else {
 			currentCat.innerText = '*';
 		}
 		if (!items) {
 			cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
 			console.log("There's nothing here")
-				}
-		
+		}
+
 	}
 
 	function showCardsGrid(items) {
-	console.log('Running  showCardsGrid')
-	let tl = new TimelineLite();
-	let frag = document.createDocumentFragment();
-	let menuInner = document.getElementById('menu-inner');
-	for (let i = 0; i < 9; i++) {
-		let a = document.createElement('a');
-		let li = document.createElement('li');
-		li.setAttribute('class', 'grid__item');
+		console.log('Running  showCardsGrid')
+		let tl = new TimelineLite();
+		let frag = document.createDocumentFragment();
+		let menuInner = document.getElementById('menu-inner');
+		for (let i = 0; i < 9; i++) {
+			let a = document.createElement('a');
+			let li = document.createElement('li');
+			li.setAttribute('class', 'grid__item');
 
-		if (i < items.length) {
-			console.log(items.length)
-			li.innerText = items[i].name;
+			if (i < items.length) {
+				console.log(items.length)
+				li.innerText = items[i].name;
 				a.addEventListener('click', function(e) {
-			let clicked = e.target.innerText;
-			currentCat.innerText = clicked;
-			console.log('clicked: ' + clicked)
-			menuTransition();
-			appendCardContent(clicked, items)
-			// Append the content to the DOM
-			
-			//	appendCardContent(clicked, items)
-		});
+					let clicked = e.target.innerText;
+					currentCat.innerText = clicked;
+					console.log('clicked: ' + clicked)
+					menuTransition();
+					appendCardContent(clicked, items)
+						// Append the content to the DOM
+
+					//	appendCardContent(clicked, items)
+				});
+			}
+			a.appendChild(li);
+			frag.appendChild(a);
 		}
-		a.appendChild(li);
-		frag.appendChild(a);
+		gridOverlay.appendChild(frag);
+
+
+		TweenLite.to(grid, 0.7, {
+			y: -20,
+			ease: Power1.easeOut
+		});
 	}
-	gridOverlay.appendChild(frag);
-
-
-	TweenLite.to(grid, 0.7, {
-		y: -20,
-		ease: Power1.easeOut
-	});
-}
 
 	openRequest.onsuccess = function(e) {
 		console.log("running onsuccess");
@@ -147,13 +161,12 @@ document.addEventListener("DOMContentLoaded", function() {
 					length = items[i].cards.length;
 				};
 				if (length === 1) {
-				li.innerHTML = `<span>${items[i].name}</span>
-				<span class="menu__item__num">${length} card</span>`	
-				}
-				else {
-				li.innerHTML = `<span>${items[i].name}</span>
+					li.innerHTML = `<span>${items[i].name}</span>
+				<span class="menu__item__num">${length} card</span>`
+				} else {
+					li.innerHTML = `<span>${items[i].name}</span>
 				<span class="menu__item__num">${length} cards</span>`;
-			}
+				}
 				a.appendChild(li);
 				frag.appendChild(a);
 				li.addEventListener('click', function(e) {
@@ -313,7 +326,7 @@ flashcardsDB.addNewCard = function(items) {
 		}
 	};
 	let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
-	console.log('cardsArr=',cardsArr)
+	console.log('cardsArr=', cardsArr)
 	console.log(lb)
 	cardsArr.push(lb);
 	newCardInput.value = '';
@@ -435,9 +448,9 @@ flashcardsDB.deleteRecord = function(variable) {
  */
 
 function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function showMenus() {
@@ -548,7 +561,7 @@ function hideMenus() {
 		opacity: 0
 	}).to(menu4, 0, {
 		display: 'none'
-	});	
+	});
 	TweenLite.to(line1, 0.3, {
 		height: '0px',
 		x: 0
@@ -678,11 +691,11 @@ function hideCardsGrid() {
 	let tl = new TimelineLite();
 	const noCardsMsg = document.getElementById('noCardsMsg');
 	tl.to(grid, 0.7, {
-		opacity: 0
-	})
-	.to(grid, 0, {
-		display: 'none'
-	});
+			opacity: 0
+		})
+		.to(grid, 0, {
+			display: 'none'
+		});
 	TweenLite.to(noCardsMsg, 0.2, {
 		opacity: 0,
 	});
@@ -710,5 +723,3 @@ addCardBtn.addEventListener('click', function(e) {
 });
 
 // gridBtn.addEventListener('click', showCardsGrid);
-
-
