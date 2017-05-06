@@ -24,6 +24,7 @@ const currentCat = document.getElementById('currentCat');
 const addCardLabel = document.getElementById('addCardLabel');
 const grid = document.getElementById('gridOverlay');
 const gridBtn = document.getElementById('grid-btn');
+let current;
 
 /**
  * Code to create the database that will store the decks
@@ -69,18 +70,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	function appendCardContent(clicked, items) {
 		console.log('Running appendCardContent')
+		let random;
 		cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
 		if (clicked) {
 			currentCat.innerText = clicked;
+			random = getRandomInt(0, items[0].cards.length)
+			let content = items[0].cards[random];
+			cardContent.innerHTML = content;
 		} else {
 			currentCat.innerText = '*';
 		}
 		if (!items) {
-			cardContent.innerHTML = "There's nothing here.";
-		} else if (items[0].cards[0]) {
-			let content = items[0].cards[0];
-			cardContent.innerHTML = content;
-		}
+			cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
+			console.log("There's nothing here")
+				}
+		
 	}
 
 	function showCardsGrid(items) {
@@ -252,7 +256,6 @@ document.addEventListener("DOMContentLoaded", function() {
 					opacity: 1,
 					ease: Power1.easeOut
 				});
-				//newCardInput.value = "";
 			})();
 
 
@@ -297,7 +300,7 @@ flashcardsDB.addNewCategory = function(e) {
 
 flashcardsDB.addNewCard = function(items) {
 
-	let current = currentCat.innerText
+	current = currentCat.innerText
 	let cardsArr;
 	// Get the current category depending on which menu item was clicked
 	console.log('Unfiltered: ' + items)
@@ -305,9 +308,13 @@ flashcardsDB.addNewCard = function(items) {
 		if (items[i].name === current) {
 			cardsArr = items[i].cards;
 			console.log(cardsArr)
+
+			console.log('Added card!')
 		}
 	};
 	let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
+	console.log('cardsArr=',cardsArr)
+	console.log(lb)
 	cardsArr.push(lb);
 	newCardInput.value = '';
 
@@ -427,7 +434,11 @@ flashcardsDB.deleteRecord = function(variable) {
  * Menu opening and transition
  */
 
-
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
 function showMenus() {
 
@@ -533,6 +544,11 @@ function hideMenus() {
 	}).to(menu3, 0, {
 		display: 'none'
 	});
+	tl3.to(menu4, 0.1, {
+		opacity: 0
+	}).to(menu4, 0, {
+		display: 'none'
+	});	
 	TweenLite.to(line1, 0.3, {
 		height: '0px',
 		x: 0
