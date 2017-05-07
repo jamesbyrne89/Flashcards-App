@@ -78,28 +78,29 @@ document.addEventListener("DOMContentLoaded", function() {
 		let random;
 		console.log(items)
 		current = clicked;
-	
+
 		if (clicked) {
-		currentCat.innerText = current;
-		
-			
-		items.forEach(function(i) {
-			var x = i.name;
-			console.log('current = ',current)
-			console.log(x == current)
-			if (x == current) {
-				console.log('matching x = ',x)
-				random = getRandomInt(0, i.cards.length)
-				cardIndex = random;
-				catIndex = i;
-				console.log('cardIndex: ',cardIndex)
-				let content = i.cards[cardIndex];
-				fcNum.innerText = '0' + (random + 1);
-				console.log('content=',content)
-				cardContent.innerHTML = content;
-			}
-		});	
-			
+			currentCat.innerText = current;
+
+
+			items.forEach(function(i) {
+				var x = i.name;
+				console.log('current = ', current)
+				console.log(x == current)
+				if (x == current) {
+					console.log('matching x = ', x)
+					random = getRandomInt(0, i.cards.length)
+					cardIndex = random;
+					catIndex = i;
+					currentCards = i.cards;
+					console.log(currentCards)
+					let content = i.cards[cardIndex];
+					fcNum.innerText = '0' + (random + 1);
+					console.log('content=', content)
+					cardContent.innerHTML = content;
+				}
+			});
+
 		} else {
 			currentCat.innerText = '*';
 		}
@@ -125,6 +126,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				li.innerText = items[i].name;
 				a.addEventListener('click', function(e) {
 					let clicked = e.target.innerText;
+					console.log(clicked)
 					currentCat.innerText = clicked;
 					console.log('clicked: ' + clicked)
 					menuTransition();
@@ -189,7 +191,6 @@ document.addEventListener("DOMContentLoaded", function() {
 				catMenu.setAttribute('class', 'relational-menu')
 
 			}
-		
 
 
 
@@ -464,14 +465,26 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-		function nextCard () {
-			console.log(current)
-			console.log(cardIndex);
-			cardIndex++;
-			cardContent.innerText = catIndex.cards[cardIndex];
-			fcNum.innerText = cardIndex + 1;
-
+function nextCard(next) {
+	console.log('ran')
+	cardIndex = next;
+	console.log(cardIndex)
+	if (cardIndex < currentCards.length && cardIndex > 0 ) {
+		
+		console.log(currentCards.length)
+			console.log(cardIndex)
+		cardContent.innerText = catIndex.cards[cardIndex];
+		if (cardIndex < 9) {
+			fcNum.innerText = '0' + (cardIndex + 1);
 		}
+		else {
+			fcNum.innerText = (cardIndex + 1);
+		}
+	} 
+	else {
+		return;
+	}
+}
 
 function showMenus() {
 
@@ -499,6 +512,7 @@ function showMenus() {
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
 				let clicked = e.target.innerText;
+
 				hideMenus();
 				// Run a function that takes the category name you clicked on as a parameter
 				appendCardContent(clicked, items)
@@ -728,7 +742,12 @@ function hideCardsGrid() {
 menuBtn.addEventListener('click', showMenus);
 menuOverlay.addEventListener('click', hideMenus, false);
 grid.addEventListener('click', hideCardsGrid, false);
-rightBtn.addEventListener('click', nextCard, false);
+leftBtn.addEventListener('click', function(){
+	nextCard(cardIndex-1)
+}, false);
+rightBtn.addEventListener('click', function () {
+	nextCard(cardIndex+1)
+}, false);
 addCategoryBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
@@ -746,17 +765,27 @@ addCardBtn.addEventListener('click', function(e) {
 // gridBtn.addEventListener('click', showCardsGrid);
 // 
 
-document.body.onkeyup = function (e) {
+document.body.onkeyup = function(e) {
 	if (e.keyCode === 39) {
 		let tl = new TimelineLite();
-		tl.to(rightBtn, 0.2, {color: '#ffffff', scale: 1.8})
-		.to(rightBtn, 0.7, {color: '#a9a9a9', scale: 1});
+		tl.to(rightBtn, 0.2, {
+				color: '#ffffff',
+				scale: 1.8
+			})
+			.to(rightBtn, 0.7, {
+				color: '#a9a9a9',
+				scale: 1
+			});
 	}
 	if (e.keyCode === 37) {
 		let tl = new TimelineLite();
-		tl.to(leftBtn, 0.2, {color: '#ffffff', scale: 1.8})
-		.to(leftBtn, 0.7, {color: '#a9a9a9', scale: 1});
+		tl.to(leftBtn, 0.2, {
+				color: '#ffffff',
+				scale: 1.8
+			})
+			.to(leftBtn, 0.7, {
+				color: '#a9a9a9',
+				scale: 1
+			});
 	}
 }
-
-
