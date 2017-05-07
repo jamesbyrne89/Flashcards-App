@@ -1,5 +1,6 @@
 // Declare global variables
 
+const body = document.getElementById('body');
 const menuBtn = document.getElementById('menu-btn');
 const addCategoryBtn = document.getElementById('addCategory');
 const addCardBtn = document.getElementById('addCard');
@@ -85,10 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			items.forEach(function(i) {
 				var x = i.name;
-				console.log('current = ', current)
-				console.log(x == current)
 				if (x == current) {
-					console.log('matching x = ', x)
 					random = getRandomInt(0, i.cards.length)
 					cardIndex = random;
 					catIndex = i;
@@ -96,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function() {
 					console.log(currentCards)
 					let content = i.cards[cardIndex];
 					fcNum.innerText = '0' + (random + 1);
-					console.log('content=', content)
 					cardContent.innerHTML = content;
 				}
 			});
@@ -124,17 +121,24 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (i < items.length) {
 				console.log(items.length)
 				li.innerText = items[i].name;
+				console.log(li.innerText)
+				if (li.innerText !== '') {
+					
 				a.addEventListener('click', function(e) {
 					let clicked = e.target.innerText;
 					console.log(clicked)
 					currentCat.innerText = clicked;
-					console.log('clicked: ' + clicked)
+					console.log('clicked!!!')
 					menuTransition();
+					// Append the content to the DOM
 					appendCardContent(clicked, items)
-						// Append the content to the DOM
-
-					//	appendCardContent(clicked, items)
-				});
+						
+					
+				})
+			}
+			else {
+					return;
+			};
 			}
 			a.appendChild(li);
 			frag.appendChild(a);
@@ -199,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		// Listen for submission of new category
 		newCategoryInput.onkeyup = function(e) {
 			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-
+				modal()
 				flashcardsDB.addNewCategory();
 				flashcardsDB.getCards(function(items) {
 					console.log('Running getCards callback');
@@ -224,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function() {
 							let clicked = e.target.innerText;
 							currentCat.innerText = clicked;
 							// Append the content to the DOM
-
+							
 							//	appendCardContent(clicked, items)
 						});
 						menuInner.appendChild(frag);
@@ -465,20 +469,38 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function nextCard(next) {
-	console.log('ran')
-	cardIndex = next;
+function nextCard() {
+	
 	console.log(cardIndex)
-	if (cardIndex < currentCards.length && cardIndex > 0 ) {
-		
-		console.log(currentCards.length)
-			console.log(cardIndex)
+	if (cardIndex < currentCards.length && cardIndex >= 0 ) {
+		cardIndex+=1;
+			console.log(currentCards.length)
 		cardContent.innerText = catIndex.cards[cardIndex];
 		if (cardIndex < 9) {
 			fcNum.innerText = '0' + (cardIndex + 1);
 		}
 		else {
 			fcNum.innerText = (cardIndex + 1);
+		}
+	} 
+	else {
+		return;
+	}
+}
+
+function prevCard() {
+	
+	console.log(cardIndex)
+	if (cardIndex <= currentCards.length && cardIndex > 0 ) {
+		cardIndex-=1;
+			console.log(currentCards.length)
+		cardContent.innerText = catIndex.cards[cardIndex];
+		if (cardIndex < 9) {
+			fcNum.innerText = '0' + (cardIndex + 1);
+		}
+		else {
+			fcNum.innerText = (cardIndex + 1);
+			leftBtn.css=('opacity: 0.1')
 		}
 	} 
 	else {
@@ -742,12 +764,8 @@ function hideCardsGrid() {
 menuBtn.addEventListener('click', showMenus);
 menuOverlay.addEventListener('click', hideMenus, false);
 grid.addEventListener('click', hideCardsGrid, false);
-leftBtn.addEventListener('click', function(){
-	nextCard(cardIndex-1)
-}, false);
-rightBtn.addEventListener('click', function () {
-	nextCard(cardIndex+1)
-}, false);
+leftBtn.addEventListener('click', prevCard, false);
+rightBtn.addEventListener('click', nextCard, false);
 addCategoryBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
@@ -788,4 +806,21 @@ document.body.onkeyup = function(e) {
 				scale: 1
 			});
 	}
+}
+
+
+function modal () {
+console.log('modal')
+	const modal = document.createElement('div');
+	const modalOverlay = document.createElement('div');
+	body.appendChild(modalOverlay)
+	modalOverlay.appendChild(modal)
+	modal.setAttribute('class', 'confirmation-modal');
+	modalOverlay.setAttribute('class', 'modal-overlay');
+	modalOverlay.addEventListener('click', function(){
+		TweenLite.to(modalOverlay, 0.2, {display: 'none'});
+	});
+
+	TweenLite.to(modal, 0.2, {height: '100px', delay: 0.2});
+
 }
