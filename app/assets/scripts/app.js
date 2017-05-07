@@ -23,7 +23,8 @@ const fcNum = document.getElementById('flashcard-num');
 const currentCat = document.getElementById('currentCat');
 const addCardLabel = document.getElementById('addCardLabel');
 const grid = document.getElementById('gridOverlay');
-const gridBtn = document.getElementById('grid-btn');
+const leftBtn = document.getElementById('leftBtn');
+const rightBtn = document.getElementById('rightBtn');
 let current;
 
 /**
@@ -596,7 +597,7 @@ function menuTransition() {
 		})
 		.to(slider, 0.7, {
 			opacity: 0,
-			delay: 0.2
+			delay: 0.3
 		})
 		.to(slider, 0, {
 			display: 'none'
@@ -723,3 +724,17 @@ addCardBtn.addEventListener('click', function(e) {
 });
 
 // gridBtn.addEventListener('click', showCardsGrid);
+// 
+
+document.body.onkeyup = function (e) {
+	if (e.keyCode === 39) {
+		let tl = new TimelineLite();
+		tl.to(rightBtn, 0.2, {color: '#ffffff', scale: 1.8})
+		.to(rightBtn, 0.7, {color: '#a9a9a9', scale: 1});
+	}
+	if (e.keyCode === 37) {
+		let tl = new TimelineLite();
+		tl.to(leftBtn, 0.2, {color: '#ffffff', scale: 1.8})
+		.to(leftBtn, 0.7, {color: '#a9a9a9', scale: 1});
+	}
+}

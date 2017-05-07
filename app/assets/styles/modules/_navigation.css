@@ -131,7 +131,7 @@
   height: 100vh;
   position: absolute;
   right: 0;
-  background-color: #d4ff0c;
+  background-color: #D5F9F3;
   z-index: 300;
 }
 
@@ -180,7 +180,7 @@
 }
 
 .grid-overlay a:hover {
-  background: #c9ff0c;
+  background: #D5F9F3;
   color: #000;
   cursor: pointer;
 }
