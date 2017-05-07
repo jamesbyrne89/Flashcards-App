@@ -81,6 +81,11 @@
   transition: all 0.5s;
 }
 
+.menu-inner:hover > .menu__item__num {
+  opacity: 1;
+}
+
+
 .menu-inner:hover > a:hover {
   color: white;
   transition: all 0.5s;

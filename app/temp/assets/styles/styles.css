@@ -254,6 +254,10 @@ overflow-x: none;
   transition: all 0.5s;
 }
 
+.menu-inner:hover > .menu__item__num {
+  opacity: 1;
+}
+
 .menu-inner:hover > a:hover {
   color: white;
   transition: all 0.5s;
@@ -564,5 +568,9 @@ textarea.materialize-textarea {
   opacity: 0;
 }
 
-
-
+.flashcard-num__line {
+  margin-top: 40px;
+  width: 50px;
+  border: solid 2px #a9a9a9;
+  margin-left: 0;
+}

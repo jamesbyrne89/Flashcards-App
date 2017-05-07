@@ -186,4 +186,9 @@ textarea.materialize-textarea {
 }
 
 
-
+.flashcard-num__line {
+  margin-top: 40px;
+  width: 50px;
+  border: solid 2px #a9a9a9;
+  margin-left: 0;
+}

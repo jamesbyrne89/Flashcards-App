@@ -20,12 +20,16 @@ const newCategoryInput = document.getElementById('addCategoryInput');
 const newCardInput = document.getElementById('addCardInput');
 const cardContent = document.getElementById('card-content');
 const fcNum = document.getElementById('flashcard-num');
+const fcRelTxt = document.getElementById('flashcard-relational-text');
 const currentCat = document.getElementById('currentCat');
 const addCardLabel = document.getElementById('addCardLabel');
 const grid = document.getElementById('gridOverlay');
 const leftBtn = document.getElementById('leftBtn');
 const rightBtn = document.getElementById('rightBtn');
 let current;
+let currentCards;
+let cardIndex;
+let catIndex;
 
 /**
  * Code to create the database that will store the decks
@@ -73,21 +77,25 @@ document.addEventListener("DOMContentLoaded", function() {
 		console.log('Running appendCardContent')
 		let random;
 		console.log(items)
+		current = clicked;
 	
 		if (clicked) {
-		currentCat.innerText = clicked;
+		currentCat.innerText = current;
 		
 			
 		items.forEach(function(i) {
 			var x = i.name;
-			console.log('clicked = ',clicked)
-			console.log(x == clicked)
-			if (x == clicked) {
+			console.log('current = ',current)
+			console.log(x == current)
+			if (x == current) {
 				console.log('matching x = ',x)
 				random = getRandomInt(0, i.cards.length)
-				console.log('random: ',random)
-				let content = i.cards[random];
-				
+				cardIndex = random;
+				catIndex = i;
+				console.log('cardIndex: ',cardIndex)
+				let content = i.cards[cardIndex];
+				fcNum.innerText = '0' + (random + 1);
+				console.log('content=',content)
 				cardContent.innerHTML = content;
 			}
 		});	
@@ -181,9 +189,11 @@ document.addEventListener("DOMContentLoaded", function() {
 				catMenu.setAttribute('class', 'relational-menu')
 
 			}
+		
+
+
+
 		});
-
-
 
 		// Listen for submission of new category
 		newCategoryInput.onkeyup = function(e) {
@@ -454,6 +464,15 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
+		function nextCard () {
+			console.log(current)
+			console.log(cardIndex);
+			cardIndex++;
+			cardContent.innerText = catIndex.cards[cardIndex];
+			fcNum.innerText = cardIndex + 1;
+
+		}
+
 function showMenus() {
 
 	const tl = new TimelineLite();
@@ -709,6 +728,7 @@ function hideCardsGrid() {
 menuBtn.addEventListener('click', showMenus);
 menuOverlay.addEventListener('click', hideMenus, false);
 grid.addEventListener('click', hideCardsGrid, false);
+rightBtn.addEventListener('click', nextCard, false);
 addCategoryBtn.addEventListener('click', function(e) {
 
 	e.stopPropagation();
@@ -738,3 +758,5 @@ document.body.onkeyup = function (e) {
 		.to(leftBtn, 0.7, {color: '#a9a9a9', scale: 1});
 	}
 }
+
+
