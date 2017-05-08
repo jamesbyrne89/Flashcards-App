@@ -844,13 +844,19 @@ function modal () {
 	});
 
 	confirmBtn.addEventListener('click', confirm);
-	
+
 	cancelBtn.addEventListener('click', function(){
 		TweenLite.to(frag, 0.2, {opacity: 0, delay: 1});
 		TweenLite.to(modal, 0.2, {height: '0px', delay: 0.2});
 		TweenLite.to(modal, 0.2, {display: 'none', delay: 1});
 	});
 }
+
+newCategoryInput.on.keyup = function(e) {
+    if (this.clientHeight < this.scrollHeight) { 
+    	this.style.height = this.scrollHeight + 'px';
+    }
+};
 
 
 
