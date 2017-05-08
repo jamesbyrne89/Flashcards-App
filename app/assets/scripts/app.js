@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				});
 
 
-				(function confirm() {
+				function confirm() {
 					const newCatMenuInner = document.getElementById('newCategoryInner');
 					let confirmation = document.createElement('span');
 					confirmation.setAttribute('class', 'add-category__confirmation');
@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
 						ease: Power1.easeOut
 					});
 					newCategoryInput.value = "";
-				})();
+				};
 			}
 		}
 		submitCardBtn.addEventListener('click', function(e) {
@@ -810,17 +810,51 @@ document.body.onkeyup = function(e) {
 
 
 function modal () {
-console.log('modal')
+
 	const modal = document.createElement('div');
 	const modalOverlay = document.createElement('div');
-	body.appendChild(modalOverlay)
-	modalOverlay.appendChild(modal)
+	let frag = document.createDocumentFragment();
+	const btnHolder = document.createElement('div');
+	const confirmBtn = document.createElement('btn');
+	const cancelBtn = document.createElement('btn');
+	const modalTxt = document.createElement('span');
+
+	confirmBtn.setAttribute('class', 'submit-btn');
+	cancelBtn.setAttribute('class', 'submit-btn');
+	btnHolder.setAttribute('class', 'wrapper');
+	modalTxt.setAttribute('class', 'modal-text');
 	modal.setAttribute('class', 'confirmation-modal');
 	modalOverlay.setAttribute('class', 'modal-overlay');
+
+	modalTxt.innerText = `Are you sure you want to create the ${newCategoryInput.value} category?`;
+
+	btnHolder.appendChild(confirmBtn);
+	btnHolder.appendChild(cancelBtn);
+	frag.appendChild(btnHolder);
+	frag.appendChild(modalTxt);
+	body.appendChild(modalOverlay)	
+	modal.appendChild(frag);
+	modalOverlay.appendChild(modal);
+
+	TweenLite.to(modal, 0.2, {height: '100px', delay: 0.2});
+	TweenLite.to(frag, 0.2, {opacity: 1, delay: 1});
+
 	modalOverlay.addEventListener('click', function(){
 		TweenLite.to(modalOverlay, 0.2, {display: 'none'});
 	});
 
-	TweenLite.to(modal, 0.2, {height: '100px', delay: 0.2});
-
+	confirmBtn.addEventListener('click', confirm);
+	
+	cancelBtn.addEventListener('click', function(){
+		TweenLite.to(frag, 0.2, {opacity: 0, delay: 1});
+		TweenLite.to(modal, 0.2, {height: '0px', delay: 0.2});
+		TweenLite.to(modal, 0.2, {display: 'none', delay: 1});
+	});
 }
+
+
+
+
+
+
+
