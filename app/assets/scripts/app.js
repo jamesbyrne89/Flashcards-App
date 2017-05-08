@@ -123,22 +123,21 @@ document.addEventListener("DOMContentLoaded", function() {
 				li.innerText = items[i].name;
 				console.log(li.innerText)
 				if (li.innerText !== '') {
-					
-				a.addEventListener('click', function(e) {
-					let clicked = e.target.innerText;
-					console.log(clicked)
-					currentCat.innerText = clicked;
-					console.log('clicked!!!')
-					menuTransition();
-					// Append the content to the DOM
-					appendCardContent(clicked, items)
-						
-					
-				})
-			}
-			else {
+
+					a.addEventListener('click', function(e) {
+						let clicked = e.target.innerText;
+						console.log(clicked)
+						currentCat.innerText = clicked;
+						console.log('clicked!!!')
+						menuTransition();
+						// Append the content to the DOM
+						appendCardContent(clicked, items)
+
+
+					})
+				} else {
 					return;
-			};
+				};
 			}
 			a.appendChild(li);
 			frag.appendChild(a);
@@ -195,69 +194,9 @@ document.addEventListener("DOMContentLoaded", function() {
 				catMenu.setAttribute('class', 'relational-menu')
 
 			}
-
-
-
 		});
 
-		// Listen for submission of new category
-		newCategoryInput.onkeyup = function(e) {
-			if (e.keyCode == 13 && newCategoryInput.value !== "") {
-				modal()
-				flashcardsDB.addNewCategory();
-				flashcardsDB.getCards(function(items) {
-					console.log('Running getCards callback');
-					let frag = document.createDocumentFragment();
-					for (let i = 0; i < items.length; i++) {
-						let a = document.createElement('a');
-						let li = document.createElement('li');
-						let length;
-						li.setAttribute('class', 'menu__item');
-						a.setAttribute('data-category', items[i].name);
-						if (items[i].cards.length) {
-							length = 0;
-						} else {
-							length = items[i].cards.length;
-						};
-						li.innerHTML = `<span>${items[i].name}</span>
-				<span class="menu__item__num">${length} cards</span>`;
-						a.appendChild(li);
-						frag.appendChild(a);
-						li.addEventListener('click', function(e) {
-							hideMenus();
-							let clicked = e.target.innerText;
-							currentCat.innerText = clicked;
-							// Append the content to the DOM
-							
-							//	appendCardContent(clicked, items)
-						});
-						menuInner.appendChild(frag);
-					}
-				});
 
-
-				function confirm() {
-					const newCatMenuInner = document.getElementById('newCategoryInner');
-					let confirmation = document.createElement('span');
-					confirmation.setAttribute('class', 'add-category__confirmation');
-					confirmation.innerText = `${newCategoryInput.value} category successfully added`;
-					newCatMenuInner.appendChild(confirmation);
-					const tl = new TimelineLite();
-					tl.to(newCategoryInput, 0.05, {
-						opacity: 0
-					}).to(newCategoryInput, 0.1, {
-						opacity: 1,
-						delay: 0.1
-					});
-					TweenLite.to(confirmation, 1, {
-						y: -15,
-						opacity: 1,
-						ease: Power1.easeOut
-					});
-					newCategoryInput.value = "";
-				};
-			}
-		}
 		submitCardBtn.addEventListener('click', function(e) {
 
 
@@ -470,40 +409,36 @@ function getRandomInt(min, max) {
 }
 
 function nextCard() {
-	
+
 	console.log(cardIndex)
-	if (cardIndex < currentCards.length && cardIndex >= 0 ) {
-		cardIndex+=1;
-			console.log(currentCards.length)
+	if (cardIndex < currentCards.length && cardIndex >= 0) {
+		cardIndex += 1;
+		console.log(currentCards.length)
 		cardContent.innerText = catIndex.cards[cardIndex];
 		if (cardIndex < 9) {
 			fcNum.innerText = '0' + (cardIndex + 1);
-		}
-		else {
+		} else {
 			fcNum.innerText = (cardIndex + 1);
 		}
-	} 
-	else {
+	} else {
 		return;
 	}
 }
 
 function prevCard() {
-	
+
 	console.log(cardIndex)
-	if (cardIndex <= currentCards.length && cardIndex > 0 ) {
-		cardIndex-=1;
-			console.log(currentCards.length)
+	if (cardIndex <= currentCards.length && cardIndex > 0) {
+		cardIndex -= 1;
+		console.log(currentCards.length)
 		cardContent.innerText = catIndex.cards[cardIndex];
 		if (cardIndex < 9) {
 			fcNum.innerText = '0' + (cardIndex + 1);
-		}
-		else {
+		} else {
 			fcNum.innerText = (cardIndex + 1);
-			leftBtn.css=('opacity: 0.1')
+			leftBtn.css = ('opacity: 0.1')
 		}
-	} 
-	else {
+	} else {
 		return;
 	}
 }
@@ -809,58 +744,142 @@ document.body.onkeyup = function(e) {
 }
 
 
-function modal () {
+// Listen for submission of new category
+newCategoryInput.onkeyup = function(e) {
+	if (e.keyCode == 13 && newCategoryInput.value !== "") {
+		modal();
+
+	}
+}
+
+
+function modal() {
 
 	const modal = document.createElement('div');
 	const modalOverlay = document.createElement('div');
 	let frag = document.createDocumentFragment();
 	const btnHolder = document.createElement('div');
-	const confirmBtn = document.createElement('btn');
-	const cancelBtn = document.createElement('btn');
+	const confirmBtn = document.createElement('button');
+	const cancelBtn = document.createElement('button');
 	const modalTxt = document.createElement('span');
 
-	confirmBtn.setAttribute('class', 'submit-btn');
-	cancelBtn.setAttribute('class', 'submit-btn');
+	confirmBtn.setAttribute('class', 'btn-submit');
+	cancelBtn.setAttribute('class', 'btn-submit');
 	btnHolder.setAttribute('class', 'wrapper');
 	modalTxt.setAttribute('class', 'modal-text');
 	modal.setAttribute('class', 'confirmation-modal');
 	modalOverlay.setAttribute('class', 'modal-overlay');
 
 	modalTxt.innerText = `Are you sure you want to create the ${newCategoryInput.value} category?`;
+	confirmBtn.innerText = 'Submit';
+	cancelBtn.innerText = 'Cancel';
 
 	btnHolder.appendChild(confirmBtn);
 	btnHolder.appendChild(cancelBtn);
-	frag.appendChild(btnHolder);
 	frag.appendChild(modalTxt);
-	body.appendChild(modalOverlay)	
-	modal.appendChild(frag);
+	frag.appendChild(btnHolder);
+	body.appendChild(modalOverlay)
 	modalOverlay.appendChild(modal);
-
-	TweenLite.to(modal, 0.2, {height: '100px', delay: 0.2});
-	TweenLite.to(frag, 0.2, {opacity: 1, delay: 1});
-
-	modalOverlay.addEventListener('click', function(){
-		TweenLite.to(modalOverlay, 0.2, {display: 'none'});
+	modal.appendChild(frag);
+	
+	TweenLite.to(modal, 0.2, {
+		height: '200px',
+		delay: 0.2
+	});
+	TweenLite.from(frag, 0.2, {
+	opacity: 0
+	});
+	TweenLite.to(frag, 0.2, {
+		opacity: 1,
+		delay: 3
 	});
 
-	confirmBtn.addEventListener('click', confirm);
+	modalOverlay.addEventListener('click', function() {
+		e.stopPropagation();
+		TweenLite.to(modalOverlay, 0.2, {
+			display: 'none'
+		});
+	});
 
-	cancelBtn.addEventListener('click', function(){
-		TweenLite.to(frag, 0.2, {opacity: 0, delay: 1});
-		TweenLite.to(modal, 0.2, {height: '0px', delay: 0.2});
-		TweenLite.to(modal, 0.2, {display: 'none', delay: 1});
+	confirmBtn.addEventListener('click', function() {
+		confirm
+		flashcardsDB.addNewCategory();
+		flashcardsDB.getCards(function(items) {
+			console.log('Running getCards callback');
+			let frag = document.createDocumentFragment();
+			for (let i = 0; i < items.length; i++) {
+				let a = document.createElement('a');
+				let li = document.createElement('li');
+				let length;
+				li.setAttribute('class', 'menu__item');
+				a.setAttribute('data-category', items[i].name);
+				if (items[i].cards.length) {
+					length = 0;
+				} else {
+					length = items[i].cards.length;
+				};
+				li.innerHTML = `<span>${items[i].name}</span>
+				<span class="menu__item__num">${length} cards</span>`;
+				a.appendChild(li);
+				frag.appendChild(a);
+				li.addEventListener('click', function(e) {
+					hideMenus();
+					let clicked = e.target.innerText;
+					currentCat.innerText = clicked;
+					// Append the content to the DOM
+
+					//	appendCardContent(clicked, items)
+				});
+				menuInner.appendChild(frag);
+			}
+		});
+
+
+		function confirm() {
+			const newCatMenuInner = document.getElementById('newCategoryInner');
+			let confirmation = document.createElement('span');
+			confirmation.setAttribute('class', 'add-category__confirmation');
+			confirmation.innerText = `${newCategoryInput.value} category successfully added`;
+			newCatMenuInner.appendChild(confirmation);
+			const tl = new TimelineLite();
+			tl.to(newCategoryInput, 0.05, {
+				opacity: 0
+			}).to(newCategoryInput, 0.1, {
+				opacity: 1,
+				delay: 0.1
+			});
+			TweenLite.to(confirmation, 1, {
+				y: -15,
+				opacity: 1,
+				ease: Power1.easeOut
+			});
+			newCategoryInput.value = "";
+		};
+
+	});
+
+	cancelBtn.addEventListener('click', function() {
+		TweenLite.to(frag, 0.2, {
+			opacity: 0,
+			delay: 1
+		});
+		TweenLite.to(modal, 0.2, {
+			height: '0px',
+			delay: 0.2
+		});
+		TweenLite.to(modal, 0.2, {
+			display: 'none',
+			delay: 1
+		});
+		TweenLite.to(modalOverlay, 0.2, {
+			display: 'none'
+		});
 	});
 }
 
-newCategoryInput.on.keyup = function(e) {
-    if (this.clientHeight < this.scrollHeight) { 
-    	this.style.height = this.scrollHeight + 'px';
-    }
+newCardInput.onkeyup = function(e) {
+	console.log(this)
+	if (this.clientHeight < this.scrollHeight) {
+		this.style.height = this.scrollHeight + 'px';
+	}
 };
-
-
-
-
-
-
-
