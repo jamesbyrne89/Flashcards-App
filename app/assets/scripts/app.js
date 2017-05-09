@@ -782,19 +782,22 @@ function modal() {
 	modalOverlay.appendChild(modal);
 	modal.appendChild(frag);
 	
-	TweenLite.to(modal, 0.2, {
+	TweenLite.to(modal, 0.3, {
 		height: '200px',
-		delay: 0.2
+		delay: 0.2,
+		ease: Power1.easeOut
 	});
-	TweenLite.from(frag, 0.2, {
-	opacity: 0
-	});
-	TweenLite.to(frag, 0.2, {
+	TweenLite.to(btnHolder, 0.3, {
 		opacity: 1,
-		delay: 3
+		delay: 0.5
+	});
+	TweenLite.to(modalTxt, 0.3, {
+		opacity: 1,
+		delay: 0.5
 	});
 
 	modalOverlay.addEventListener('click', function() {
+		console.log('closed overlay')
 		e.stopPropagation();
 		TweenLite.to(modalOverlay, 0.2, {
 			display: 'none'
@@ -802,7 +805,7 @@ function modal() {
 	});
 
 	confirmBtn.addEventListener('click', function() {
-		confirm
+
 		flashcardsDB.addNewCategory();
 		flashcardsDB.getCards(function(items) {
 			console.log('Running getCards callback');
@@ -858,21 +861,27 @@ function modal() {
 
 	});
 
-	cancelBtn.addEventListener('click', function() {
-		TweenLite.to(frag, 0.2, {
-			opacity: 0,
-			delay: 1
-		});
+	cancelBtn.addEventListener('click', function(e) {
+		e.stopPropagation();
+
 		TweenLite.to(modal, 0.2, {
 			height: '0px',
-			delay: 0.2
+			delay: 0.1,
+			ease: Power1.easeOut
 		});
-		TweenLite.to(modal, 0.2, {
+	TweenLite.to(modalTxt, 0.1, {
+		opacity: 0
+	});
+		TweenLite.to(btnHolder, 0.1, {
+		opacity: 0
+	});		
+	TweenLite.to(modal, 0, {
 			display: 'none',
-			delay: 1
+			delay: 0.3
 		});
-		TweenLite.to(modalOverlay, 0.2, {
-			display: 'none'
+		TweenLite.to(modalOverlay, 0, {
+			display: 'none',
+			delay: 0.5
 		});
 	});
 }

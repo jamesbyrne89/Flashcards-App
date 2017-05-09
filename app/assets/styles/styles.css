@@ -100,6 +100,7 @@ textarea.materialize-textarea {
   justify-content: space-around;
   margin: 0px;
   padding: 1em;
+  opacity: 0;
 }
 
 .btn-submit {
@@ -223,7 +224,6 @@ textarea.materialize-textarea {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 1em;
   background: #000;
 }
 
@@ -232,4 +232,5 @@ textarea.materialize-textarea {
   text-align: center;
   display: block;
   padding: 1em;
+  opacity: 0;
 }
