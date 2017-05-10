@@ -1,927 +1,383 @@
-// Wrap entire code in init function
-
-(function init () {
-
-// Declare global variables
-const body = document.getElementById('body');
-const menuBtn = document.getElementById('menu-btn');
-const addCategoryBtn = document.getElementById('add-category');
-const addCardBtn = document.getElementById('addCard');
-const submitCardBtn = document.getElementById('submit-card');
-const menuOverlay = document.getElementById('menu-overlay');
-const menu = document.getElementById('main-menu');
-const menu2 = document.getElementById('secondary-menu');
-const menu3 = document.getElementById('tertiary-menu-one');
-const menu4 = document.getElementById('tertiary-menu-two');
-const catMenu = document.getElementById('categories-menu');
-const line1 = document.getElementById('vert-line-1');
-const line2 = document.getElementById('vert-line-2');
-const menuBar1 = document.getElementById('menu-bar-one');
-const menuBar2 = document.getElementById('menu-bar-two');
-const menuBar3 = document.getElementById('menu-bar-three');
-const backBtn = document.getElementById('back-btn');
-const newCategoryInput = document.getElementById('add-category-input');
-const newCardInput = document.getElementById('add-card-input');
-const cardContent = document.getElementById('card-content');
-const fcNum = document.getElementById('flashcard-num');
-const fcRelTxt = document.getElementById('flashcard-relational-text');
-const currentCat = document.getElementById('current-cat');
-const addCardLabel = document.getElementById('add-card-label');
-const grid = document.getElementById('grid-overlay');
-const leftBtn = document.getElementById('left-btn');
-const rightBtn = document.getElementById('right-btn');
-let current;
-let currentCards;
-let cardIndex;
-let catIndex;
-
-/**
- * Code to create the database that will store the decks
- */
-
-let flashcardsDB = (function() {
-	let flashcardsDB = {};
-	let datastore = null;
-
-	// flashcards: Add methods for interacting with the database here.
-
-	// Export the tDB object.
-	return flashcardsDB;
-}());
-
-
-var db;
-
-flashcardsDB.indexedDBOk = function() {
-	return "indexedDB" in window;
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-
-	//No support? Go in the corner and pout.
-	if (!flashcardsDB.indexedDBOk) return;
-
-	var openRequest = indexedDB.open("idarticle_categories", 1);
-
-	openRequest.onupgradeneeded = function(e) {
-		var thisDB = e.target.result;
-
-		if (!thisDB.objectStoreNames.contains("categories")) {
-			thisDB.createObjectStore("categories", {
-				autoIncrement: true
-			});
-			// I want to be able to search categories by name later
-			//os.createIndex("categoryNames", "name", {
-			//	unique: false
-			//});
-		}
-	}
-
-	function appendCardContent(clicked, items) {
-		console.log('Running appendCardContent')
-		let random;
-		console.log(items)
-		current = clicked;
-
-		if (clicked) {
-			currentCat.innerText = current;
-
-
-			items.forEach(function(i) {
-				var x = i.name;
-				if (x == current) {
-					random = getRandomInt(0, i.cards.length)
-					cardIndex = random;
-					catIndex = i;
-					currentCards = i.cards;
-					console.log(currentCards)
-					let content = i.cards[cardIndex];
-					fcNum.innerText = '0' + (random + 1);
-					cardContent.innerHTML = content;
-				}
-			});
-
-		} else {
-			currentCat.innerText = '*';
-		}
-		if (!items) {
-			cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
-			console.log("There's nothing here")
-		}
-
-	}
-
-	function showCardsGrid(items) {
-		console.log('Running  showCardsGrid')
-		let tl = new TimelineLite();
-		let frag = document.createDocumentFragment();
-		let menuInner = document.getElementById('menu-inner');
-		for (let i = 0; i < 9; i++) {
-			let a = document.createElement('a');
-			let li = document.createElement('li');
-			li.setAttribute('class', 'grid__item');
-
-			if (i < items.length) {
-				console.log(items.length)
-				li.innerText = items[i].name;
-				console.log(li.innerText)
-				if (li.innerText !== '') {
-
-					a.addEventListener('click', function(e) {
-						let clicked = e.target.innerText;
-						console.log(clicked)
-						currentCat.innerText = clicked;
-						console.log('clicked!!!')
-						menuTransition();
-						// Append the content to the DOM
-						appendCardContent(clicked, items)
-
-
-					})
-				} else {
-					return;
-				};
-			}
-			a.appendChild(li);
-			frag.appendChild(a);
-		}
-		gridOverlay.appendChild(frag);
-
-
-		TweenLite.to(grid, 0.7, {
-			y: -20,
-			ease: Power1.easeOut
-		});
-	}
-
-	openRequest.onsuccess = function(e) {
-		console.log("running onsuccess");
-		db = e.target.result;
-
-		flashcardsDB.getCards(function(items) {
-			console.log('Running getCards callback');
-			// Display initial content
-			appendCardContent();
-			showCardsGrid(items);
-			let menuInner = document.getElementById('menu-inner');
-			menuInner.innerHTML = '';
-			let frag = document.createDocumentFragment();
-			for (let i = 0; i < items.length; i++) {
-				let a = document.createElement('a');
-				let li = document.createElement('li');
-				let length;
-				li.setAttribute('class', 'menu__item');
-				a.setAttribute('data-category', items[i].name);
-				if (!items[i].cards.length) {
-					length = 0;
-				} else {
-					length = items[i].cards.length;
-				};
-				if (length === 1) {
-					li.innerHTML = `<span>${items[i].name}</span>
-				<span class="menu__item__num">${length} card</span>`
-				} else {
-					li.innerHTML = `<span>${items[i].name}</span>
-				<span class="menu__item__num">${length} cards</span>`;
-				}
-				a.appendChild(li);
-				frag.appendChild(a);
-				li.addEventListener('click', function(e) {
-					let clicked = e.target.innerText;
-
-					// Run a function that takes the category name you clicked on as a parameter
-					appendCardContent(clicked, items)
-					hideMenus();
-				});
-				menuInner.appendChild(frag);
-				catMenu.setAttribute('class', 'relational-menu')
-
-			}
-		});
-
-
-		submitCardBtn.addEventListener('click', function(e) {
-
-
-			//flashcardsDB.addNewCard(items);
-			flashcardsDB.getCards(function(items) {
-				console.log(items)
-				flashcardsDB.addNewCard(items);
-
-			});
-			(function confirm() {
-				const newCardMenuInner = document.getElementById('newCardInner');
-				let confirmation = document.createElement('span');
-				confirmation.setAttribute('class', 'success-message');
-				confirmation.innerText = `New card successfully added`;
-				newCardMenuInner.appendChild(confirmation);
-				const tl = new TimelineLite();
-				tl.to(newCategoryInput, 0.05, {
-					opacity: 0
-				}).to(newCategoryInput, 0.1, {
-					opacity: 1,
-					delay: 0.1
-				});
-				TweenLite.to(confirmation, 1, {
-					y: -15,
-					opacity: 1,
-					ease: Power1.easeOut
-				});
-			})();
-
-
-
-		});
-	}
-
-	openRequest.onerror = function(e) {
-		//Do something for the error
-	}
-
-}, false);
-
-flashcardsDB.addNewCategory = function(e) {
-	var name = newCategoryInput.value;
-
-	console.log("About to add " + name);
-
-	var transaction = db.transaction(["categories"], "readwrite");
-	var store = transaction.objectStore("categories");
-
-	//Define a category object
-	var category = {
-		name: name,
-		created: new Date(),
-		cards: []
-	}
-
-	//Perform the add
-	var request = store.add(category);
-
-	request.onerror = function(e) {
-		console.log("Error", e.target.error.name);
-		//some type of error handler
-	}
-
-	request.onsuccess = function(e) {
-		console.log("Woot! Did it");
-	}
-}
-
-
-flashcardsDB.addNewCard = function(items) {
-
-	current = currentCat.innerText
-	let cardsArr;
-	// Get the current category depending on which menu item was clicked
-	console.log('Unfiltered: ' + items)
-	for (let i = 0; i < items.length; i++) {
-		if (items[i].name === current) {
-			cardsArr = items[i].cards;
-			console.log(cardsArr)
-
-			console.log('Added card!')
-		}
-	};
-	let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
-	console.log('cardsArr=', cardsArr)
-	console.log(lb)
-	cardsArr.push(lb);
-	newCardInput.value = '';
-
-
-	// Updates the database with the new input
-
-	let title = current;
-
-	let transaction = db.transaction(['categories'], 'readwrite');
-	let objectStore = transaction.objectStore('categories');
-
-	objectStore.openCursor().onsuccess = function(event) {
-		let cursor = event.target.result;
-		if (cursor) {
-			if (cursor.value.name === current) {
-				let updateData = cursor.value;
-
-				updateData.cards = cardsArr;
-				let request = cursor.update(updateData);
-				request.onsuccess = function() {
-					console.log('A better album year?');
-				};
-			};
-			cursor.continue();
-		} else {
-			console.log('Entries displayed.');
-		}
-	};
-
-}
-
-
-// Get all cards in the database (not filtered)
-flashcardsDB.getCards = function(callback) {
-	console.log('Running getCards');
-	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
-	var store = transaction.objectStore("categories");
-	var items = [];
-
-	transaction.oncomplete = function(evt) {
-
-		callback(items);
-		console.log(items);
-	};
-
-	var cursorRequest = store.openCursor();
-
-	cursorRequest.onerror = function(error) {
-		console.log(error);
-	};
-
-	cursorRequest.onsuccess = function(evt) {
-		var cursor = evt.target.result;
-		if (cursor) {
-			items.push(cursor.value);
-			cursor.continue();
-		}
-
-	};
-
-}
-
-flashcardsDB.deleteEverything = function() {
-	// open a read/write db transaction, ready for deleting the data
-	var transaction = db.transaction(["categories"], "readwrite");
-
-	// report on the success of opening the transaction
-	transaction.oncomplete = function(event) {
-		console.log('Transaction completed: database modification finished.');
-	};
-
-
-	transaction.onerror = function(event) {
-		console.log('Transaction not opened due to error: ' + transaction.error);
-	};
-
-	// create an object store on the transaction
-	var objectStore = transaction.objectStore("categories");
-
-	// Delete the specified record out of the object store
-	var objectStoreRequest = objectStore.clear();
-
-	objectStoreRequest.onsuccess = function(event) {
-		// report the success of our delete operation
-		console.log('Record deleted.');
-	};
+// JavaScript Document
+window.onload = function() {
+    console.log("Junior developer test.");
+
+    // declare your variables here.
+    var background;
+    var skyLogo;
+    var frameOneTextPrimary;
+    var frameOneTextSecondary;
+    var mAndS;
+    var samsung;
+    var frameTwoTextPrimary;
+    var grabber;
+    var frameTwoTerms;
+    var CTA;
+    var frameThreeTextPrimary;
+    var frameThreeTextSecondary;
+    var frameThreeTerms;
+    var frameThreeTextTertiary;
+    var backgroundEnd;
+    var bounce;
+    var sheen;
+    // store a reference to the canvas which we will draw on.
+    var stage = new createjs.Stage("banner");
+
+    // register the stage to handle mouse events. 
+    stage.enableMouseOver(10);
+
+    // register the Ticker to listen for the tick event.
+    createjs.Ticker.addEventListener("tick", handleTick, false);
+
+    // redraw the canvas - like Event.ENTER_FRAME in Adobe Flash.
+    function handleTick(event) {
+        stage.update();
+    }
+
+    // create a preloader to load the images.
+    var loader = new createjs.LoadQueue(false);
+
+    // when all images are loaded call the handleAllImageLoaded function.
+    loader.on('complete', handleAllImagesLoaded, this);
+
+    // provide a manifest of files and ids to be loaded.
+    loader.loadManifest([{
+            id: "background",
+            src: "images/background.png"
+        },
+        {
+            id: "skyLogo",
+            src: "images/Sky_glassmark_multicoloured_CMYK_Large.png"
+        },
+        {
+            id: "frameOneTextPrimary",
+            src: "images/frame-1-text-1.png"
+        },
+        {
+            id: "frameOneTextSecondary",
+            src: "images/frame-1-text-2.png"
+        },
+        {
+            id: "mAndS",
+            src: "images/MandS.png"
+        },
+        {
+            id: "samsung",
+            src: "images/samsung.png"
+        },
+        {
+            id: "stamp",
+            src: "images/BB_Sale_12MF_Sky_UL_Stamp.png"
+        },
+        {
+            id: "frameTwoTextPrimary",
+            src: "images/When-you-join-Sky-with.png"
+        },
+        {
+            id: "grabber",
+            src: "images/grabber_1.png"
+        },
+        {
+            id: "frameTwoTerms",
+            src: "images/frame-2-terms.png"
+        },
+        {
+            id: "CTA",
+            src: "images/CTA.png"
+        },
+        {
+            id: "frameThreeTextPrimary",
+            src: "images/frame-3-text-1.png"
+        },
+        {
+            id: "frameThreeTextSecondary",
+            src: "images/frame-3-text-2.png"
+        },
+        {
+            id: "frameThreeTextTertiary",
+            src: "images/frame-3-text-3.png"
+        },
+        {
+            id: "frameThreeTerms",
+            src: "images/frame-3-terms.png"
+        },
+        {
+            id: "backgroundEnd",
+            src: "images/bg.png"
+        },
+    ]);
+
+    function handleAllImagesLoaded() {
+        console.log("All the images have loaded.");
+        drawTheBannerBackground();
+    }
+
+    function drawTheBannerBackground() {
+        console.log("draw and animate the background.");
+
+        // provide the loader result for the item with id == 'background'
+        // as a bitmap which will be stored in our background variable.
+        background = new createjs.Bitmap(loader.getResult("background"));
+
+        // set the background bitmap alpha to zero.
+        background.alpha = 0;
+
+        // add background to the display list.
+        stage.addChild(background);
+
+        // animate the background bitmap alpha value to 1 over the duration of 1000 milliseconds.
+        createjs.Tween.get(background).to({
+            alpha: 1
+        }, 1000);
+
+        // after the background is drawn on the canvas draw and animate the content for frame 1.
+        setTimeout(frame1, 100);
+
+
+    }
+
+    function frame1() {
+        console.log("draw and animate frame one.");
+
+        skyLogo = new createjs.Bitmap(loader.getResult("skyLogo"));
+        frameOneTextPrimary = new createjs.Bitmap(loader.getResult("frameOneTextPrimary"));
+        frameOneTextSecondary = new createjs.Bitmap(loader.getResult("frameOneTextSecondary"));
+        mAndS = new createjs.Bitmap(loader.getResult("mAndS"));
+        samsung = new createjs.Bitmap(loader.getResult("samsung"));
+        // refer to the creative brief, frame 1 for guidance.
+        stage.addChild(skyLogo);
+        skyLogo.x = 15;
+        skyLogo.y = 210;
+
+        stage.addChild(frameOneTextPrimary);
+        frameOneTextPrimary.x = 45;
+        frameOneTextPrimary.y = 20;
+        frameOneTextPrimary.alpha = 0;
+        createjs.Tween.get(frameOneTextPrimary).to({
+                alpha: 1
+            }, 1000)
+            .wait(2750)
+            .to({
+                alpha: 0
+            }, 500);
+
+        stage.addChild(frameOneTextSecondary);
+        frameOneTextSecondary.x = 56;
+        frameOneTextSecondary.y = 45;
+        frameOneTextSecondary.alpha = 0;
+        createjs.Tween.get(frameOneTextSecondary)
+            .wait(750)
+            .to({
+                alpha: 1
+            }, 1000)
+            .wait(2000)
+            .to({
+                alpha: 0
+            }, 500);
+        stage.addChild(mAndS);
+        mAndS.x = 160;
+        mAndS.y = 115;
+        createjs.Tween.get(mAndS).to({
+                alpha: 1
+            })
+            .wait(3750)
+            .to({
+                alpha: 0
+            }, 500);
+        stage.addChild(samsung);
+        samsung.x = 55;
+        samsung.y = 115;
+        createjs.Tween.get(samsung).to({
+                alpha: 1
+            })
+            .wait(3750)
+            .to({
+                alpha: 0
+            }, 500);
+        // after a timeout and the animations have completed, draw frame 2.
+        setTimeout(frame2, 5000);
+    }
+
+    function frame2() {
+        console.log("draw and animate frame two.");
+        stamp = new createjs.Bitmap(loader.getResult("stamp"));
+        frameTwoTextPrimary = new createjs.Bitmap(loader.getResult("frameTwoTextPrimary"));
+        grabber = new createjs.Bitmap(loader.getResult("grabber"));
+        frameTwoTerms = new createjs.Bitmap(loader.getResult("frameTwoTerms"));
+        // refer to the creative brief, frame 2 for guidance.
+
+
+        stage.addChild(frameTwoTextPrimary);
+        frameTwoTextPrimary.x = 40;
+        frameTwoTextPrimary.y = 30;
+        frameTwoTextPrimary.alpha = 0;
+        createjs.Tween.get(frameTwoTextPrimary).to({
+                alpha: 1
+            }, 1000)
+            .wait(3500)
+            .to({
+                alpha: 0
+            }, 500)
+
+
+        stage.addChild(frameTwoTerms);
+        frameTwoTerms.x = 120;
+        frameTwoTerms.y = 220;
+        frameTwoTerms.alpha = 0;
+        createjs.Tween.get(frameTwoTerms)
+            .wait(1000)
+            .to({
+                alpha: 1
+            }, 1000)
+            .wait(2500)
+            .to({
+                alpha: 0
+            }, 500)
+
+        stamp.x = 71;
+        stamp.y = -140;
+
+        stage.addChild(stamp);
+
+        stage.addChild(grabber);
+        grabber.x = 110;
+        grabber.y = -70;
+        grabber.alpha = 0;
+        createjs.Tween.get(grabber).to({
+                alpha: 1
+            }, 1000)
+            .wait(1000)
+            .to({
+                y: 0
+            }, 500)
+            .wait(2000)
+            .to({
+                alpha: 0
+            }, 500)
+        bounce =
+            createjs.Tween.get(stamp, {
+                loop: false
+            })
+            .wait(1000)
+            .to({
+                x: 71,
+                y: 67
+            }, 1000, createjs.Ease.bounceOut)
+            .wait(2500)
+            .to({
+                alpha: 0
+            }, 500)
+
+        createjs.Tween.get(background)
+            .wait(4500)
+            .to({
+                alpha: 0
+            }, 1000)
+
+        // after a timeout and the animations have completed, draw frame 3.
+        setTimeout(frame3, 5000);
+    }
+
+    function frame3() {
+        console.log("draw and animate frame three.");
+
+        backgroundEnd = new createjs.Bitmap(loader.getResult("backgroundEnd"));
+        skyLogo = new createjs.Bitmap(loader.getResult("skyLogo"));
+        CTA = new createjs.Bitmap(loader.getResult("CTA"));
+        frameThreeTextPrimary = new createjs.Bitmap(loader.getResult("frameThreeTextPrimary"));
+        frameThreeTextSecondary = new createjs.Bitmap(loader.getResult("frameThreeTextSecondary"));
+        frameThreeTextTertiary = new createjs.Bitmap(loader.getResult("frameThreeTextTertiary"));
+        frameThreeTerms = new createjs.Bitmap(loader.getResult("frameThreeTerms"));
+
+
+        function goURL() {
+            location.assign('https://www.sky.com');
+        }
+
+
+
+        stage.addChild(backgroundEnd);
+        backgroundEnd.alpha = 0;
+        createjs.Tween.get(backgroundEnd)
+            .to({
+                alpha: 1
+            }, 1000)
+
+        stage.addChild(skyLogo);
+        skyLogo.x = 15;
+        skyLogo.y = 210;
+
+        stage.addChild(CTA);
+        CTA.x = 145;
+        CTA.y = banner.height - 48;
+        CTA.addEventListener("click", goURL);
+        CTA.cursor = 'pointer';
+
+        rectangle = new createjs.Shape();
+        rectangle.graphics.beginLinearGradientFill(
+                ["rgba(255, 255, 255, 0.2)",
+                    "rgba(255, 255, 255, 0.2)",
+                    "rgba(255, 255, 255, 0.9)",
+                    "rgba(255, 255, 255, 0.0)"
+                ], [0, .37, .45, 1], 0, 0, 20, 0)
+            .drawRect(0, 0, 25, 45);
+        rectangle.x = 110;
+        rectangle.y = banner.height - 52;
+        rectangle.rotation = 20;
+        rectangle.alpha = 0.8;
+
+        stage.addChild(rectangle);
+
+        var sheen =
+            createjs.Tween.get(rectangle, {
+                loop: false
+            })
+            .wait(3500)
+            .to({
+                x: 285
+            }, 750)
+            .to({
+                alpha: 0
+            }, 200)
+
+        stage.addChild(frameThreeTextPrimary);
+        frameThreeTextPrimary.x = 10;
+        frameThreeTextPrimary.y = 30;
+        frameThreeTextPrimary.alpha = 0;
+        createjs.Tween.get(frameThreeTextPrimary).to({
+            alpha: 1
+        }, 1000)
+
+        stage.addChild(frameThreeTextSecondary);
+        frameThreeTextSecondary.x = 40;
+        frameThreeTextSecondary.y = 84;
+        frameThreeTextSecondary.alpha = 0;
+        createjs.Tween.get(frameThreeTextSecondary)
+            .wait(750)
+            .to({
+                alpha: 1
+            }, 1000)
+
+        stage.addChild(frameThreeTextTertiary);
+        frameThreeTextTertiary.x = 74;
+        frameThreeTextTertiary.y = 140;
+        frameThreeTextTertiary.alpha = 0;
+        createjs.Tween.get(frameThreeTextTertiary)
+            .wait(1500)
+            .to({
+                alpha: 1
+            }, 1000)
+
+        stage.addChild(frameThreeTerms);
+        frameThreeTerms.x = 80;
+        frameThreeTerms.y = 185;
+        frameThreeTerms.alpha = 0;
+        createjs.Tween.get(frameThreeTerms)
+            .wait(2250)
+            .to({
+                alpha: 1
+            }, 1000)
+        // refer to the creative brief, frame 3 for guidance.
+    }
+
 };
-
-flashcardsDB.deleteRecord = function(variable) {
-	// open a read/write db transaction, ready for deleting the data
-	var transaction = db.transaction(["categories"], "readwrite");
-
-	// report on the success of opening the transaction
-	transaction.oncomplete = function(event) {
-		console.log('Transaction completed: database modification finished.');
-	};
-
-
-	transaction.onerror = function(event) {
-		console.log('Transaction not opened due to error: ' + transaction.error);
-	};
-
-	// create an object store on the transaction
-	var objectStore = transaction.objectStore("categories");
-
-	// Delete the specified record out of the object store
-	var objectStoreRequest = objectStore.delete(variable);
-
-	objectStoreRequest.onsuccess = function(event) {
-		// report the success of our delete operation
-		console.log('Record deleted.');
-	};
-};
-
-
-/**
- * Menu opening and transition
- */
-
-function getRandomInt(min, max) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function nextCard() {
-
-	console.log(cardIndex)
-	if (cardIndex < currentCards.length && cardIndex >= 0) {
-		cardIndex += 1;
-		console.log(currentCards.length)
-		cardContent.innerText = catIndex.cards[cardIndex];
-		if (cardIndex < 9) {
-			fcNum.innerText = '0' + (cardIndex + 1);
-		} else {
-			fcNum.innerText = (cardIndex + 1);
-		}
-	} else {
-		return;
-	}
-}
-
-function prevCard() {
-
-	console.log(cardIndex)
-	if (cardIndex <= currentCards.length && cardIndex > 0) {
-		cardIndex -= 1;
-		console.log(currentCards.length)
-		cardContent.innerText = catIndex.cards[cardIndex];
-		if (cardIndex < 9) {
-			fcNum.innerText = '0' + (cardIndex + 1);
-		} else {
-			fcNum.innerText = (cardIndex + 1);
-			leftBtn.css = ('opacity: 0.1')
-		}
-	} else {
-		return;
-	}
-}
-
-function showMenus() {
-
-	const tl = new TimelineLite();
-	const tl2 = new TimelineLite();
-
-	flashcardsDB.getCards(function(items) {
-
-		let frag = document.createDocumentFragment();
-		let menuInner = document.getElementById('menu-inner');
-		for (let i = 0; i < items.length; i++) {
-			let a = document.createElement('a');
-			let li = document.createElement('li');
-			let length;
-			li.setAttribute('class', 'menu__item');
-			a.setAttribute('data-category', items[i].name);
-			if (items[i].cards.length) {
-				length = 0;
-			} else {
-				length = items[i].cards.length;
-			};
-			li.innerHTML = `<span>${items[i].name}</span>
-				<span class="menu__item__num">${length} cards</span>`;
-			a.appendChild(li);
-			frag.appendChild(a);
-			li.addEventListener('click', function(e) {
-				let clicked = e.target.innerText;
-
-				hideMenus();
-				// Run a function that takes the category name you clicked on as a parameter
-				appendCardContent(clicked, items)
-			});
-			menuInner.appendChild(frag);
-		}
-	});
-
-
-	tl.to(menuOverlay, 0, {
-		display: 'flex',
-		opacity: 0.95
-	}).to(menu, 0.1, {
-		display: 'flex'
-	}).to(menu, 0.5, {
-		y: -15,
-		opacity: 0.95
-	});
-	tl2.to(menu2, 0.1, {
-		display: 'flex'
-	}).to(menu2, 0.1, {
-		y: -15,
-		opacity: 0.95
-	});
-	TweenLite.to(line1, 0.7, {
-		height: '100vh'
-	});
-	TweenLite.to(line2, 0.7, {
-		height: '100vh',
-		delay: 0.5
-	});
-	TweenLite.to(menuBarOne, 0.5, {
-		width: '0px',
-		delay: 0.4
-	});
-	TweenLite.to(menuBarTwo, 0.5, {
-		width: '0px',
-		delay: 0.2
-	});
-	TweenLite.to(menuBarThree, 0.5, {
-		width: '0px'
-	});
-
-}
-
-function hideMenus() {
-	console.log('Running hideMenus')
-	const tl = new TimelineLite();
-	const tl2 = new TimelineLite();
-	const tl3 = new TimelineLite();
-	const addCategoryMenu = document.getElementById("tertiary-menu-one");
-	const menuInner = document.getElementById('menu-inner')
-
-	menuInner.innerHTML = '';
-
-
-
-	// Animation
-
-	tl.to(menu, 0.1, {
-		opacity: 0
-	}).to(menu, 0, {
-		display: 'none'
-	}).to(menuOverlay, 1, {
-		opacity: 0
-	}).to(menuOverlay, 0, {
-		display: 'none'
-	})
-	tl2.to(menu2, 0.1, {
-		opacity: 0
-	}).to(menu2, 0, {
-		display: 'none'
-	});
-	tl3.to(menu3, 0.1, {
-		opacity: 0
-	}).to(menu3, 0, {
-		display: 'none'
-	});
-	tl3.to(menu4, 0.1, {
-		opacity: 0
-	}).to(menu4, 0, {
-		display: 'none'
-	});
-	TweenLite.to(line1, 0.3, {
-		height: '0px',
-		x: 0
-	});
-	TweenLite.to(line2, 0.3, {
-		height: '0px',
-		delay: 0.2
-	});
-	TweenLite.to(menuBarOne, 0.5, {
-		width: '100%',
-		delay: 0.4
-	});
-	TweenLite.to(menuBarTwo, 0.5, {
-		width: '100%',
-		delay: 0.2
-	});
-	TweenLite.to(menuBarThree, 0.5, {
-		width: '100%'
-	});
-}
-
-function menuTransition() {
-
-	const slider = document.createElement('div');
-	const tl = new TimelineLite();
-
-	slider.classList.add('menu-transition');
-	document.body.appendChild(slider);
-
-	tl.to(slider, 0.3, {
-			width: '100vw'
-		})
-		.to(slider, 0.7, {
-			opacity: 0,
-			delay: 0.3
-		})
-		.to(slider, 0, {
-			display: 'none'
-		});
-	TweenLite.to(line1, 0.2, {
-		height: '0',
-	});
-	TweenLite.to(line2, 0.2, {
-		height: '0',
-	});
-	TweenLite.to(menu, 0, {
-		display: 'none'
-	});
-	TweenLite.to(menu2, 0, {
-		display: 'none'
-	});
-}
-
-function showCategoryInput() {
-
-	const tl = new TimelineLite();
-	const addCategoryMenu = document.getElementById("tertiary-menu-one");
-
-	backBtn.addEventListener('click', function(e) {
-		TweenLite.to(addCategoryMenu, 0, {
-			display: 'none'
-		});
-		menuTransition();
-		setTimeout(showMenus, 1500);
-
-	})
-
-	menuTransition();
-
-	tl.to(menu3, 0, {
-			display: 'flex'
-		})
-		.to(menu3, 0.3, {
-			opacity: 1,
-			delay: 1.4
-		});
-	// Fade out main menu
-	TweenLite.to(line1, 0.7, {
-		display: 'inline-block',
-		height: '100vh',
-		delay: 1.2
-	});
-
-	menu3.addEventListener('click', function(e) {
-		e.stopPropagation();
-	});
-}
-
-function showCardInput() {
-	let current = currentCat.innerText;
-	const tl = new TimelineLite();
-	const addCardMenu = document.getElementById("tertiary-menu-two");
-	addCardLabel.innerText = `Add a new card to ${current}:`;
-	backBtn2.addEventListener('click', function(e) {
-		TweenLite.to(addCardMenu, 0, {
-			display: 'none'
-		});
-		menuTransition();
-		setTimeout(showMenus, 1500);
-
-	})
-
-	menuTransition();
-
-	tl.to(menu4, 0, {
-			display: 'flex'
-		})
-		.to(menu4, 0.3, {
-			opacity: 1,
-			delay: 1.4
-		});
-	// Fade out main menu
-	TweenLite.to(line1, 0.7, {
-		display: 'inline-block',
-		height: '100vh',
-		delay: 1.2
-	});
-
-	menu4.addEventListener('click', function(e) {
-		e.stopPropagation();
-	});
-}
-
-
-
-function hideCardsGrid() {
-	let tl = new TimelineLite();
-	const noCardsMsg = document.getElementById('noCardsMsg');
-	tl.to(grid, 0.7, {
-			opacity: 0
-		})
-		.to(grid, 0, {
-			display: 'none'
-		});
-	TweenLite.to(noCardsMsg, 0.2, {
-		opacity: 0,
-	});
-
-}
-
-
-// Event listeners
-
-menuBtn.addEventListener('click', showMenus);
-menuOverlay.addEventListener('click', hideMenus, false);
-grid.addEventListener('click', hideCardsGrid, false);
-leftBtn.addEventListener('click', prevCard, false);
-rightBtn.addEventListener('click', nextCard, false);
-addCategoryBtn.addEventListener('click', function(e) {
-
-	e.stopPropagation();
-	showCategoryInput();
-
-});
-
-addCardBtn.addEventListener('click', function(e) {
-
-	e.stopPropagation();
-	showCardInput();
-
-});
-
-// gridBtn.addEventListener('click', showCardsGrid);
-// 
-
-document.body.onkeyup = function(e) {
-	if (e.keyCode === 39) {
-		let tl = new TimelineLite();
-		tl.to(rightBtn, 0.2, {
-				color: '#ffffff',
-				scale: 1.8
-			})
-			.to(rightBtn, 0.7, {
-				color: '#a9a9a9',
-				scale: 1
-			});
-	}
-	if (e.keyCode === 37) {
-		let tl = new TimelineLite();
-		tl.to(leftBtn, 0.2, {
-				color: '#ffffff',
-				scale: 1.8
-			})
-			.to(leftBtn, 0.7, {
-				color: '#a9a9a9',
-				scale: 1
-			});
-	}
-}
-
-
-// Listen for submission of new category
-newCategoryInput.onkeyup = function(e) {
-	if (e.keyCode == 13 && newCategoryInput.value !== "") {
-		modal();
-
-	}
-}
-
-
-function modal() {
-
-	const modal = document.createElement('div');
-	const modalOverlay = document.createElement('div');
-	let frag = document.createDocumentFragment();
-	const btnHolder = document.createElement('div');
-	const confirmBtn = document.createElement('button');
-	const cancelBtn = document.createElement('button');
-	const modalTxt = document.createElement('span');
-
-	confirmBtn.setAttribute('class', 'btn-submit');
-	cancelBtn.setAttribute('class', 'btn-submit');
-	btnHolder.setAttribute('class', 'wrapper');
-	modalTxt.setAttribute('class', 'modal-text');
-	modal.setAttribute('class', 'confirmation-modal');
-	modalOverlay.setAttribute('class', 'modal-overlay');
-
-	modalTxt.innerText = `Are you sure you want to create the ${newCategoryInput.value} category?`;
-	confirmBtn.innerText = 'Submit';
-	cancelBtn.innerText = 'Cancel';
-
-	btnHolder.appendChild(confirmBtn);
-	btnHolder.appendChild(cancelBtn);
-	frag.appendChild(modalTxt);
-	frag.appendChild(btnHolder);
-	body.appendChild(modalOverlay)
-	modalOverlay.appendChild(modal);
-	modal.appendChild(frag);
-	
-	TweenLite.to(modal, 0.3, {
-		height: '200px',
-		delay: 0.2,
-		ease: Power1.easeOut
-	});
-	TweenLite.to(btnHolder, 0.3, {
-		opacity: 1,
-		delay: 0.5
-	});
-	TweenLite.to(modalTxt, 0.3, {
-		opacity: 1,
-		delay: 0.5
-	});
-
-	modalOverlay.addEventListener('click', function() {
-		console.log('closed overlay')
-		e.stopPropagation();
-		TweenLite.to(modalOverlay, 0.2, {
-			display: 'none'
-		});
-	});
-
-	confirmBtn.addEventListener('click', function() {
-
-		flashcardsDB.addNewCategory();
-		flashcardsDB.getCards(function(items) {
-			console.log('Running getCards callback');
-			let frag = document.createDocumentFragment();
-			for (let i = 0; i < items.length; i++) {
-				let a = document.createElement('a');
-				let li = document.createElement('li');
-				let length;
-				li.setAttribute('class', 'menu__item');
-				a.setAttribute('data-category', items[i].name);
-				if (items[i].cards.length) {
-					length = 0;
-				} else {
-					length = items[i].cards.length;
-				};
-				li.innerHTML = `<span>${items[i].name}</span>
-				<span class="menu__item__num">${length} cards</span>`;
-				a.appendChild(li);
-				frag.appendChild(a);
-				li.addEventListener('click', function(e) {
-					hideMenus();
-					let clicked = e.target.innerText;
-					currentCat.innerText = clicked;
-					// Append the content to the DOM
-
-					//	appendCardContent(clicked, items)
-				});
-				menuInner.appendChild(frag);
-			}
-		});
-
-
-		function confirm() {
-			const newCatMenuInner = document.getElementById('newCategoryInner');
-			let confirmation = document.createElement('span');
-			confirmation.setAttribute('class', 'success-message');
-			confirmation.innerText = `${newCategoryInput.value} category successfully added`;
-			newCatMenuInner.appendChild(confirmation);
-			const tl = new TimelineLite();
-			tl.to(newCategoryInput, 0.05, {
-				opacity: 0
-			}).to(newCategoryInput, 0.1, {
-				opacity: 1,
-				delay: 0.1
-			});
-			TweenLite.to(confirmation, 1, {
-				y: -15,
-				opacity: 1,
-				ease: Power1.easeOut
-			});
-			newCategoryInput.value = "";
-		};
-
-	});
-
-	cancelBtn.addEventListener('click', function(e) {
-		e.stopPropagation();
-
-		TweenLite.to(modal, 0.2, {
-			height: '0px',
-			delay: 0.1,
-			ease: Power1.easeOut
-		});
-	TweenLite.to(modalTxt, 0.1, {
-		opacity: 0
-	});
-		TweenLite.to(btnHolder, 0.1, {
-		opacity: 0
-	});		
-	TweenLite.to(modal, 0, {
-			display: 'none',
-			delay: 0.3
-		});
-		TweenLite.to(modalOverlay, 0, {
-			display: 'none',
-			delay: 0.5
-		});
-	});
-}
-
-newCardInput.onkeyup = function(e) {
-	console.log(this)
-	if (this.clientHeight < this.scrollHeight) {
-		this.style.height = this.scrollHeight + 'px';
-	}
-};
-
-
-function cardOut (cardIn) {
-	let tl = new TimelineLite();
-	tl.to(cardContent, 1, {
-		x: -200
-	})
-	.to(cardContent, 0.3, {opacity: 0, delay: 0.5})
-	}
-}
-
-function cardIn () {
-	let tl = new TimelineLite();
-	tl.to(cardContent, 1, {
-
-	})
-	.to(cardContent, 0.3, {opacity: 0, delay: 0.5})
-	}
-}
-
-
-
-
-
-
-
-
-
-
-})(); // End init function and execute
