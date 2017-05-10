@@ -72,7 +72,7 @@
   z-index: 180;
 }
 
-.menu-bar-one {
+.menu-btn__bar-one {
   display: block;
   position: relative;
   bottom: 5px;
@@ -81,7 +81,7 @@
   right: 0px;
 }
 
-.menu-bar-two {
+.menu-btn__bar-two {
   display: block;
   height: 2px;
   background-color: #fff;
@@ -89,7 +89,7 @@
   left: 0px;
 }
 
-.menu-bar-three {
+.menu-btn__bar-three {
   display: block;
   position: relative;
   top: 5px;
