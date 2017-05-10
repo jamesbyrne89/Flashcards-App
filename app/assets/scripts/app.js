@@ -895,4 +895,33 @@ newCardInput.onkeyup = function(e) {
 		this.style.height = this.scrollHeight + 'px';
 	}
 };
+
+
+function cardOut (cardIn) {
+	let tl = new TimelineLite();
+	tl.to(cardContent, 1, {
+		x: -200
+	})
+	.to(cardContent, 0.3, {opacity: 0, delay: 0.5})
+	}
+}
+
+function cardIn () {
+	let tl = new TimelineLite();
+	tl.to(cardContent, 1, {
+
+	})
+	.to(cardContent, 0.3, {opacity: 0, delay: 0.5})
+	}
+}
+
+
+
+
+
+
+
+
+
+
 })(); // End init function and execute
