@@ -1,0 +1,26 @@
+.input {
+  background: transparent;
+  border: solid 1px #fff;
+  padding: 0.5em;
+  color: #fff;
+  margin-top: 20px;
+  font-family: 'roboto mono';
+  width: 200px; 
+  display: block;
+}
+
+.input:focus {
+  outline: none;
+  border: solid 1px #D5F9F3;
+}
+
+.add-card__input {
+  width: 300px;
+  height: 80px;
+  overflow: hidden;
+}
+
+.add-category__label {
+  display: block;
+  margin-top: 50px;
+}

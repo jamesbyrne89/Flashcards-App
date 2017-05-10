@@ -1,0 +1,105 @@
+.btn-submit {
+  margin-top: 20px;
+  padding: 0.875em 1.5em;
+  border: solid 1px #a9a9a9;
+  background: transparent;
+  color: #a9a9a9;
+  font-family: 'roboto condensed';
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 0.3s;
+  display: block;
+}
+
+.btn-submit:hover {
+  color: #fff;
+  border: solid 1px #fff;
+  cursor: pointer;
+}
+
+.back-btn {
+  font-size: 0.75rem;
+  font-weight: thin;
+  background: transparent;
+  color: #a9a9a9;
+  position: relative;
+  right: 0;
+  transition: all 0.7s;
+  font-family: inherit;
+  padding: 0.5em;
+}
+
+.back-btn:hover {
+  color: #fff;
+}
+
+.menu__back-btn:hover.btn-back-arrow {
+  left: -15px;
+  transform: translateX(-5px);
+  color: #fff;
+}
+
+.btn-back-arrow {
+  position: relative;
+  left: -5px;
+  transition: all 0.7s;
+  color: #a9a9a9;
+}
+
+.directional-btn {
+  align-items: center;
+  font-size: 1.25rem;
+  background: none;
+  color: #a9a9a9;
+  transition: all 0.7s;
+  width: 50%;
+  display: inline-block;
+  padding: 2em;
+}
+
+.directional-btn:hover {
+  color: #fff;
+}
+
+.menu-btn {
+  position: absolute;
+  right: 50px;
+  top: 50px;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  padding: 0;
+  z-index: 180;
+}
+
+.menu-bar-one {
+  display: block;
+  position: relative;
+  bottom: 5px;
+  height: 2px;
+  background-color: #fff;
+  right: 0px;
+}
+
+.menu-bar-two {
+  display: block;
+  height: 2px;
+  background-color: #fff;
+  width: 30px;
+  left: 0px;
+}
+
+.menu-bar-three {
+  display: block;
+  position: relative;
+  top: 5px;
+  height: 2px;
+  background-color: #fff;
+  right: 0px;
+  text-align: right;
+}
+
+.btn-wrapper {
+  display: flex;
+  margin-top: 100px;
+}

@@ -1,5 +1,8 @@
-// Declare global variables
+// Wrap entire code in init function
 
+(function init () {
+
+// Declare global variables
 const body = document.getElementById('body');
 const menuBtn = document.getElementById('menu-btn');
 const addCategoryBtn = document.getElementById('addCategory');
@@ -209,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			(function confirm() {
 				const newCardMenuInner = document.getElementById('newCardInner');
 				let confirmation = document.createElement('span');
-				confirmation.setAttribute('class', 'add-card__confirmation');
+				confirmation.setAttribute('class', 'success-message');
 				confirmation.innerText = `New card successfully added`;
 				newCardMenuInner.appendChild(confirmation);
 				const tl = new TimelineLite();
@@ -841,7 +844,7 @@ function modal() {
 		function confirm() {
 			const newCatMenuInner = document.getElementById('newCategoryInner');
 			let confirmation = document.createElement('span');
-			confirmation.setAttribute('class', 'add-category__confirmation');
+			confirmation.setAttribute('class', 'success-message');
 			confirmation.innerText = `${newCategoryInput.value} category successfully added`;
 			newCatMenuInner.appendChild(confirmation);
 			const tl = new TimelineLite();
@@ -892,3 +895,4 @@ newCardInput.onkeyup = function(e) {
 		this.style.height = this.scrollHeight + 'px';
 	}
 };
+})(); // End init function and execute

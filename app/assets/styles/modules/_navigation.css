@@ -46,6 +46,10 @@
   justify-content: space-between;
 }
 
+.menu__item:hover {
+    cursor: pointer;
+  }
+
 .menu__item__num {
   opacity: 0.3;
 }
