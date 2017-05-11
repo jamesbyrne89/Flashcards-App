@@ -21,7 +21,7 @@ beautify = require('gulp-jsbeautify');
 
 // Default task that runs on 'Gulp' command
 
-gulp.task('default', ['cssInject', 'compilecss', 'watch']);
+gulp.task('default', ['cssInject', 'compilecss', 'watch', 'babel']);
 
 
 gulp.task('watch', function(){

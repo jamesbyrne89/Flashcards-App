@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700|Roboto+Mono" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- Compiled and minified CSS -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles/styles-12e1fe3ea2.css"/>
+  <link href="/assets/images/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+  <link href="/assets/images/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+  <script src="https://use.fontawesome.com/a697955832.js">
+  </script>
+  <title>Flashcards</title>
+</head>
+<body id="body">
+  <div class="menu-overlay hidden" id="menu-overlay">
+    <div class="vert-line line-up" id="vert-line-1"></div>
+    <nav class="secondary-menu menu hidden" id="secondary-menu">
+      <div class="relational-menu">
+        <h2 id="currentCat" class="secondary-menu__header menu__header">Current category</h2>
+        <ul class="menu-inner">
+         <a href="#"><li class="menu__item" id="addCard">Add a new card</li></a>
+        <a href="#"><li class="menu__item" id="addCategory">Add a new category</li></a>
+        </ul>
+      </div>
+    </nav>
+    <div class="vert-line line-down" id="vert-line-2"></div>
+    <nav class="main-menu menu hidden" id="main-menu">
+      <div class="relational-menu" id="categories-menu">
+        <h2 class="menu__header">All Categories</h2>
+        <ul class="menu-inner" id="menu-inner"></ul>
+      </div>
+    </nav>
+    <nav class="add-category-menu menu hidden" id="tertiary-menu-one">
+      <div class="relational-menu" id="newCategoryInner">
+        <button class="menu__back-btn" id="backBtn"><i aria-hidden="true" class="btn-back-arrow fa fa-long-arrow-left"></i> Back to menu</button>
+        <h2 class="menu__header">New Category</h2><label class="for='add-category'">Add a new category:</label> <input class="add-category__input input" id='addCategoryInput' name="add-category">
+      </div>
+    </nav>
+    <nav class="add-card-menu menu hidden" id="tertiary-menu-two">
+      <div class="relational-menu" id="newCardInner">
+        <button class="menu__back-btn" id="backBtn2"><i aria-hidden="true" class="btn-back-arrow fa fa-long-arrow-left"></i> Back to menu</button>
+        <h2 class="menu__header">New Card</h2><label class="for='add-card'" id="addCardLabel">Add a new card to the deck:</label> <textarea class="add-card__input input" id='addCardInput' name="add-card" autofocus></textarea>
+        <button class="btn-submit" id="submitCard">Add</button>
+      </div>
+    </nav>    
+  </div>
+  <main class="wrap" id="wrap">
+  <!--<button class='grid-btn' id='grid-btn'>View as grid</button>-->
+    <button class="menu-btn" id="menu-btn"><span class="menu-bar-one" id="menuBarOne"></span> <span class="menu-bar-two" id="menuBarTwo"></span> <span class="menu-bar-three" id="menuBarThree"></span></button>
+    <div class="flashcard" id="flashcard">
+      <span id="flashcard-num" class="flashcard__number">01</span>
+      <span id="flashcard-relational-text" class="flashcard__relational-text"></span>
+      <hr class="flashcard-num__line">
+    <p id="card-content"></p>
+    </div>
+    <div class="btn-wrapper">
+      <button class="directional-btn" id="leftBtn"><i class="fa fa-chevron-left" aria-hidden="true"></i><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+      <button class="directional-btn" id="rightBtn"><i class="fa fa-chevron-right" aria-hidden="true"></i><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+      </div>
+    <footer class="footer">
+      <p>Created by <a class="link" href="http://jamestbyrne.com">James Byrne</a>.</p>
+    </footer>
+  </main>
+  <div class="grid-overlay" id="gridOverlay">
+  <span class="message" id="noCardsMsg">No categories yet. Add one.</span>
+  </div>
+  
+</body>
+</html>

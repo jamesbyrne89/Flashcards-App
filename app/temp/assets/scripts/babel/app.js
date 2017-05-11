@@ -1,353 +1,836 @@
-"use strict";
+'use strict';
 
-$(document).ready(function () {
+var _database = require('database.js');
 
-    // Get current location from API
-    var lat;
-    var lon;
-    var city;
-    var state;
+// Declare global variables
 
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success);
-    } else {
-        alert("Geolocation services are not supported by your web browser.");
-    }
+var body = document.getElementById('body');
+var menuBtn = document.getElementById('menu-btn');
+var addCategoryBtn = document.getElementById('addCategory');
+var addCardBtn = document.getElementById('addCard');
+var submitCardBtn = document.getElementById('submitCard');
+var menuOverlay = document.getElementById('menu-overlay');
+var menu = document.getElementById('main-menu');
+var menu2 = document.getElementById('secondary-menu');
+var menu3 = document.getElementById('tertiary-menu-one');
+var menu4 = document.getElementById('tertiary-menu-two');
+var catMenu = document.getElementById('categories-menu');
+var line1 = document.getElementById('vert-line-1');
+var line2 = document.getElementById('vert-line-2');
+var menuBar1 = document.getElementById('menu-bar-one');
+var menuBar2 = document.getElementById('menu-bar-two');
+var menuBar3 = document.getElementById('menu-bar-three');
+var backBtn = document.getElementById('backBtn');
+var newCategoryInput = document.getElementById('addCategoryInput');
+var newCardInput = document.getElementById('addCardInput');
+var cardContent = document.getElementById('card-content');
+var fcNum = document.getElementById('flashcard-num');
+var fcRelTxt = document.getElementById('flashcard-relational-text');
+var currentCat = document.getElementById('currentCat');
+var addCardLabel = document.getElementById('addCardLabel');
+var grid = document.getElementById('gridOverlay');
+var leftBtn = document.getElementById('leftBtn');
+var rightBtn = document.getElementById('rightBtn');
+var current = void 0;
+var currentCards = void 0;
+var cardIndex = void 0;
+var catIndex = void 0;
 
-    function success(position) {
-        lat = position.coords.latitude;
-        lon = position.coords.longitude;
-        var reversegeocodingapi = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "%2C" + lon;
-        $.getJSON(reversegeocodingapi, function (place) {
-            for (var i = 0; i < place.results[0].address_components.length; i++) {
-                if (place.results[0].address_components[i].types[0] === "locality") {
-                    var city = place.results[0].address_components[i].long_name;
-                }
-                if (place.results[0].address_components[i].types[0] === "administrative_area_level_1") {
-                    var state = place.results[0].address_components[i].long_name;
-                }
-            }
-            //end success
-            function error() {
-                alert("Geolocation requires a secure connection to work. Please add 'https://' to the beginning of this page's URL. (i.e. 'https://codepen.io/bethqiang/full/bZrZpa')");
-            }
+/**
+ * Code to create the database that will store the decks
+ */
 
-            var apiKey = "f0357c3104cec9981bd0216276f0778f";
+var db;
 
-            // Get current weather from API
+_database.flashcardsDB.indexedDBOk = function () {
+	return "indexedDB" in window;
+};
 
-            $.getJSON('https://api.forecast.io/forecast/' + apiKey + '/' + lat + ',' + lon + '?units=si&callback=?', function (wd) {
+document.addEventListener("DOMContentLoaded", function () {
 
-                var currentTemp = Math.floor(wd.currently.temperature);
-                var maxTemp = Math.floor(wd.daily.data[0].temperatureMax);
-                var minTemp = Math.floor(wd.daily.data[0].temperatureMin);
-                var weatherDescription = wd.currently.icon.replace(/-|\s/g, " ");
-                var precipChance = (wd.daily.data[0].precipProbability * 100).toFixed(0);
-                var windSpeed = (wd.currently.windSpeed * 2.23694).toFixed(0);
-                var humidity = (wd.currently.humidity * 100).toFixed(0);
-                var cloudiness = wd.currently.cloudCover;
-                var windDirection = wd.currently.windBearing;
+	//No support? Go in the corner and pout.
+	if (!_database.flashcardsDB.indexedDBOk) return;
 
-                // Place current weather values into HTML
-                $('#current-temp').html(currentTemp + "&deg;");
-                $('#current-hi').html(maxTemp + "&deg;");
-                $('#current-lo').html(minTemp + "&deg;");
-                $('#weather-description').html(weatherDescription);
-                $('#location').html(city + ", " + state);
-                $('.wind-speed').html(windSpeed + " mph");
-                $('.wind-direction').html(windDirection);
-                $('.precip-chance').html(precipChance + "\%");
-                $('.cloudiness').html(cloudiness + "\%");
-                $('.humidity').html(humidity + "\%");
+	var openRequest = indexedDB.open("idarticle_categories", 1);
 
-                // Get five-day weather forecast from API
+	openRequest.onupgradeneeded = function (e) {
+		var thisDB = e.target.result;
 
+		if (!thisDB.objectStoreNames.contains("categories")) {
+			thisDB.createObjectStore("categories", {
+				autoIncrement: true
+			});
+			// I want to be able to search categories by name later
+			//os.createIndex("categoryNames", "name", {
+			//	unique: false
+			//});
+		}
+	};
 
-                var dayOneMax = wd.daily.data[1].temperatureMax.toFixed(0);
-                var dayOneMin = wd.daily.data[1].temperatureMin.toFixed(0);
+	function appendCardContent(clicked, items) {
+		console.log('Running appendCardContent');
+		var random = void 0;
+		console.log(items);
+		current = clicked;
 
-                var dayTwoMax = wd.daily.data[2].temperatureMax.toFixed(0);
-                var dayTwoMin = wd.daily.data[2].temperatureMin.toFixed(0);
+		if (clicked) {
+			currentCat.innerText = current;
 
-                var dayThreeMax = wd.daily.data[3].temperatureMax.toFixed(0);
-                var dayThreeMin = wd.daily.data[3].temperatureMin.toFixed(0);
+			items.forEach(function (i) {
+				var x = i.name;
+				if (x == current) {
+					random = getRandomInt(0, i.cards.length);
+					cardIndex = random;
+					catIndex = i;
+					currentCards = i.cards;
+					console.log(currentCards);
+					var content = i.cards[cardIndex];
+					fcNum.innerText = '0' + (random + 1);
+					cardContent.innerHTML = content;
+				}
+			});
+		} else {
+			currentCat.innerText = '*';
+		}
+		if (!items) {
+			cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
+			console.log("There's nothing here");
+		}
+	}
 
-                var dayFourMax = wd.daily.data[4].temperatureMax.toFixed(0);
-                var dayFourMin = wd.daily.data[4].temperatureMin.toFixed(0);
+	function showCardsGrid(items) {
+		console.log('Running  showCardsGrid');
+		var tl = new TimelineLite();
+		var frag = document.createDocumentFragment();
+		var menuInner = document.getElementById('menu-inner');
+		for (var i = 0; i < 9; i++) {
+			var a = document.createElement('a');
+			var li = document.createElement('li');
+			li.setAttribute('class', 'grid__item');
 
-                var dayFiveMax = wd.daily.data[5].temperatureMax.toFixed(0);
-                var dayFiveMin = wd.daily.data[5].temperatureMin.toFixed(0);
+			if (i < items.length) {
+				console.log(items.length);
+				li.innerText = items[i].name;
+				console.log(li.innerText);
+				if (li.innerText !== '') {
 
-                var dayOneWeather = wd.daily.data[1].icon.replace(/-|\s/g, " ");
-                var dayTwoWeather = wd.daily.data[2].icon.replace(/-|\s/g, " ");
-                var dayThreeWeather = wd.daily.data[3].icon.replace(/-|\s/g, " ");
-                var dayFourWeather = wd.daily.data[4].icon.replace(/-|\s/g, " ");
-                var dayFiveWeather = wd.daily.data[5].icon.replace(/-|\s/g, " ");
+					a.addEventListener('click', function (e) {
+						var clicked = e.target.innerText;
+						console.log(clicked);
+						currentCat.innerText = clicked;
+						console.log('clicked!!!');
+						menuTransition();
+						// Append the content to the DOM
+						appendCardContent(clicked, items);
+					});
+				} else {
+					return;
+				};
+			}
+			a.appendChild(li);
+			frag.appendChild(a);
+		}
+		gridOverlay.appendChild(frag);
 
-                var dayOneIcon = wd.daily.data[1].icon;
-                var dayTwoIcon = wd.daily.data[2].icon;
-                var dayThreeIcon = wd.daily.data[3].icon;
-                var dayFourIcon = wd.daily.data[4].icon;
-                var dayFiveIcon = wd.daily.data[5].icon;
+		TweenLite.to(grid, 0.7, {
+			y: -20,
+			ease: Power1.easeOut
+		});
+	}
 
-                // Place forecast values into HTML
+	openRequest.onsuccess = function (e) {
+		console.log("running onsuccess");
+		db = e.target.result;
 
-                $('#day-one-forecast-temp-hi').html(dayOneMax);
-                $('#day-one-forecast-temp-lo').html(dayOneMin + "&deg;");
-                $('#day-two-forecast-temp-hi').html(dayTwoMax + "&deg;");
-                $('#day-two-forecast-temp-lo').html(dayTwoMin + "&deg;");
-                $('#day-three-forecast-temp-hi').html(dayThreeMax + "&deg;");
-                $('#day-three-forecast-temp-lo').html(dayThreeMin + "&deg;");
-                $('#day-four-forecast-temp-hi').html(dayFourMax + "&deg;");
-                $('#day-four-forecast-temp-lo').html(dayFourMin + "&deg;");
-                $('#day-five-forecast-temp-hi').html(dayFiveMax + "&deg;");
-                $('#day-five-forecast-temp-lo').html(dayFiveMin + "&deg;");
+		_database.flashcardsDB.getCards(function (items) {
+			console.log('Running getCards callback');
+			// Display initial content
+			appendCardContent();
+			showCardsGrid(items);
+			var menuInner = document.getElementById('menu-inner');
+			menuInner.innerHTML = '';
+			var frag = document.createDocumentFragment();
+			for (var i = 0; i < items.length; i++) {
+				var a = document.createElement('a');
+				var li = document.createElement('li');
+				var length = void 0;
+				li.setAttribute('class', 'menu__item');
+				a.setAttribute('data-category', items[i].name);
+				if (!items[i].cards.length) {
+					length = 0;
+				} else {
+					length = items[i].cards.length;
+				};
+				if (length === 1) {
+					li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' card</span>';
+				} else {
+					li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' cards</span>';
+				}
+				a.appendChild(li);
+				frag.appendChild(a);
+				li.addEventListener('click', function (e) {
+					var clicked = e.target.innerText;
 
-                // Get icons
+					// Run a function that takes the category name you clicked on as a parameter
+					appendCardContent(clicked, items);
+					hideMenus();
+				});
+				menuInner.appendChild(frag);
+				catMenu.setAttribute('class', 'relational-menu');
+			}
+		});
 
-                var currentIcon = wd.currently.icon;
+		submitCardBtn.addEventListener('click', function (e) {
 
-                // Change icon depending on weather
+			//flashcardsDB.addNewCard(items);
+			_database.flashcardsDB.getCards(function (items) {
+				console.log(items);
+				_database.flashcardsDB.addNewCard(items);
+			});
+			(function confirm() {
+				var newCardMenuInner = document.getElementById('newCardInner');
+				var confirmation = document.createElement('span');
+				confirmation.setAttribute('class', 'add-card__confirmation');
+				confirmation.innerText = 'New card successfully added';
+				newCardMenuInner.appendChild(confirmation);
+				var tl = new TimelineLite();
+				tl.to(newCategoryInput, 0.05, {
+					opacity: 0
+				}).to(newCategoryInput, 0.1, {
+					opacity: 1,
+					delay: 0.1
+				});
+				TweenLite.to(confirmation, 1, {
+					y: -15,
+					opacity: 1,
+					ease: Power1.easeOut
+				});
+			})();
+		});
+	};
 
-                if (currentIcon == "clear-day") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-sunny current-weather-icon'></i>");
-                } else if (currentIcon === "clear-night") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-night-clear current-weather-icon'></i>");
-                } else if (currentIcon === "rain") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-rain current-weather-icon'></i>");
-                } else if (currentIcon === "snow") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-snow current-weather-icon'></i>");
-                } else if (currentIcon === "sleet") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-sleet current-weather-icon'></i>");
-                } else if (currentIcon === "wind") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-windy current-weather-icon'></i>");
-                } else if (currentIcon === "fog") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-fog current-weather-icon'></i>");
-                } else if (currentIcon === "cloudy") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-cloudy current-weather-icon'></i>");
-                } else if (currentIcon === "partly-cloudy-day") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-cloudy current-weather-icon'></i>");
-                } else if (currentIcon === "partly-cloudy-night") {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-night-partly-cloudy current-weather-icon'></i>");
-                } else {
-                    $('#weather-icon-wrapper-left').html("<i class='wi wi-day-sunny current-weather-icon'></i>");
-                }
+	openRequest.onerror = function (e) {
+		//Do something for the error
+	};
+}, false);
 
-                if (dayOneIcon == "clear-day") {
-                    $('#icon-day-one').html("<i class='wi wi-day-sunny forecast-list-icons'></i>");
-                } else if (dayOneIcon === "clear-night") {
-                    $('#icon-day-one').html("<i class='wi wi-night-clear forecast-list-icons'></i>");
-                } else if (dayOneIcon === "rain") {
-                    $('#icon-day-one').html("<i class='wi wi-day-rain forecast-list-icons'></i>");
-                } else if (dayOneIcon === "snow") {
-                    $('#icon-day-one').html("<i class='wi wi-day-snow forecast-list-icons'></i>");
-                } else if (dayOneIcon === "sleet") {
-                    $('#icon-day-one').html("<i class='wi wi-day-sleet forecast-list-icons'></i>");
-                } else if (dayOneIcon === "wind") {
-                    $('#icon-day-one').html("<i class='wi wi-day-windy forecast-list-icons'></i>");
-                } else if (dayOneIcon === "fog") {
-                    $('#icon-day-one').html("<i class='wi wi-day-fog forecast-list-icons'></i>");
-                } else if (dayOneIcon === "cloudy") {
-                    $('#icon-day-one').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayOneIcon === "partly-cloudy-day") {
-                    $('#icon-day-one').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayOneIcon === "partly-cloudy-night") {
-                    $('#icon-day-one').html("<i class='wi wi-night-partly-cloudy forecast-list-icons'></i>");
-                } else {
-                    $('#icon-day-one').html("<i class='wi wi-day-sunny current-weather-icon'></i>");
-                }
+_database.flashcardsDB.addNewCategory = function (e) {
+	var name = newCategoryInput.value;
 
-                if (dayTwoIcon == "clear-day") {
-                    $('#icon-day-two').html("<i class='wi wi-day-sunny forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "clear-night") {
-                    $('#icon-day-two').html("<i class='wi wi-night-clear forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "rain") {
-                    $('#icon-day-two').html("<i class='wi wi-day-rain forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "snow") {
-                    $('#icon-day-two').html("<i class='wi wi-day-snow forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "sleet") {
-                    $('#icon-day-two').html("<i class='wi wi-day-sleet forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "wind") {
-                    $('#icon-day-two').html("<i class='wi wi-day-windy forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "fog") {
-                    $('#icon-day-two').html("<i class='wi wi-day-fog forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "cloudy") {
-                    $('#icon-day-two').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "partly-cloudy-day") {
-                    $('#icon-day-two').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayTwoIcon === "partly-cloudy-night") {
-                    $('#icon-day-two').html("<i class='wi wi-night-partly-cloudy forecast-list-icons'></i>");
-                } else {
-                    $('#icon-day-two').html("<i class='wi wi-day-sunny current-weather-icon'></i>");
-                }
+	console.log("About to add " + name);
 
-                if (dayThreeIcon == "clear-day") {
-                    $('#icon-day-three').html("<i class='wi wi-day-sunny forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "clear-night") {
-                    $('#icon-day-three').html("<i class='wi wi-night-clear forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "rain") {
-                    $('#icon-day-three').html("<i class='wi wi-day-rain forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "snow") {
-                    $('#icon-day-three').html("<i class='wi wi-day-snow forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "sleet") {
-                    $('#icon-day-three').html("<i class='wi wi-day-sleet forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "wind") {
-                    $('#icon-day-three').html("<i class='wi wi-day-windy forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "fog") {
-                    $('#icon-day-three').html("<i class='wi wi-day-fog forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "cloudy") {
-                    $('#icon-day-three').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "partly-cloudy-day") {
-                    $('#icon-day-three').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayThreeIcon === "partly-cloudy-night") {
-                    $('#icon-day-three').html("<i class='wi wi-night-partly-cloudy forecast-list-icons'></i>");
-                } else {
-                    $('#icon-day-three').html("<i class='wi wi-day-sunny current-weather-icon'></i>");
-                }
+	var transaction = db.transaction(["categories"], "readwrite");
+	var store = transaction.objectStore("categories");
 
-                if (dayFourIcon == "clear-day") {
-                    $('#icon-day-four').html("<i class='wi wi-day-sunny forecast-list-icons'></i>");
-                } else if (dayFourIcon === "clear-night") {
-                    $('#icon-day-four').html("<i class='wi wi-night-clear forecast-list-icons'></i>");
-                } else if (dayFourIcon === "rain") {
-                    $('#icon-day-four').html("<i class='wi wi-day-rain forecast-list-icons'></i>");
-                } else if (dayFourIcon === "snow") {
-                    $('#icon-day-four').html("<i class='wi wi-day-snow forecast-list-icons'></i>");
-                } else if (dayFourIcon === "sleet") {
-                    $('#icon-day-four').html("<i class='wi wi-day-sleet forecast-list-icons'></i>");
-                } else if (dayFourIcon === "wind") {
-                    $('#icon-day-four').html("<i class='wi wi-day-windy forecast-list-icons'></i>");
-                } else if (dayFourIcon === "fog") {
-                    $('#icon-day-four').html("<i class='wi wi-day-fog forecast-list-icons'></i>");
-                } else if (dayFourIcon === "cloudy") {
-                    $('#icon-day-four').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayFourIcon === "partly-cloudy-day") {
-                    $('#icon-day-four').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayFourIcon === "partly-cloudy-night") {
-                    $('#icon-day-four').html("<i class='wi wi-night-partly-cloudy forecast-list-icons'></i>");
-                } else {
-                    $('#icon-day-four').html("<i class='wi wi-day-sunny current-weather-icon'></i>");
-                }
+	//Define a category object
+	var category = {
+		name: name,
+		created: new Date(),
+		cards: []
+	};
 
-                if (dayFiveIcon == "clear-day") {
-                    $('#icon-day-five').html("<i class='wi wi-day-sunny forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "clear-night") {
-                    $('#icon-day-five').html("<i class='wi wi-night-clear forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "rain") {
-                    $('#icon-day-five').html("<i class='wi wi-day-rain forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "snow") {
-                    $('#icon-day-five').html("<i class='wi wi-day-snow forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "sleet") {
-                    $('#icon-day-five').html("<i class='wi wi-day-sleet forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "wind") {
-                    $('#icon-day-five').html("<i class='wi wi-day-windy forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "fog") {
-                    $('#icon-day-five').html("<i class='wi wi-day-fog forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "cloudy") {
-                    $('#icon-day-five').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "partly-cloudy-day") {
-                    $('#icon-day-five').html("<i class='wi wi-day-cloudy forecast-list-icons'></i>");
-                } else if (dayFiveIcon === "partly-cloudy-night") {
-                    $('#icon-day-five').html("<i class='wi wi-night-partly-cloudy forecast-list-icons'></i>");
-                } else {
-                    $('#icon-day-five').html("<i class='wi wi-day-sunny current-weather-icon'></i>");
-                }
+	//Perform the add
+	var request = store.add(category);
 
-                // Get date
+	request.onerror = function (e) {
+		console.log("Error", e.target.error.name);
+		//some type of error handler
+	};
 
-                var days = new Array(7);
-                days[0] = "Sunday";
-                days[1] = "Monday";
-                days[2] = "Tuesday";
-                days[3] = "Wednesday";
-                days[4] = "Thursday";
-                days[5] = "Friday";
-                days[6] = "Saturday";
+	request.onsuccess = function (e) {
+		console.log("Woot! Did it");
+	};
+};
 
-                var months = new Array(12);
-                months[0] = "January";
-                months[1] = "February";
-                months[2] = "March";
-                months[3] = "April";
-                months[4] = "May";
-                months[5] = "June";
-                months[6] = "July";
-                months[7] = "August";
-                months[8] = "September";
-                months[9] = "October";
-                months[10] = "November";
-                months[11] = "December";
+_database.flashcardsDB.addNewCard = function (items) {
 
-                var current_date = new Date();
-                var month_value = current_date.getMonth();
-                var date_value = current_date.getDate();
-                var day_value = current_date.getDay();
-                var year_value = current_date.getFullYear();
-                var d1 = (day_value + 1) % 7;
-                var d2 = (day_value + 2) % 7;
-                var d3 = (day_value + 3) % 7;
-                var d4 = (day_value + 4) % 7;
-                var d5 = (day_value + 5) % 7;
+	current = currentCat.innerText;
+	var cardsArr = void 0;
+	// Get the current category depending on which menu item was clicked
+	console.log('Unfiltered: ' + items);
+	for (var i = 0; i < items.length; i++) {
+		if (items[i].name === current) {
+			cardsArr = items[i].cards;
+			console.log(cardsArr);
 
-                var todayPlusOne = days[d1].substring(0, 3);
-                var todayPlusTwo = days[d2].substring(0, 3);
-                var todayPlusThree = days[d3].substring(0, 3);
-                var todayPlusFour = days[d4].substring(0, 3);
-                var todayPlusFive = days[d5].substring(0, 3);
+			console.log('Added card!');
+		}
+	};
+	var lb = newCardInput.value.replace(/(\n)+/g, '<br>');
+	console.log('cardsArr=', cardsArr);
+	console.log(lb);
+	cardsArr.push(lb);
+	newCardInput.value = '';
 
-                // Place date information into HTML
+	// Updates the database with the new input
 
-                $('#dateandtime').html(days[day_value] + " " + date_value + " " + months[month_value] + ", " + year_value);
+	var title = current;
 
-                $('.day-one').html(todayPlusOne);
-                $('.day-two').html(todayPlusTwo);
-                $('.day-three').html(todayPlusThree);
-                $('.day-four').html(todayPlusFour);
-                $('.day-five').html(todayPlusFive);
+	var transaction = db.transaction(['categories'], 'readwrite');
+	var objectStore = transaction.objectStore('categories');
 
-                // Calculate fahrenheit
+	objectStore.openCursor().onsuccess = function (event) {
+		var cursor = event.target.result;
+		if (cursor) {
+			if (cursor.value.name === current) {
+				var updateData = cursor.value;
 
-                var convertToFahrenheit = function convertToFahrenheit(temp) {
-                    return Math.floor(temp * (9 / 5) + 32);
-                };
+				updateData.cards = cardsArr;
+				var request = cursor.update(updateData);
+				request.onsuccess = function () {
+					console.log('A better album year?');
+				};
+			};
+			cursor.continue();
+		} else {
+			console.log('Entries displayed.');
+		}
+	};
+};
 
-                // Switch between celsius and fahrenheit
+// Get all cards in the database (not filtered)
+_database.flashcardsDB.getCards = function (callback) {
+	console.log('Running getCards');
+	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
+	var store = transaction.objectStore("categories");
+	var items = [];
 
-                $("input[type=checkbox]").change(function () {
-                    if (this.checked) {
-                        $('#current-temp').addClass('.current-temp-far').removeClass('.current-temp').html(convertToFahrenheit(currentTemp) + "&deg;");
-                        $('#current-temp').css('margin-left', '0px').css('text-align', 'center');
-                        $('.high-temp-left').html(convertToFahrenheit(maxTemp) + "&deg;");
-                        $('.low-temp-left').html(convertToFahrenheit(minTemp) + "&deg;");
-                        $('#day-one-forecast-temp-hi').html(convertToFahrenheit(dayOneMax) + "&deg;");
-                        $('#day-one-forecast-temp-lo').html(convertToFahrenheit(dayOneMin) + "&deg;");
-                        $('#day-two-forecast-temp-hi').html(convertToFahrenheit(dayTwoMax) + "&deg;");
-                        $('#day-two-forecast-temp-lo').html(convertToFahrenheit(dayTwoMin) + "&deg;");
-                        $('#day-three-forecast-temp-hi').html(convertToFahrenheit(dayThreeMax) + "&deg;");
-                        $('#day-three-forecast-temp-lo').html(convertToFahrenheit(dayThreeMin) + "&deg;");
-                        $('#day-four-forecast-temp-hi').html(convertToFahrenheit(dayFourMax) + "&deg;");
-                        $('#day-four-forecast-temp-lo').html(convertToFahrenheit(dayFourMin) + "&deg;");
-                        $('#day-five-forecast-temp-hi').html(convertToFahrenheit(dayFiveMax) + "&deg;");
-                        $('#day-five-forecast-temp-lo').html(convertToFahrenheit(dayFiveMin) + "&deg;");
-                    } else {
-                        $('#current-temp').addClass('.current-temp').removeClass('.current-temp-far').html(currentTemp + "&deg;");
-                        $('#current-temp').css('text-align', 'center').css('margin-left', 'auto');
-                        $('.high-temp-left').html(maxTemp + "&deg;");
-                        $('.low-temp-left').html(minTemp + "&deg;");
-                        $('#day-one-forecast-temp-hi').html(dayOneMax + "&deg;");
-                        $('#day-one-forecast-temp-lo').html(dayOneMin + "&deg;");
-                        $('#day-two-forecast-temp-hi').html(dayTwoMax + "&deg;");
-                        $('#day-two-forecast-temp-lo').html(dayTwoMin + "&deg;");
-                        $('#day-three-forecast-temp-hi').html(dayThreeMax + "&deg;");
-                        $('#day-three-forecast-temp-lo').html(dayThreeMin + "&deg;");
-                        $('#day-four-forecast-temp-hi').html(dayFourMax + "&deg;");
-                        $('#day-four-forecast-temp-lo').html(dayFourMin + "&deg;");
-                        $('#day-five-forecast-temp-hi').html(dayFiveMax + "&deg;");
-                        $('#day-five-forecast-temp-lo').html(dayFiveMin + "&deg;");
-                    }
-                });
-            });
-        });
-    }
-    // Finish doing everything
+	transaction.oncomplete = function (evt) {
+
+		callback(items);
+		console.log(items);
+	};
+
+	var cursorRequest = store.openCursor();
+
+	cursorRequest.onerror = function (error) {
+		console.log(error);
+	};
+
+	cursorRequest.onsuccess = function (evt) {
+		var cursor = evt.target.result;
+		if (cursor) {
+			items.push(cursor.value);
+			cursor.continue();
+		}
+	};
+};
+
+_database.flashcardsDB.deleteEverything = function () {
+	// open a read/write db transaction, ready for deleting the data
+	var transaction = db.transaction(["categories"], "readwrite");
+
+	// report on the success of opening the transaction
+	transaction.oncomplete = function (event) {
+		console.log('Transaction completed: database modification finished.');
+	};
+
+	transaction.onerror = function (event) {
+		console.log('Transaction not opened due to error: ' + transaction.error);
+	};
+
+	// create an object store on the transaction
+	var objectStore = transaction.objectStore("categories");
+
+	// Delete the specified record out of the object store
+	var objectStoreRequest = objectStore.clear();
+
+	objectStoreRequest.onsuccess = function (event) {
+		// report the success of our delete operation
+		console.log('Record deleted.');
+	};
+};
+
+_database.flashcardsDB.deleteRecord = function (variable) {
+	// open a read/write db transaction, ready for deleting the data
+	var transaction = db.transaction(["categories"], "readwrite");
+
+	// report on the success of opening the transaction
+	transaction.oncomplete = function (event) {
+		console.log('Transaction completed: database modification finished.');
+	};
+
+	transaction.onerror = function (event) {
+		console.log('Transaction not opened due to error: ' + transaction.error);
+	};
+
+	// create an object store on the transaction
+	var objectStore = transaction.objectStore("categories");
+
+	// Delete the specified record out of the object store
+	var objectStoreRequest = objectStore.delete(variable);
+
+	objectStoreRequest.onsuccess = function (event) {
+		// report the success of our delete operation
+		console.log('Record deleted.');
+	};
+};
+
+/**
+ * Menu opening and transition
+ */
+
+function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function nextCard() {
+
+	console.log(cardIndex);
+	if (cardIndex < currentCards.length && cardIndex >= 0) {
+		cardIndex += 1;
+		console.log(currentCards.length);
+		cardContent.innerText = catIndex.cards[cardIndex];
+		if (cardIndex < 9) {
+			fcNum.innerText = '0' + (cardIndex + 1);
+		} else {
+			fcNum.innerText = cardIndex + 1;
+		}
+	} else {
+		return;
+	}
+}
+
+function prevCard() {
+
+	console.log(cardIndex);
+	if (cardIndex <= currentCards.length && cardIndex > 0) {
+		cardIndex -= 1;
+		console.log(currentCards.length);
+		cardContent.innerText = catIndex.cards[cardIndex];
+		if (cardIndex < 9) {
+			fcNum.innerText = '0' + (cardIndex + 1);
+		} else {
+			fcNum.innerText = cardIndex + 1;
+			leftBtn.css = 'opacity: 0.1';
+		}
+	} else {
+		return;
+	}
+}
+
+function showMenus() {
+
+	var tl = new TimelineLite();
+	var tl2 = new TimelineLite();
+
+	_database.flashcardsDB.getCards(function (items) {
+
+		var frag = document.createDocumentFragment();
+		var menuInner = document.getElementById('menu-inner');
+		for (var i = 0; i < items.length; i++) {
+			var a = document.createElement('a');
+			var li = document.createElement('li');
+			var length = void 0;
+			li.setAttribute('class', 'menu__item');
+			a.setAttribute('data-category', items[i].name);
+			if (items[i].cards.length) {
+				length = 0;
+			} else {
+				length = items[i].cards.length;
+			};
+			li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' cards</span>';
+			a.appendChild(li);
+			frag.appendChild(a);
+			li.addEventListener('click', function (e) {
+				var clicked = e.target.innerText;
+
+				hideMenus();
+				// Run a function that takes the category name you clicked on as a parameter
+				appendCardContent(clicked, items);
+			});
+			menuInner.appendChild(frag);
+		}
+	});
+
+	tl.to(menuOverlay, 0, {
+		display: 'flex',
+		opacity: 0.95
+	}).to(menu, 0.1, {
+		display: 'flex'
+	}).to(menu, 0.5, {
+		y: -15,
+		opacity: 0.95
+	});
+	tl2.to(menu2, 0.1, {
+		display: 'flex'
+	}).to(menu2, 0.1, {
+		y: -15,
+		opacity: 0.95
+	});
+	TweenLite.to(line1, 0.7, {
+		height: '100vh'
+	});
+	TweenLite.to(line2, 0.7, {
+		height: '100vh',
+		delay: 0.5
+	});
+	TweenLite.to(menuBarOne, 0.5, {
+		width: '0px',
+		delay: 0.4
+	});
+	TweenLite.to(menuBarTwo, 0.5, {
+		width: '0px',
+		delay: 0.2
+	});
+	TweenLite.to(menuBarThree, 0.5, {
+		width: '0px'
+	});
+}
+
+function hideMenus() {
+	console.log('Running hideMenus');
+	var tl = new TimelineLite();
+	var tl2 = new TimelineLite();
+	var tl3 = new TimelineLite();
+	var addCategoryMenu = document.getElementById("tertiary-menu-one");
+	var menuInner = document.getElementById('menu-inner');
+
+	menuInner.innerHTML = '';
+
+	// Animation
+
+	tl.to(menu, 0.1, {
+		opacity: 0
+	}).to(menu, 0, {
+		display: 'none'
+	}).to(menuOverlay, 1, {
+		opacity: 0
+	}).to(menuOverlay, 0, {
+		display: 'none'
+	});
+	tl2.to(menu2, 0.1, {
+		opacity: 0
+	}).to(menu2, 0, {
+		display: 'none'
+	});
+	tl3.to(menu3, 0.1, {
+		opacity: 0
+	}).to(menu3, 0, {
+		display: 'none'
+	});
+	tl3.to(menu4, 0.1, {
+		opacity: 0
+	}).to(menu4, 0, {
+		display: 'none'
+	});
+	TweenLite.to(line1, 0.3, {
+		height: '0px',
+		x: 0
+	});
+	TweenLite.to(line2, 0.3, {
+		height: '0px',
+		delay: 0.2
+	});
+	TweenLite.to(menuBarOne, 0.5, {
+		width: '100%',
+		delay: 0.4
+	});
+	TweenLite.to(menuBarTwo, 0.5, {
+		width: '100%',
+		delay: 0.2
+	});
+	TweenLite.to(menuBarThree, 0.5, {
+		width: '100%'
+	});
+}
+
+function menuTransition() {
+
+	var slider = document.createElement('div');
+	var tl = new TimelineLite();
+
+	slider.classList.add('menu-transition');
+	document.body.appendChild(slider);
+
+	tl.to(slider, 0.3, {
+		width: '100vw'
+	}).to(slider, 0.7, {
+		opacity: 0,
+		delay: 0.3
+	}).to(slider, 0, {
+		display: 'none'
+	});
+	TweenLite.to(line1, 0.2, {
+		height: '0'
+	});
+	TweenLite.to(line2, 0.2, {
+		height: '0'
+	});
+	TweenLite.to(menu, 0, {
+		display: 'none'
+	});
+	TweenLite.to(menu2, 0, {
+		display: 'none'
+	});
+}
+
+function showCategoryInput() {
+
+	var tl = new TimelineLite();
+	var addCategoryMenu = document.getElementById("tertiary-menu-one");
+
+	backBtn.addEventListener('click', function (e) {
+		TweenLite.to(addCategoryMenu, 0, {
+			display: 'none'
+		});
+		menuTransition();
+		setTimeout(showMenus, 1500);
+	});
+
+	menuTransition();
+
+	tl.to(menu3, 0, {
+		display: 'flex'
+	}).to(menu3, 0.3, {
+		opacity: 1,
+		delay: 1.4
+	});
+	// Fade out main menu
+	TweenLite.to(line1, 0.7, {
+		display: 'inline-block',
+		height: '100vh',
+		delay: 1.2
+	});
+
+	menu3.addEventListener('click', function (e) {
+		e.stopPropagation();
+	});
+}
+
+function showCardInput() {
+	var current = currentCat.innerText;
+	var tl = new TimelineLite();
+	var addCardMenu = document.getElementById("tertiary-menu-two");
+	addCardLabel.innerText = 'Add a new card to ' + current + ':';
+	backBtn2.addEventListener('click', function (e) {
+		TweenLite.to(addCardMenu, 0, {
+			display: 'none'
+		});
+		menuTransition();
+		setTimeout(showMenus, 1500);
+	});
+
+	menuTransition();
+
+	tl.to(menu4, 0, {
+		display: 'flex'
+	}).to(menu4, 0.3, {
+		opacity: 1,
+		delay: 1.4
+	});
+	// Fade out main menu
+	TweenLite.to(line1, 0.7, {
+		display: 'inline-block',
+		height: '100vh',
+		delay: 1.2
+	});
+
+	menu4.addEventListener('click', function (e) {
+		e.stopPropagation();
+	});
+}
+
+function hideCardsGrid() {
+	var tl = new TimelineLite();
+	var noCardsMsg = document.getElementById('noCardsMsg');
+	tl.to(grid, 0.7, {
+		opacity: 0
+	}).to(grid, 0, {
+		display: 'none'
+	});
+	TweenLite.to(noCardsMsg, 0.2, {
+		opacity: 0
+	});
+}
+
+// Event listeners
+
+menuBtn.addEventListener('click', showMenus);
+menuOverlay.addEventListener('click', hideMenus, false);
+grid.addEventListener('click', hideCardsGrid, false);
+leftBtn.addEventListener('click', prevCard, false);
+rightBtn.addEventListener('click', nextCard, false);
+addCategoryBtn.addEventListener('click', function (e) {
+
+	e.stopPropagation();
+	showCategoryInput();
 });
+
+addCardBtn.addEventListener('click', function (e) {
+
+	e.stopPropagation();
+	showCardInput();
+});
+
+// gridBtn.addEventListener('click', showCardsGrid);
+// 
+
+document.body.onkeyup = function (e) {
+	if (e.keyCode === 39) {
+		var tl = new TimelineLite();
+		tl.to(rightBtn, 0.2, {
+			color: '#ffffff',
+			scale: 1.8
+		}).to(rightBtn, 0.7, {
+			color: '#a9a9a9',
+			scale: 1
+		});
+	}
+	if (e.keyCode === 37) {
+		var _tl = new TimelineLite();
+		_tl.to(leftBtn, 0.2, {
+			color: '#ffffff',
+			scale: 1.8
+		}).to(leftBtn, 0.7, {
+			color: '#a9a9a9',
+			scale: 1
+		});
+	}
+};
+
+// Listen for submission of new category
+newCategoryInput.onkeyup = function (e) {
+	if (e.keyCode == 13 && newCategoryInput.value !== "") {
+		modal();
+	}
+};
+
+function modal() {
+
+	var modal = document.createElement('div');
+	var modalOverlay = document.createElement('div');
+	var frag = document.createDocumentFragment();
+	var btnHolder = document.createElement('div');
+	var confirmBtn = document.createElement('button');
+	var cancelBtn = document.createElement('button');
+	var modalTxt = document.createElement('span');
+
+	confirmBtn.setAttribute('class', 'btn-submit');
+	cancelBtn.setAttribute('class', 'btn-submit');
+	btnHolder.setAttribute('class', 'wrapper');
+	modalTxt.setAttribute('class', 'modal-text');
+	modal.setAttribute('class', 'confirmation-modal');
+	modalOverlay.setAttribute('class', 'modal-overlay');
+
+	modalTxt.innerText = 'Are you sure you want to create the ' + newCategoryInput.value + ' category?';
+	confirmBtn.innerText = 'Submit';
+	cancelBtn.innerText = 'Cancel';
+
+	btnHolder.appendChild(confirmBtn);
+	btnHolder.appendChild(cancelBtn);
+	frag.appendChild(modalTxt);
+	frag.appendChild(btnHolder);
+	body.appendChild(modalOverlay);
+	modalOverlay.appendChild(modal);
+	modal.appendChild(frag);
+
+	TweenLite.to(modal, 0.3, {
+		height: '200px',
+		delay: 0.2,
+		ease: Power1.easeOut
+	});
+	TweenLite.to(btnHolder, 0.3, {
+		opacity: 1,
+		delay: 0.5
+	});
+	TweenLite.to(modalTxt, 0.3, {
+		opacity: 1,
+		delay: 0.5
+	});
+
+	modalOverlay.addEventListener('click', function () {
+		console.log('closed overlay');
+		e.stopPropagation();
+		TweenLite.to(modalOverlay, 0.2, {
+			display: 'none'
+		});
+	});
+
+	confirmBtn.addEventListener('click', function () {
+
+		_database.flashcardsDB.addNewCategory();
+		_database.flashcardsDB.getCards(function (items) {
+			console.log('Running getCards callback');
+			var frag = document.createDocumentFragment();
+			for (var i = 0; i < items.length; i++) {
+				var a = document.createElement('a');
+				var li = document.createElement('li');
+				var length = void 0;
+				li.setAttribute('class', 'menu__item');
+				a.setAttribute('data-category', items[i].name);
+				if (items[i].cards.length) {
+					length = 0;
+				} else {
+					length = items[i].cards.length;
+				};
+				li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' cards</span>';
+				a.appendChild(li);
+				frag.appendChild(a);
+				li.addEventListener('click', function (e) {
+					hideMenus();
+					var clicked = e.target.innerText;
+					currentCat.innerText = clicked;
+					// Append the content to the DOM
+
+					//	appendCardContent(clicked, items)
+				});
+				menuInner.appendChild(frag);
+			}
+		});
+
+		function confirm() {
+			var newCatMenuInner = document.getElementById('newCategoryInner');
+			var confirmation = document.createElement('span');
+			confirmation.setAttribute('class', 'add-category__confirmation');
+			confirmation.innerText = newCategoryInput.value + ' category successfully added';
+			newCatMenuInner.appendChild(confirmation);
+			var tl = new TimelineLite();
+			tl.to(newCategoryInput, 0.05, {
+				opacity: 0
+			}).to(newCategoryInput, 0.1, {
+				opacity: 1,
+				delay: 0.1
+			});
+			TweenLite.to(confirmation, 1, {
+				y: -15,
+				opacity: 1,
+				ease: Power1.easeOut
+			});
+			newCategoryInput.value = "";
+		};
+	});
+
+	cancelBtn.addEventListener('click', function (e) {
+		e.stopPropagation();
+
+		TweenLite.to(modal, 0.2, {
+			height: '0px',
+			delay: 0.1,
+			ease: Power1.easeOut
+		});
+		TweenLite.to(modalTxt, 0.1, {
+			opacity: 0
+		});
+		TweenLite.to(btnHolder, 0.1, {
+			opacity: 0
+		});
+		TweenLite.to(modal, 0, {
+			display: 'none',
+			delay: 0.3
+		});
+		TweenLite.to(modalOverlay, 0, {
+			display: 'none',
+			delay: 0.5
+		});
+	});
+}
+
+newCardInput.onkeyup = function (e) {
+	console.log(this);
+	if (this.clientHeight < this.scrollHeight) {
+		this.style.height = this.scrollHeight + 'px';
+	}
+};
