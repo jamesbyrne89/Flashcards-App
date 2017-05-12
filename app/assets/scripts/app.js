@@ -113,6 +113,11 @@ document.addEventListener("DOMContentLoaded", function() {
 		let tl = new TimelineLite();
 		let frag = document.createDocumentFragment();
 		let menuInner = document.getElementById('menu-inner');
+		console.log('items on load: ' + items)
+		if (items.length === 0) {
+			const noCardsFound = document.get
+		}
+		else {
 		for (let i = 0; i < 9; i++) {
 			let a = document.createElement('a');
 			let li = document.createElement('li');
@@ -138,6 +143,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				} else {
 					return;
 				};
+			}
 			}
 			a.appendChild(li);
 			frag.appendChild(a);

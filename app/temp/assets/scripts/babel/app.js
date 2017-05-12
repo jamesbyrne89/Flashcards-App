@@ -1,7 +1,5 @@
 'use strict';
 
-var _database = require('database.js');
-
 // Declare global variables
 
 var body = document.getElementById('body');
@@ -40,16 +38,26 @@ var catIndex = void 0;
  * Code to create the database that will store the decks
  */
 
+var flashcardsDB = function () {
+	var flashcardsDB = {};
+	var datastore = null;
+
+	// flashcards: Add methods for interacting with the database here.
+
+	// Export the tDB object.
+	return flashcardsDB;
+}();
+
 var db;
 
-_database.flashcardsDB.indexedDBOk = function () {
+flashcardsDB.indexedDBOk = function () {
 	return "indexedDB" in window;
 };
 
 document.addEventListener("DOMContentLoaded", function () {
 
 	//No support? Go in the corner and pout.
-	if (!_database.flashcardsDB.indexedDBOk) return;
+	if (!flashcardsDB.indexedDBOk) return;
 
 	var openRequest = indexedDB.open("idarticle_categories", 1);
 
@@ -142,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		console.log("running onsuccess");
 		db = e.target.result;
 
-		_database.flashcardsDB.getCards(function (items) {
+		flashcardsDB.getCards(function (items) {
 			console.log('Running getCards callback');
 			// Display initial content
 			appendCardContent();
@@ -183,9 +191,9 @@ document.addEventListener("DOMContentLoaded", function () {
 		submitCardBtn.addEventListener('click', function (e) {
 
 			//flashcardsDB.addNewCard(items);
-			_database.flashcardsDB.getCards(function (items) {
+			flashcardsDB.getCards(function (items) {
 				console.log(items);
-				_database.flashcardsDB.addNewCard(items);
+				flashcardsDB.addNewCard(items);
 			});
 			(function confirm() {
 				var newCardMenuInner = document.getElementById('newCardInner');
@@ -214,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	};
 }, false);
 
-_database.flashcardsDB.addNewCategory = function (e) {
+flashcardsDB.addNewCategory = function (e) {
 	var name = newCategoryInput.value;
 
 	console.log("About to add " + name);
@@ -242,7 +250,7 @@ _database.flashcardsDB.addNewCategory = function (e) {
 	};
 };
 
-_database.flashcardsDB.addNewCard = function (items) {
+flashcardsDB.addNewCard = function (items) {
 
 	current = currentCat.innerText;
 	var cardsArr = void 0;
@@ -289,7 +297,7 @@ _database.flashcardsDB.addNewCard = function (items) {
 };
 
 // Get all cards in the database (not filtered)
-_database.flashcardsDB.getCards = function (callback) {
+flashcardsDB.getCards = function (callback) {
 	console.log('Running getCards');
 	var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
 	var store = transaction.objectStore("categories");
@@ -316,7 +324,7 @@ _database.flashcardsDB.getCards = function (callback) {
 	};
 };
 
-_database.flashcardsDB.deleteEverything = function () {
+flashcardsDB.deleteEverything = function () {
 	// open a read/write db transaction, ready for deleting the data
 	var transaction = db.transaction(["categories"], "readwrite");
 
@@ -341,7 +349,7 @@ _database.flashcardsDB.deleteEverything = function () {
 	};
 };
 
-_database.flashcardsDB.deleteRecord = function (variable) {
+flashcardsDB.deleteRecord = function (variable) {
 	// open a read/write db transaction, ready for deleting the data
 	var transaction = db.transaction(["categories"], "readwrite");
 
@@ -416,7 +424,7 @@ function showMenus() {
 	var tl = new TimelineLite();
 	var tl2 = new TimelineLite();
 
-	_database.flashcardsDB.getCards(function (items) {
+	flashcardsDB.getCards(function (items) {
 
 		var frag = document.createDocumentFragment();
 		var menuInner = document.getElementById('menu-inner');
@@ -751,8 +759,8 @@ function modal() {
 
 	confirmBtn.addEventListener('click', function () {
 
-		_database.flashcardsDB.addNewCategory();
-		_database.flashcardsDB.getCards(function (items) {
+		flashcardsDB.addNewCategory();
+		flashcardsDB.getCards(function (items) {
 			console.log('Running getCards callback');
 			var frag = document.createDocumentFragment();
 			for (var i = 0; i < items.length; i++) {
