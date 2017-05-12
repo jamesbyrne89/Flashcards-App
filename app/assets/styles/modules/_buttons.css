@@ -1,0 +1,77 @@
+
+.button-collapse {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.btn-submit {
+  margin-top: 20px;
+  padding: 0.875em 1.5em;
+  border: solid 1px #a9a9a9;
+  background: transparent;
+  color: #a9a9a9;
+  font-family: 'roboto condensed';
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 0.3s;
+  display: block;
+}
+
+/*------------------------------------*\
+  #BUTTONS
+\*------------------------------------*/
+
+.btn-submit:hover {
+  color: #fff;
+  border: solid 1px #fff;
+  cursor: pointer;
+}
+
+.menu__back-btn {
+  font-size: 0.75rem;
+  font-weight: thin;
+  background: transparent;
+  color: #a9a9a9;
+   position: relative;
+  right: 0;
+  transition: all 0.7s;
+  font-family: inherit;
+  padding: 0.5em;
+}
+
+.menu__back-btn:hover {
+  color: #fff;
+  }
+
+.menu__back-btn:hover.btn-back-arrow {
+  left: -15px;
+  transform: translateX(-5px);
+  color: #fff;
+}
+
+  .btn-back-arrow {
+    position: relative;
+    left: -5px;
+    transition: all 0.7s;
+    color: #a9a9a9;
+  }
+
+.directional-btn {
+  align-items: center;
+  font-size: 1.25rem;
+  background: none;
+  color: #a9a9a9;
+  transition: all 0.7s;
+  width: 50%;
+  display: inline-block;
+  padding: 2em;
+}
+
+.directional-btn:hover {
+  color: #fff;
+}
+
+.btn-wrapper {
+  display: flex;
+  margin-top: 100px;
+}

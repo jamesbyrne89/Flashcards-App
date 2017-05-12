@@ -1,0 +1,20 @@
+.flashcard {
+  font-size: 2.25rem;
+  min-height: 70vh;
+  margin: 20px;
+  p {
+    margin-top: 200px;
+  }
+}
+
+.flashcard__number {
+  opacity: 0.5;
+  font-size: 6rem;
+}
+
+.flashcard-num__line {
+  margin-top: 40px;
+  width: 50px;
+  border: solid 2px #a9a9a9;
+  margin-left: 0;
+}

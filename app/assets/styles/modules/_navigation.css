@@ -1,42 +1,28 @@
-  .menu-overlay {
-    position: absolute;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    background: black;
-    width: 100%;
-    height: 100%;
-    opacity: 0.9;
-    z-index: 100;
-  }
+/*------------------------------------*\
+  #NAVIGATION
+\*------------------------------------*/
 
-  .menu {
-    width: 500px;
-     opacity: 0;
-     margin-top: 15px;
-  }
+.menu-overlay {
+  position: absolute;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  background: black;
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+  z-index: 100;
+}
 
-  .secondary-menu__header {
-    opacity: 0.5;
-  }
+.menu {
+  width: 500px;
+  opacity: 0;
+  margin-top: 15px;
+}
 
-  .vert-line {
-    position: relative;
-    width: 1px;
-    background: #898989;
-    display: inline-block;
-    opacity: 0.7;
-  }
-
-  .line-up {
-    margin-top: auto;
-    bottom: 0;
-  }
-
-  .line-down {
-    top: 0px;
-    margin-bottom: auto;
-  }
+.secondary-menu__header {
+  opacity: 0.5;
+}
 
 .menu__item {
   border-bottom: solid 1px #201F1A;
@@ -44,6 +30,10 @@
   list-style: none;
   display: flex;
   justify-content: space-between;
+}
+
+.menu__item:hover {
+  cursor: pointer;
 }
 
 .menu__item__num {
@@ -56,7 +46,7 @@
   font-size: 1.25rem;
   font-family: 'roboto condensed';
   text-transform: uppercase;
-  padding:  1em 1.5em;
+  padding: 1em 1.5em;
 }
 
 .relational-menu {
@@ -85,23 +75,22 @@
   opacity: 1;
 }
 
-
 .menu-inner:hover > a:hover {
   color: white;
   transition: all 0.5s;
   opacity: 1;
 }
 
-  .menu-btn {
-    position: absolute;
-    right: 50px;
-    top: 50px;
-    width: 30px;
-    height: 30px;
-    background-color: transparent;
-    padding: 0;
-    z-index: 180;
-  }
+.menu-btn {
+  position: absolute;
+  right: 50px;
+  top: 50px;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  padding: 0;
+  z-index: 180;
+}
 
 .menu-bar-one {
   display: block;
@@ -142,53 +131,14 @@
   max-height: 50vh;
 }
 
-  .grid-btn {
-    position: absolute;
-    left: 50px;
-    top: 50px;
-    height: 30px;
-    background-color: transparent;
-    padding: 0;
-    z-index: 180;
-    color: #fff;
-    font-family: 'roboto mono';
-  }
-
-.grid-overlay {
-    position: absolute;
-    justify-content: center;
-    bottom: 0;
-    left: 0;
-    background: black;
-    color: #fff;
-    width: 100%;
-    height: 100%;
-    opacity: 1;
-    z-index: 300;
-    text-align: center;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    padding-top: 15px;
+.grid-btn {
+  position: absolute;
+  left: 50px;
+  top: 50px;
+  height: 30px;
+  background-color: transparent;
+  padding: 0;
+  z-index: 180;
+  color: #fff;
+  font-family: 'roboto mono';
 }
-
-.grid-overlay a {
-  width: 25vw;
-  height: 50vh;
-  transition: all 0.7s;
-  display: flex;
-  flex: 0 0 25vw;
-  justify-content: center;
-  align-items: center;
-}
-
-.grid-overlay a:hover {
-  background: #D5F9F3;
-  color: #000;
-  cursor: pointer;
-}
-
-.grid__item {
-  list-style: none;
-}
-
