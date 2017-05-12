@@ -336,7 +336,7 @@ overflow-x: none;
     background: black;
     color: #fff;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     opacity: 1;
     z-index: 300;
     text-align: center;
@@ -578,6 +578,7 @@ textarea.materialize-textarea {
 .message {
   display: none;
   opacity: 0;
+  text-align: center;
 }
 
 .flashcard-num__line {

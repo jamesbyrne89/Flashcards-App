@@ -192,6 +192,7 @@ textarea.materialize-textarea {
 .message {
   display: none;
   opacity: 0;
+  text-align: center;
 }
 
 
