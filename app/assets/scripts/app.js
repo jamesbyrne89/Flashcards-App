@@ -32,6 +32,8 @@
 	const leftBtn = document.getElementById('leftBtn');
 	const rightBtn = document.getElementById('rightBtn');
 	const noCardsMsg = document.getElementById('no-cards-message');
+	const filler = document.getElementById('filler');
+	const introText = document.getElementById('intro__title');
 	let current;
 	let currentCards;
 	let cardIndex;
@@ -114,9 +116,14 @@
 		function showCardsGrid(items) {
 			console.log('Running  showCardsGrid')
 			let tl = new TimelineLite();
+			let tl2 = new TimelineLite();
 			let frag = document.createDocumentFragment();
 			let menuInner = document.getElementById('menu-inner');
 			const addFirstCat = document.getElementById('add-first-cat');
+			TweenLite.to(introText, 0, {color: '#fff', delay: 1});
+			tl2.to(filler, 1, {width: '100%', ease: Power1.easeOut})
+					.to(filler, 0.7, {width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2});
+					//.to(filler, 0.7, {width: '0px', left: 'auto'});
 			if (items.length === 0) {
 				TweenLite.to(noCardsMsg, 0.7, {
 					display: 'block',
@@ -133,43 +140,44 @@
 				});
 			} else {
 				grid.addEventListener('click', hideCardsGrid, false);
-				for (let i = 0; i < 9; i++) {
-					let a = document.createElement('a');
-					let li = document.createElement('li');
-					li.setAttribute('class', 'grid__item');
-
-					if (i < items.length) {
-						console.log(items.length)
-						li.innerText = items[i].name;
-						console.log(li.innerText)
-						if (li.innerText !== '') {
-
-							a.addEventListener('click', function(e) {
-								let clicked = e.target.innerText;
-								console.log(clicked)
-								currentCat.innerText = clicked;
-								console.log('clicked!!!')
-								menuTransition();
-								// Append the content to the DOM
-								appendCardContent(clicked, items)
-
-
-							})
-						} else {
-							return;
-						};
-					}
-					a.appendChild(li);
-					frag.appendChild(a);
-				}
-			}
-			gridOverlay.appendChild(frag);
+			//	for (let i = 0; i < 9; i++) {
+			//		let a = document.createElement('a');
+			//		let li = document.createElement('li');
+			//		li.setAttribute('class', 'grid__item');
+//
+//					if (i < items.length) {
+//						console.log(items.length)
+//						li.innerText = items[i].name;
+//						console.log(li.innerText)
+//						if (li.innerText !== '') {
+//
+//							a.addEventListener('click', function(e) {
+//								let clicked = e.target.innerText;
+//								console.log(clicked)
+//								currentCat.innerText = clicked;
+//								console.log('clicked!!!')
+//								menuTransition();
+//								// Append the content to the DOM
+//								appendCardContent(clicked, items)
 
 
-			TweenLite.to(grid, 0.7, {
-				y: -20,
-				ease: Power1.easeOut
-			});
+//							})
+						}
+//						else {
+//							return;
+//						};
+//					}
+//					a.appendChild(li);
+//					frag.appendChild(a);
+//				}
+//			}
+//			gridOverlay.appendChild(frag);
+//
+
+		//	TweenLite.to(grid, 0.7, {
+		//		y: -20,
+		//		ease: Power1.easeOut
+		//	});
 		}
 
 		openRequest.onsuccess = function(e) {

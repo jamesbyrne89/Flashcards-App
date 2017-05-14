@@ -32,6 +32,7 @@
 	var grid = document.getElementById('gridOverlay');
 	var leftBtn = document.getElementById('leftBtn');
 	var rightBtn = document.getElementById('rightBtn');
+	var noCardsMsg = document.getElementById('no-cards-message');
 	var current = void 0;
 	var currentCards = void 0;
 	var cardIndex = void 0;
@@ -94,7 +95,6 @@
 						cardIndex = random;
 						catIndex = i;
 						currentCards = i.cards;
-						console.log(currentCards);
 						var content = i.cards[cardIndex];
 						fcNum.innerText = '0' + (random + 1);
 						cardContent.innerHTML = content;
@@ -104,8 +104,7 @@
 				currentCat.innerText = '*';
 			}
 			if (!items) {
-				cardContent.innerHTML = "<p>There's nothing here. Add something.</p>";
-				console.log("There's nothing here");
+				cardContent.innerHTML = "<p>There's nothing here.Add something.</p>";
 			}
 		}
 
@@ -114,10 +113,23 @@
 			var tl = new TimelineLite();
 			var frag = document.createDocumentFragment();
 			var menuInner = document.getElementById('menu-inner');
-			var noCardsMsg = document.getElementById('no-cards-message');
+			var addFirstCat = document.getElementById('add-first-cat');
 			if (items.length === 0) {
-				TweenLite.to(noCardsMsg, 0.7, { display: 'block', opacity: 1, y: -15 });
+				TweenLite.to(noCardsMsg, 0.7, {
+					display: 'block',
+					opacity: 1,
+					y: -15
+				});
+				addFirstCat.addEventListener('click', function () {
+					tl.to(menuOverlay, 0, {
+						display: 'flex',
+						opacity: 0.95
+					});
+					showCategoryInput();
+					hideCardsGrid();
+				});
 			} else {
+				grid.addEventListener('click', hideCardsGrid, false);
 				for (var i = 0; i < 9; i++) {
 					var a = document.createElement('a');
 					var li = document.createElement('li');
@@ -584,7 +596,7 @@
 	}
 
 	function showCategoryInput() {
-
+		console.log('Running showCategoryInput');
 		var tl = new TimelineLite();
 		var addCategoryMenu = document.getElementById("tertiary-menu-one");
 
@@ -666,7 +678,6 @@
 
 	menuBtn.addEventListener('click', showMenus);
 	menuOverlay.addEventListener('click', hideMenus, false);
-	grid.addEventListener('click', hideCardsGrid, false);
 	leftBtn.addEventListener('click', prevCard, false);
 	rightBtn.addEventListener('click', nextCard, false);
 	addCategoryBtn.addEventListener('click', function (e) {
