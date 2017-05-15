@@ -35,6 +35,7 @@
 	var noCardsMsg = document.getElementById('no-cards-message');
 	var filler = document.getElementById('filler');
 	var introText = document.getElementById('intro__title');
+	var fillerHolder = document.getElementById('filler-holder');
 	var current = void 0;
 	var currentCards = void 0;
 	var cardIndex = void 0;
@@ -111,17 +112,19 @@
 		}
 
 		function showCardsGrid(items) {
-			console.log('Running  showCardsGrid');
+
 			var tl = new TimelineLite();
 			var tl2 = new TimelineLite({ onComplete: showGridMenu });
 			var frag = document.createDocumentFragment();
 			var menuInner = document.getElementById('menu-inner');
 			var addFirstCat = document.getElementById('add-first-cat');
-			TweenLite.to(introText, 0, { color: '#fff', delay: 1 });
-			TweenLite.to(introText, 0, { color: '#000', delay: 4.4 });
-			tl2.to(filler, 1, { width: '100%', ease: Power1.easeOut }).to(filler, 0.7, { width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2 }).to(filler, 0.7, { width: '100%', ease: Circ.easeOut, delay: 2 }).to(filler, 0.7, { width: '0px', left: '0', right: 'auto', ease: Circ.easeOut, delay: 0.2 });
+
+			TweenLite.to(introText, 0, { opacity: 1, delay: 1 });
+			TweenLite.to(introText, 0, { opacity: 0, delay: 4.4 });
+			TweenLite.to(fillerHolder, 0, { display: 'none', delay: 4.8 });
+			tl2.to(filler, 1, { width: '100%', ease: Power1.easeOut }).to(filler, 0.7, { width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2 }).to(filler, 0.4, { width: '100%', ease: Circ.easeOut, delay: 2 }).to(filler, 0.4, { width: '0px', left: '0', right: 'auto', ease: Circ.easeOut, delay: 0.2 });
+
 			function showGridMenu() {
-				//.to(filler, 0.7, {width: '0px', left: 'auto'});
 				if (items.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
 						display: 'block',
@@ -430,12 +433,21 @@
 		}
 	}
 
+	function slideLeft() {
+		TweenLite.to(cardContent, 1, { x: -300, opacity: 0 });
+	}
+
+	function slideRight() {
+		TweenLite.to(cardContent, 1, { x: 300, opacity: 0 });
+	}
+
 	function prevCard() {
 
 		console.log(cardIndex);
 		if (cardIndex <= currentCards.length && cardIndex > 0) {
 			cardIndex -= 1;
 			console.log(currentCards.length);
+			slideLeft();
 			cardContent.innerText = catIndex.cards[cardIndex];
 			if (cardIndex < 9) {
 				fcNum.innerText = '0' + (cardIndex + 1);

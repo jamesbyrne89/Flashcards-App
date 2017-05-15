@@ -152,7 +152,7 @@ button:focus {
 }
 
 html {
-  overflow-x: hidden;
+  overflow: hidden;
   max-height: 100vh;
 }
 body {
