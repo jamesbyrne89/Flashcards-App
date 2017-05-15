@@ -84,22 +84,20 @@
 
 		function appendCardContent(clicked, items) {
 			console.log('Running appendCardContent');
-			var random = void 0;
 			console.log(items);
 			current = clicked;
 
 			if (clicked) {
 				currentCat.innerText = current;
-
 				items.forEach(function (i) {
 					var x = i.name;
-					if (x == current) {
-						random = getRandomInt(0, i.cards.length);
-						cardIndex = random;
+					if (x === current) {
+						var content = i.cards[cardIndex];
+						// Show a random card
+						cardIndex = getRandomInt(0, i.cards.length);
 						catIndex = i;
 						currentCards = i.cards;
-						var content = i.cards[cardIndex];
-						fcNum.innerText = '0' + (random + 1);
+						fcNum.innerText = '0' + (cardIndex + 1);
 						cardContent.innerHTML = content;
 					}
 				});
@@ -119,11 +117,6 @@
 			var menuInner = document.getElementById('menu-inner');
 			var addFirstCat = document.getElementById('add-first-cat');
 
-			TweenLite.to(introText, 0, { opacity: 1, delay: 1 });
-			TweenLite.to(introText, 0, { opacity: 0, delay: 4.4 });
-			TweenLite.to(fillerHolder, 0, { display: 'none', delay: 4.8 });
-			tl2.to(filler, 1, { width: '100%', ease: Power1.easeOut }).to(filler, 0.7, { width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2 }).to(filler, 0.4, { width: '100%', ease: Circ.easeOut, delay: 2 }).to(filler, 0.4, { width: '0px', left: '0', right: 'auto', ease: Circ.easeOut, delay: 0.2 });
-
 			function showGridMenu() {
 				if (items.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
@@ -141,22 +134,20 @@
 					});
 				} else {
 					grid.addEventListener('click', hideCardsGrid, false);
-					for (var i = 0; i < 9; i++) {
-						var a = document.createElement('a');
-						var li = document.createElement('li');
-						li.setAttribute('class', 'grid__item');
 
-						if (i < items.length) {
-							console.log(items.length);
-							li.innerText = items[i].name;
-							console.log(li.innerText);
+					for (obj in items) {
+						if (items[obj].hasOwnProperty('name')) {
+							var a = document.createElement('a');
+							var li = document.createElement('li');
+
+							li.setAttribute('class', 'grid__item');
+							li.innerText = items[obj].name;
 							if (li.innerText !== '') {
 
 								a.addEventListener('click', function (e) {
 									var clicked = e.target.innerText;
 									console.log(clicked);
 									currentCat.innerText = clicked;
-									console.log('clicked!!!');
 									menuTransition();
 									// Append the content to the DOM
 									appendCardContent(clicked, items);
@@ -164,9 +155,9 @@
 							} else {
 								return;
 							};
+							a.appendChild(li);
+							frag.appendChild(a);
 						}
-						a.appendChild(li);
-						frag.appendChild(a);
 					}
 				}
 				gridOverlay.appendChild(frag);
@@ -182,58 +173,43 @@
 			console.log("running onsuccess");
 			db = e.target.result;
 
+			/**
+    * Grab all the cards from the database
+    */
+
 			flashcardsDB.getCards(function (items) {
 				console.log('Running getCards callback');
+
+				// Display all categories as a grid
+				showCardsGrid(items);
+
 				// Display initial content
 				appendCardContent();
-				showCardsGrid(items);
-				var menuInner = document.getElementById('menu-inner');
-				menuInner.innerHTML = '';
-				var frag = document.createDocumentFragment();
-				for (var i = 0; i < items.length; i++) {
-					var a = document.createElement('a');
-					var li = document.createElement('li');
-					var length = void 0;
-					li.setAttribute('class', 'menu__item');
-					a.setAttribute('data-category', items[i].name);
-					if (!items[i].cards.length) {
-						length = 0;
-					} else {
-						length = items[i].cards.length;
-					};
-					if (length === 1) {
-						li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' card</span>';
-					} else {
-						li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' cards</span>';
-					}
-					a.appendChild(li);
-					frag.appendChild(a);
-					li.addEventListener('click', function (e) {
-						var clicked = e.target.innerText;
 
-						// Run a function that takes the category name you clicked on as a parameter
-						appendCardContent(clicked, items);
-						hideMenus();
-					});
-					menuInner.appendChild(frag);
-					catMenu.setAttribute('class', 'relational-menu');
-				}
+				// Update menus
+				updateCategoryMenu(items);
 			});
 
 			submitCardBtn.addEventListener('click', function (e) {
-
-				//flashcardsDB.addNewCard(items);
+				/**
+     * Grab all the cards from the database
+     */
 				flashcardsDB.getCards(function (items) {
 					console.log(items);
+					// Update the database with the new card
 					flashcardsDB.addNewCard(items);
 				});
+				// Show confirmation that category has been added
 				(function confirm() {
 					var newCardMenuInner = document.getElementById('newCardInner');
+					var tl = new TimelineLite();
 					var confirmation = document.createElement('span');
+
 					confirmation.setAttribute('class', 'add-card__confirmation');
 					confirmation.innerText = 'New card successfully added';
 					newCardMenuInner.appendChild(confirmation);
-					var tl = new TimelineLite();
+
+					// Animations for confirmation message
 					tl.to(newCategoryInput, 0.05, {
 						opacity: 0
 					}).to(newCategoryInput, 0.1, {
@@ -270,6 +246,7 @@
 		};
 
 		//Perform the add
+
 		var request = store.add(category);
 
 		request.onerror = function (e) {
@@ -298,7 +275,6 @@
 		};
 		var lb = newCardInput.value.replace(/(\n)+/g, '<br>');
 		console.log('cardsArr=', cardsArr);
-		console.log(lb);
 		cardsArr.push(lb);
 		newCardInput.value = '';
 
@@ -407,7 +383,7 @@
 	};
 
 	/**
-  * Menu opening and transition
+  * Get a random number within a range
   */
 
 	function getRandomInt(min, max) {
@@ -415,6 +391,10 @@
 		max = Math.floor(max);
 		return Math.floor(Math.random() * (max - min)) + min;
 	}
+
+	/**
+  * Go to the next card in the array
+  */
 
 	function nextCard() {
 
@@ -433,14 +413,17 @@
 		}
 	}
 
+	// Animate card left
 	function slideLeft() {
 		TweenLite.to(cardContent, 1, { x: -300, opacity: 0 });
 	}
 
+	// Animate card right
 	function slideRight() {
 		TweenLite.to(cardContent, 1, { x: 300, opacity: 0 });
 	}
 
+	// Grab the previous card in the array
 	function prevCard() {
 
 		console.log(cardIndex);
@@ -466,33 +449,40 @@
 		var tl2 = new TimelineLite();
 
 		flashcardsDB.getCards(function (items) {
-
-			var frag = document.createDocumentFragment();
-			var menuInner = document.getElementById('menu-inner');
-			for (var i = 0; i < items.length; i++) {
-				var a = document.createElement('a');
-				var li = document.createElement('li');
-				var length = void 0;
-				li.setAttribute('class', 'menu__item');
-				a.setAttribute('data-category', items[i].name);
-				if (items[i].cards.length) {
-					length = 0;
-				} else {
-					length = items[i].cards.length;
-				};
-				li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' cards</span>';
-				a.appendChild(li);
-				frag.appendChild(a);
-				li.addEventListener('click', function (e) {
-					var clicked = e.target.innerText;
-
-					hideMenus();
-					// Run a function that takes the category name you clicked on as a parameter
-					appendCardContent(clicked, items);
-				});
-				menuInner.appendChild(frag);
-			}
+			updateCategoryMenu(items);
 		});
+		/**
+  			let frag = document.createDocumentFragment();
+  			let menuInner = document.getElementById('menu-inner');
+  			menuInner.innerHTML='';
+  			for (let i = 0; i < items.length; i++) {
+  				
+  				let a = document.createElement('a');
+  				let li = document.createElement('li');
+  				let length;
+  				li.setAttribute('class', 'menu__item');
+  				a.setAttribute('data-category', items[i].name);
+  				if (items[i].cards.length) {
+  					length = 0;
+  				} else {
+  					length = items[i].cards.length;
+  				};
+  				li.innerHTML = `<span>${items[i].name}</span>
+  				<span class="menu__item__num">${length} cards</span>`;
+  				a.appendChild(li);
+  				frag.appendChild(a);
+  				li.addEventListener('click', function(e) {
+  					let clicked = e.target.innerText;
+  
+  					hideMenus();
+  					// Run a function that takes the category name you clicked on as a parameter
+  					appendCardContent(clicked, items)
+  				});
+  				console.log('Appending frag...');
+  				menuInner.appendChild(frag);
+  			}
+  		});
+  **/
 
 		tl.to(menuOverlay, 0, {
 			display: 'flex',
@@ -695,6 +685,40 @@
 		});
 	}
 
+	function updateCategoryMenu(items) {
+		var menuInner = document.getElementById('menu-inner');
+		menuInner.innerHTML = '';
+		var frag = document.createDocumentFragment();
+		for (var i = 0; i < items.length; i++) {
+			var a = document.createElement('a');
+			var li = document.createElement('li');
+			var length = void 0;
+			li.setAttribute('class', 'menu__item');
+			a.setAttribute('data-category', items[i].name);
+			if (!items[i].cards.length) {
+				length = 0;
+			} else {
+				length = items[i].cards.length;
+			};
+			if (length === 1) {
+				li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' card</span>';
+			} else {
+				li.innerHTML = '<span>' + items[i].name + '</span>\n\t\t\t\t<span class="menu__item__num">' + length + ' cards</span>';
+			}
+			a.appendChild(li);
+			frag.appendChild(a);
+			li.addEventListener('click', function (e) {
+				var clicked = e.target.innerText;
+
+				// Run a function that takes the category name you clicked on as a parameter
+				appendCardContent(clicked, items);
+				hideMenus();
+			});
+		}
+		menuInner.appendChild(frag);
+		catMenu.setAttribute('class', 'relational-menu');
+	}
+
 	// Event listeners
 
 	menuBtn.addEventListener('click', showMenus);
@@ -882,4 +906,13 @@
 			this.style.height = this.scrollHeight + 'px';
 		}
 	};
+
+	function playIntro() {
+
+		var tl = new TimelineLite({ onComplete: showGridMenu });
+		TweenLite.to(introText, 0, { opacity: 1, delay: 1 });
+		TweenLite.to(introText, 0, { opacity: 0, delay: 4.4 });
+		TweenLite.to(fillerHolder, 0, { display: 'none', delay: 4.8 });
+		tl.to(filler, 1, { width: '100%', ease: Power1.easeOut }).to(filler, 0.7, { width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2 }).to(filler, 0.4, { width: '100%', ease: Circ.easeOut, delay: 2 }).to(filler, 0.4, { width: '0px', left: '0', right: 'auto', ease: Circ.easeOut, delay: 0.2 });
+	}
 })();

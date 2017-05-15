@@ -114,7 +114,7 @@
 		function showCardsGrid(items) {
 
 			let tl = new TimelineLite();
-			let tl2 = new TimelineLite({onComplete:showGridMenu});
+			let tl2 = new TimelineLite({onComplete:buildGridMenu});
 			let frag = document.createDocumentFragment();
 			let menuInner = document.getElementById('menu-inner');
 			const addFirstCat = document.getElementById('add-first-cat');
@@ -127,7 +127,7 @@
 					.to(filler, 0.4, {width: '100%', ease: Circ.easeOut, delay: 2})
 					.to(filler, 0.4, {width: '0px', left: '0',right: 'auto', ease: Circ.easeOut, delay: 0.2})
 
-			function showGridMenu() {		
+			function buildGridMenu() {		
 			if (items.length === 0) {
 				TweenLite.to(noCardsMsg, 0.7, {
 					display: 'block',
