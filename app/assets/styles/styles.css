@@ -71,7 +71,8 @@
   font-family: 'roboto condensed', helvetica, sans-serif;
   text-transform: uppercase;
   font-weight: bold;
-  color: #000;
+  color: #fff;
+  opacity: 0;;
 }
 
 .filler-holder {

@@ -153,10 +153,12 @@ button:focus {
 
 html {
   overflow-x: hidden;
+  max-height: 100vh;
 }
 body {
 background:  #000;
 min-height: 100vh;
+max-height: 100vh;
 color: #F8FAFA;
 font-family: 'roboto mono';
 overflow-x: none;

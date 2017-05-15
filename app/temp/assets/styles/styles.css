@@ -153,11 +153,13 @@ button:focus {
 
 html {
   overflow-x: hidden;
+  max-height: 100vh;
 }
 
 body {
 background:  #000;
 min-height: 100vh;
+max-height: 100vh;
 color: #F8FAFA;
 font-family: 'roboto mono';
 overflow-x: none;
@@ -652,7 +654,8 @@ a {
   font-family: 'roboto condensed', helvetica, sans-serif;
   text-transform: uppercase;
   font-weight: bold;
-  color: #000;
+  color: #fff;
+  opacity: 0;;
 }
 
 .filler-holder {

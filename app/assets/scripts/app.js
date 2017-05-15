@@ -34,6 +34,7 @@
 	const noCardsMsg = document.getElementById('no-cards-message');
 	const filler = document.getElementById('filler');
 	const introText = document.getElementById('intro__title');
+	const fillerHolder = document.getElementById('filler-holder');
 	let current;
 	let currentCards;
 	let cardIndex;
@@ -114,20 +115,22 @@
 		}
 
 		function showCardsGrid(items) {
-			console.log('Running  showCardsGrid')
+
 			let tl = new TimelineLite();
 			let tl2 = new TimelineLite({onComplete:showGridMenu});
 			let frag = document.createDocumentFragment();
 			let menuInner = document.getElementById('menu-inner');
 			const addFirstCat = document.getElementById('add-first-cat');
-			TweenLite.to(introText, 0, {color: '#fff', delay: 1});
-			TweenLite.to(introText, 0, {color: '#000', delay: 4.4});
+
+			TweenLite.to(introText, 0, {opacity: 1, delay: 1});
+			TweenLite.to(introText, 0, {opacity: 0, delay: 4.4});
+			TweenLite.to(fillerHolder, 0, {display: 'none', delay: 4.8});
 			tl2.to(filler, 1, {width: '100%', ease: Power1.easeOut})
 					.to(filler, 0.7, {width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2})
-					.to(filler, 0.7, {width: '100%', ease: Circ.easeOut, delay: 2})
-					.to(filler, 0.7, {width: '0px', left: '0',right: 'auto', ease: Circ.easeOut, delay: 0.2})
+					.to(filler, 0.4, {width: '100%', ease: Circ.easeOut, delay: 2})
+					.to(filler, 0.4, {width: '0px', left: '0',right: 'auto', ease: Circ.easeOut, delay: 0.2})
+
 			function showGridMenu() {		
-					//.to(filler, 0.7, {width: '0px', left: 'auto'});
 			if (items.length === 0) {
 				TweenLite.to(noCardsMsg, 0.7, {
 					display: 'block',
