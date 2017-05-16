@@ -112,12 +112,17 @@
 		function showCardsGrid(items) {
 
 			var tl = new TimelineLite();
-			var tl2 = new TimelineLite({ onComplete: showGridMenu });
+			var tl2 = new TimelineLite({ onComplete: buildGridMenu });
 			var frag = document.createDocumentFragment();
 			var menuInner = document.getElementById('menu-inner');
 			var addFirstCat = document.getElementById('add-first-cat');
 
-			function showGridMenu() {
+			TweenLite.to(introText, 0, { opacity: 1, delay: 1 });
+			TweenLite.to(introText, 0, { opacity: 0, delay: 4.4 });
+			TweenLite.to(fillerHolder, 0, { display: 'none', delay: 4.8 });
+			tl2.to(filler, 1, { width: '100%', ease: Power1.easeOut }).to(filler, 0.7, { width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2 }).to(filler, 0.4, { width: '100%', ease: Circ.easeOut, delay: 2 }).to(filler, 0.4, { width: '0px', left: '0', right: 'auto', ease: Circ.easeOut, delay: 0.2 });
+
+			function buildGridMenu() {
 				if (items.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
 						display: 'block',
@@ -906,13 +911,4 @@
 			this.style.height = this.scrollHeight + 'px';
 		}
 	};
-
-	function playIntro() {
-
-		var tl = new TimelineLite({ onComplete: showGridMenu });
-		TweenLite.to(introText, 0, { opacity: 1, delay: 1 });
-		TweenLite.to(introText, 0, { opacity: 0, delay: 4.4 });
-		TweenLite.to(fillerHolder, 0, { display: 'none', delay: 4.8 });
-		tl.to(filler, 1, { width: '100%', ease: Power1.easeOut }).to(filler, 0.7, { width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2 }).to(filler, 0.4, { width: '100%', ease: Circ.easeOut, delay: 2 }).to(filler, 0.4, { width: '0px', left: '0', right: 'auto', ease: Circ.easeOut, delay: 0.2 });
-	}
 })();

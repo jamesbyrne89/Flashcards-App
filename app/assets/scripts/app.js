@@ -1,10 +1,9 @@
-(function init() {
+window.onload = (function init() {
 
 
 	// Declare global variables
 
 
-	const body = document.getElementById('body');
 	const menuBtn = document.getElementById('menu-btn');
 	const addCategoryBtn = document.getElementById('addCategory');
 	const addCardBtn = document.getElementById('addCard');
@@ -39,6 +38,16 @@
 	let currentCards;
 	let cardIndex;
 	let catIndex;
+
+
+	// Expand textarea when filled with content
+	newCardInput.onkeyup = function(e) {
+		console.log(this)
+		if (this.clientHeight < this.scrollHeight) {
+			this.style.height = this.scrollHeight + 'px';
+		}
+	};
+
 
 	/**
 	 * Code to create the database that will store the decks
@@ -243,6 +252,7 @@
 		}
 
 		openRequest.onerror = function(e) {
+			Alert('Error accessing the database')
 			//Do something for the error
 		}
 
@@ -424,7 +434,7 @@
 	 */
 
 	function nextCard() {
-
+		slideRight()
 		console.log(cardIndex)
 		if (cardIndex < currentCards.length && cardIndex >= 0) {
 			cardIndex += 1;
@@ -442,17 +452,19 @@
 
 	// Animate card left
 	function slideLeft() {
+		console.log('left')
 		TweenLite.to(cardContent, 1, {x: -300, opacity: 0})
 	}
 
 	// Animate card right
 	function slideRight() {
+		console.log('right')
 		TweenLite.to(cardContent, 1, {x: 300, opacity: 0})
 	}	
 
 	// Grab the previous card in the array
 	function prevCard() {
-
+		slideLeft()
 		console.log(cardIndex)
 		if (cardIndex <= currentCards.length && cardIndex > 0) {
 			cardIndex -= 1;
@@ -771,17 +783,13 @@ updateCategoryMenu(items)
 	leftBtn.addEventListener('click', prevCard, false);
 	rightBtn.addEventListener('click', nextCard, false);
 	addCategoryBtn.addEventListener('click', function(e) {
-
 		e.stopPropagation();
 		showCategoryInput();
-
 	});
 
 	addCardBtn.addEventListener('click', function(e) {
-
 		e.stopPropagation();
 		showCardInput();
-
 	});
 
 	// gridBtn.addEventListener('click', showCardsGrid);
@@ -812,12 +820,10 @@ updateCategoryMenu(items)
 		}
 	}
 
-
 	// Listen for submission of new category
 	newCategoryInput.onkeyup = function(e) {
 		if (e.keyCode == 13 && newCategoryInput.value !== "") {
 			modal();
-
 		}
 	}
 
@@ -954,16 +960,5 @@ updateCategoryMenu(items)
 			});
 		});
 	}
-
-	newCardInput.onkeyup = function(e) {
-		console.log(this)
-		if (this.clientHeight < this.scrollHeight) {
-			this.style.height = this.scrollHeight + 'px';
-		}
-	};
-
-
-
-
 
 })();
