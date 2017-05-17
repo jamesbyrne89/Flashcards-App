@@ -1,11 +1,10 @@
 'use strict';
 
-(function init() {
+window.onload = function init() {
 
 	// Declare global variables
 
 
-	var body = document.getElementById('body');
 	var menuBtn = document.getElementById('menu-btn');
 	var addCategoryBtn = document.getElementById('addCategory');
 	var addCardBtn = document.getElementById('addCard');
@@ -40,6 +39,14 @@
 	var currentCards = void 0;
 	var cardIndex = void 0;
 	var catIndex = void 0;
+
+	// Expand textarea when filled with content
+	newCardInput.onkeyup = function (e) {
+		console.log(this);
+		if (this.clientHeight < this.scrollHeight) {
+			this.style.height = this.scrollHeight + 'px';
+		}
+	};
 
 	/**
   * Code to create the database that will store the decks
@@ -122,7 +129,7 @@
 			TweenLite.to(fillerHolder, 0, { display: 'none', delay: 4.8 });
 			tl2.to(filler, 1, { width: '100%', ease: Power1.easeOut }).to(filler, 0.7, { width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2 }).to(filler, 0.4, { width: '100%', ease: Circ.easeOut, delay: 2 }).to(filler, 0.4, { width: '0px', left: '0', right: 'auto', ease: Circ.easeOut, delay: 0.2 });
 
-			function buildGridMenu() {
+			this.buildGridMenu = function () {
 				if (items.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
 						display: 'block',
@@ -171,7 +178,7 @@
 					y: -20,
 					ease: Power1.easeOut
 				});
-			}
+			};
 		}
 
 		openRequest.onsuccess = function (e) {
@@ -231,6 +238,7 @@
 		};
 
 		openRequest.onerror = function (e) {
+			Alert('Error accessing the database');
 			//Do something for the error
 		};
 	}, false);
@@ -402,7 +410,7 @@
   */
 
 	function nextCard() {
-
+		slideRight();
 		console.log(cardIndex);
 		if (cardIndex < currentCards.length && cardIndex >= 0) {
 			cardIndex += 1;
@@ -420,17 +428,19 @@
 
 	// Animate card left
 	function slideLeft() {
+		console.log('left');
 		TweenLite.to(cardContent, 1, { x: -300, opacity: 0 });
 	}
 
 	// Animate card right
 	function slideRight() {
+		console.log('right');
 		TweenLite.to(cardContent, 1, { x: 300, opacity: 0 });
 	}
 
 	// Grab the previous card in the array
 	function prevCard() {
-
+		slideLeft();
 		console.log(cardIndex);
 		if (cardIndex <= currentCards.length && cardIndex > 0) {
 			cardIndex -= 1;
@@ -731,13 +741,11 @@
 	leftBtn.addEventListener('click', prevCard, false);
 	rightBtn.addEventListener('click', nextCard, false);
 	addCategoryBtn.addEventListener('click', function (e) {
-
 		e.stopPropagation();
 		showCategoryInput();
 	});
 
 	addCardBtn.addEventListener('click', function (e) {
-
 		e.stopPropagation();
 		showCardInput();
 	});
@@ -904,11 +912,4 @@
 			});
 		});
 	}
-
-	newCardInput.onkeyup = function (e) {
-		console.log(this);
-		if (this.clientHeight < this.scrollHeight) {
-			this.style.height = this.scrollHeight + 'px';
-		}
-	};
-})();
+}();

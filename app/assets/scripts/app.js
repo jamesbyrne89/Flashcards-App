@@ -165,7 +165,6 @@ window.onload = (function init() {
 
 							a.addEventListener('click', function(e) {
 								let clicked = e.target.innerText;
-								console.log(clicked)
 								currentCat.innerText = clicked;
 								menuTransition();
 								// Append the content to the DOM
@@ -568,11 +567,6 @@ updateCategoryMenu(items)
 		const tl3 = new TimelineLite();
 		const addCategoryMenu = document.getElementById("tertiary-menu-one");
 		const menuInner = document.getElementById('menu-inner')
-
-		menuInner.innerHTML = '';
-
-
-
 		// Animation
 
 		tl.to(menu, 0.1, {
@@ -582,7 +576,10 @@ updateCategoryMenu(items)
 		}).to(menuOverlay, 1, {
 			opacity: 0
 		}).to(menuOverlay, 0, {
-			display: 'none'
+			display: 'none',
+			onComplete: function(){
+				menuInner.innerHTML = '';
+			}
 		})
 		tl2.to(menu2, 0.1, {
 			opacity: 0
@@ -618,6 +615,7 @@ updateCategoryMenu(items)
 		TweenLite.to(menuBarThree, 0.5, {
 			width: '100%'
 		});
+
 	}
 
 	function menuTransition() {
@@ -767,8 +765,9 @@ updateCategoryMenu(items)
 						let clicked = e.target.innerText;
 
 						// Run a function that takes the category name you clicked on as a parameter
-						appendCardContent(clicked, items)
 						hideMenus();
+						appendCardContent(clicked, items)
+						
 					});
 									}
 					menuInner.appendChild(frag);
