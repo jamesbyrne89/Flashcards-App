@@ -452,18 +452,17 @@ window.onload = (function init() {
 	// Animate card left
 	function slideLeft() {
 		console.log('left')
-		TweenLite.to(cardContent, 1, {x: -300, opacity: 0})
+		TweenLite.to(cardContent, 1, {x: -300, opacity: 0, onComplete: prevCard})
 	}
 
 	// Animate card right
 	function slideRight() {
 		console.log('right')
-		TweenLite.to(cardContent, 1, {x: 300, opacity: 0})
+		TweenLite.to(cardContent, 1, {x: 300, opacity: 0, onComplete: nextCard})
 	}	
 
 	// Grab the previous card in the array
 	function prevCard() {
-		slideLeft()
 		console.log(cardIndex)
 		if (cardIndex <= currentCards.length && cardIndex > 0) {
 			cardIndex -= 1;
@@ -779,8 +778,8 @@ updateCategoryMenu(items)
 
 	menuBtn.addEventListener('click', showMenus);
 	menuOverlay.addEventListener('click', hideMenus, false);
-	leftBtn.addEventListener('click', prevCard, false);
-	rightBtn.addEventListener('click', nextCard, false);
+	leftBtn.addEventListener('click', slideLeft, false);
+	rightBtn.addEventListener('click', slideRight, false);
 	addCategoryBtn.addEventListener('click', function(e) {
 		e.stopPropagation();
 		showCategoryInput();
@@ -799,7 +798,8 @@ updateCategoryMenu(items)
 			let tl = new TimelineLite();
 			tl.to(rightBtn, 0.2, {
 					color: '#ffffff',
-					scale: 1.8
+					scale: 1.8,
+					onComplete: slideRight
 				})
 				.to(rightBtn, 0.7, {
 					color: '#a9a9a9',
@@ -810,7 +810,8 @@ updateCategoryMenu(items)
 			let tl = new TimelineLite();
 			tl.to(leftBtn, 0.2, {
 					color: '#ffffff',
-					scale: 1.8
+					scale: 1.8,
+					onComplete: slideLeft
 				})
 				.to(leftBtn, 0.7, {
 					color: '#a9a9a9',

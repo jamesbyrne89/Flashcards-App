@@ -129,7 +129,7 @@ window.onload = function init() {
 			TweenLite.to(fillerHolder, 0, { display: 'none', delay: 4.8 });
 			tl2.to(filler, 1, { width: '100%', ease: Power1.easeOut }).to(filler, 0.7, { width: '0px', right: '0', left: 'auto', ease: Circ.easeOut, delay: 0.2 }).to(filler, 0.4, { width: '100%', ease: Circ.easeOut, delay: 2 }).to(filler, 0.4, { width: '0px', left: '0', right: 'auto', ease: Circ.easeOut, delay: 0.2 });
 
-			this.buildGridMenu = function () {
+			function buildGridMenu() {
 				if (items.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
 						display: 'block',
@@ -158,7 +158,6 @@ window.onload = function init() {
 
 								a.addEventListener('click', function (e) {
 									var clicked = e.target.innerText;
-									console.log(clicked);
 									currentCat.innerText = clicked;
 									menuTransition();
 									// Append the content to the DOM
@@ -178,7 +177,7 @@ window.onload = function init() {
 					y: -20,
 					ease: Power1.easeOut
 				});
-			};
+			}
 		}
 
 		openRequest.onsuccess = function (e) {
@@ -541,9 +540,6 @@ window.onload = function init() {
 		var tl3 = new TimelineLite();
 		var addCategoryMenu = document.getElementById("tertiary-menu-one");
 		var menuInner = document.getElementById('menu-inner');
-
-		menuInner.innerHTML = '';
-
 		// Animation
 
 		tl.to(menu, 0.1, {
@@ -553,7 +549,10 @@ window.onload = function init() {
 		}).to(menuOverlay, 1, {
 			opacity: 0
 		}).to(menuOverlay, 0, {
-			display: 'none'
+			display: 'none',
+			onComplete: function onComplete() {
+				menuInner.innerHTML = '';
+			}
 		});
 		tl2.to(menu2, 0.1, {
 			opacity: 0
@@ -726,8 +725,8 @@ window.onload = function init() {
 				var clicked = e.target.innerText;
 
 				// Run a function that takes the category name you clicked on as a parameter
-				appendCardContent(clicked, items);
 				hideMenus();
+				appendCardContent(clicked, items);
 			});
 		}
 		menuInner.appendChild(frag);
