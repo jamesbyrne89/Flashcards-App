@@ -1,11 +1,9 @@
 /*------------------------------------*\
   #GLOBAL
 \*------------------------------------*/
-
 /**
  * CSS reset
  */
-
 html,
 body,
 div,
@@ -60,7 +58,6 @@ video {
   vertical-align: baseline;
   background: transparent;
 }
-
 article,
 aside,
 figure,
@@ -70,65 +67,52 @@ nav,
 section {
   display: block;
 }
-
 html {
   box-sizing: border-box;
   overflow-y: scroll;
 }
-
 *,
 *:before,
 *:after {
   box-sizing: inherit;
 }
-
 img,
 object {
   max-width: 100%;
 }
-
 ul {
   list-style: none;
 }
-
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
-
 th {
   font-weight: bold;
   vertical-align: bottom;
 }
-
 td {
   font-weight: normal;
   vertical-align: top;
 }
-
 input,
 select {
   vertical-align: middle;
 }
-
 input[type="radio"] {
   vertical-align: text-bottom;
 }
-
 input[type="checkbox"] {
   vertical-align: bottom;
 }
-
 strong {
   font-weight: bold;
 }
-
 label,
 input[type="file"],
 button {
   cursor: pointer;
 }
-
 button,
 input,
 select,
@@ -136,26 +120,21 @@ textarea {
   margin: 0;
   border: 0;
 }
-
 /**
  * Custom styles begin here
  */
-
 button::-moz-focus-inner {
   padding: 0;
   border: 0;
   
 }
-
 button:focus {
-  outline: #5DE2A1;
+  outline: #DDE603;
 }
-
 html {
   overflow: hidden;
   max-height: 100vh;
 }
-
 body {
 background:  #000;
 min-height: 100vh;
@@ -164,21 +143,17 @@ color: #F8FAFA;
 font-family: 'roboto mono';
 overflow-x: none;
 }
-
 .hidden {
     display: none;
     transition: all 3s;
     opacity: 0;
   }
-
 ::-moz-selection {
-  background-color: #5DE2A1;
+  background-color: #DDE603;
 }
-
 ::selection {
-  background-color: #5DE2A1;
+  background-color: #DDE603;
 }
-
 .input {
   background: transparent;
   border: solid 1px #fff;
@@ -189,21 +164,17 @@ overflow-x: none;
   width: 200px; 
   display: block;
 }
-
 .input:focus {
   outline: none;
-  border: solid 1px #D5F9F3;
+  border: solid 1px #DDE603;
 }
-
 a {
   color: white;
   text-decoration: none;
 }
-
 /*------------------------------------*\
   #NAVIGATION
 \*------------------------------------*/
-
 .menu-overlay {
   position: absolute;
   -webkit-box-pack: center;
@@ -217,17 +188,14 @@ a {
   opacity: 0.9;
   z-index: 100;
 }
-
 .menu {
   width: 500px;
   opacity: 0;
   margin-top: 15px;
 }
-
 .secondary-menu__header {
   opacity: 0.5;
 }
-
 .menu__item {
   border-bottom: solid 1px #201F1A;
   padding: 1em 2em;
@@ -239,15 +207,12 @@ a {
       -ms-flex-pack: justify;
           justify-content: space-between;
 }
-
 .menu__item:hover {
   cursor: pointer;
 }
-
 .menu__item__num {
   opacity: 0.3;
 }
-
 .menu__header {
   transition: background-color 0.2s;
   margin-bottom: 100px;
@@ -256,39 +221,32 @@ a {
   text-transform: uppercase;
   padding: 1em 1.5em;
 }
-
 .relational-menu {
   margin: auto;
   margin-left: 20px;
   width: 100%;
   min-height: 500px;
 }
-
 .top-level-menu {
   width: 100%;
   margin: auto;
   margin-left: 20px;
 }
-
 .menu-inner a:hover {
   transition: all 0.5s;
 }
-
 .menu-inner:hover > a {
   color: #a9a9a9;
   transition: all 0.5s;
 }
-
 .menu-inner:hover > .menu__item__num {
   opacity: 1;
 }
-
 .menu-inner:hover > a:hover {
   color: white;
   transition: all 0.5s;
   opacity: 1;
 }
-
 .menu-btn {
   position: absolute;
   right: 50px;
@@ -299,7 +257,6 @@ a {
   padding: 0;
   z-index: 180;
 }
-
 .menu-bar-one {
   display: block;
   position: relative;
@@ -308,7 +265,6 @@ a {
   background-color: #fff;
   right: 0px;
 }
-
 .menu-bar-two {
   display: block;
   height: 2px;
@@ -316,7 +272,6 @@ a {
   width: 30px;
   left: 0px;
 }
-
 .menu-bar-three {
   display: block;
   position: relative;
@@ -326,19 +281,16 @@ a {
   right: 0px;
   text-align: right;
 }
-
 .menu-transition {
   height: 100vh;
   position: absolute;
   right: 0;
-  background-color: #D5F9F3;
+  background-color: #DDE603;
   z-index: 300;
 }
-
 .menu-inner {
   max-height: 50vh;
 }
-
 .grid-btn {
   position: absolute;
   left: 50px;
@@ -350,11 +302,9 @@ a {
   color: #fff;
   font-family: 'roboto mono';
 }
-
 /*------------------------------------*\
   #GRID
 \*------------------------------------*/
-
 .grid-overlay {
     position: absolute;
     -webkit-box-pack: center;
@@ -379,7 +329,6 @@ a {
             align-items: center;
     padding-top: 15px;
 }
-
 .grid-overlay a {
   width: 25vw;
   height: 50vh;
@@ -397,21 +346,17 @@ a {
       -ms-flex-align: center;
           align-items: center;
 }
-
 .grid-overlay a:hover {
   background: #D5F9F3;
   color: #000;
   cursor: pointer;
 }
-
 .grid__item {
   list-style: none;
 }
-
 /*------------------------------------*\
   #FOOTER
 \*------------------------------------*/
-
 .footer {
   position: absolute;
   bottom: 0;
@@ -421,21 +366,17 @@ a {
   color: #a9a9a9;
   font-size: 0.75rem;
 }
-
 .footer a {
   color: #a9a9a9;
   transition: all 0.5s;
 }
-
 .footer a:hover {
   color: white;
 }
-
 .button-collapse {
   margin-bottom: 20px;
   margin-top: 20px;
 }
-
 .btn-submit {
   margin-top: 20px;
   padding: 0.875em 1.5em;
@@ -448,17 +389,14 @@ a {
   transition: all 0.3s;
   display: block;
 }
-
 /*------------------------------------*\
   #BUTTONS
 \*------------------------------------*/
-
 .btn-submit:hover {
   color: #fff;
   border: solid 1px #fff;
   cursor: pointer;
 }
-
 .menu__back-btn {
   font-size: 0.75rem;
   font-weight: thin;
@@ -470,25 +408,21 @@ a {
   font-family: inherit;
   padding: 0.5em;
 }
-
 .menu__back-btn:hover {
   color: #fff;
   }
-
 .menu__back-btn:hover.btn-back-arrow {
   left: -15px;
   -webkit-transform: translateX(-5px);
           transform: translateX(-5px);
   color: #fff;
 }
-
 .btn-back-arrow {
     position: relative;
     left: -5px;
     transition: all 0.7s;
     color: #a9a9a9;
   }
-
 .directional-btn {
   -webkit-box-align: center;
       -ms-flex-align: center;
@@ -501,44 +435,36 @@ a {
   display: inline-block;
   padding: 2em;
 }
-
 .directional-btn:hover {
   color: #fff;
 }
-
 .btn-wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   margin-top: 100px;
 }
-
 .flashcard {
   font-size: 2.25rem;
   min-height: 70vh;
   margin: 20px;
 }
-
 .flashcard p {
   margin-top: 200px;
 }
-
 .flashcard__number {
   opacity: 0.5;
   font-size: 6rem;
 }
-
 .flashcard-num__line {
   margin-top: 40px;
   width: 50px;
   border: solid 2px #a9a9a9;
   margin-left: 0;
 }
-
 /*------------------------------------*\
   #MODAL
 \*------------------------------------*/
-
 .modal-overlay {
   height: 100vh;
   width: 100vw;
@@ -558,7 +484,6 @@ a {
       -ms-flex-pack: center;
           justify-content: center;
 }
-
 .confirmation-modal {
   height: 0;
   width: 500px;
@@ -575,7 +500,6 @@ a {
       justify-content: space-around;
   background: #000;
 }
-
 .modal-text {
   margin: 0 auto;
   text-align: center;
@@ -583,7 +507,6 @@ a {
   padding: 1em;
   opacity: 0;
 }
-
 .wrap {
   padding: 1em;
   display: inline-block;
@@ -595,7 +518,6 @@ a {
       -ms-flex-positive: 1;
           flex-grow: 1;
 }
-
 .wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -606,31 +528,26 @@ a {
   padding: 1em;
   opacity: 0;
 }
-
 .add-category__label {
   display: block;
   margin-top: 50px;
 }
-
 .add-category__confirmation {
   position: relative;
   display: block;
   opacity: 0;
   margin-top: 30px;
 }
-
 .add-card__input {
   width: 300px;
   height: 80px;
   overflow: hidden;
 }
-
 .message {
   display: none;
   opacity: 0;
   text-align: center;
 }
-
 .vert-line {
   position: relative;
   width: 1px;
@@ -638,17 +555,14 @@ a {
   display: inline-block;
   opacity: 0.7;
 }
-
 .line-up {
   margin-top: auto;
   bottom: 0;
 }
-
 .line-down {
   top: 0px;
   margin-bottom: auto;
 }
-
 .intro__title {
   font-size: 4rem;
   font-family: 'roboto condensed', helvetica, sans-serif;
@@ -657,7 +571,6 @@ a {
   color: #fff;
   opacity: 0;;
 }
-
 .filler-holder {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -665,7 +578,6 @@ a {
   position: relative;
   height: 4rem;
 }
-
 .filler {
   width: 0;
   background: #fff;

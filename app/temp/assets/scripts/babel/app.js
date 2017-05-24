@@ -417,8 +417,10 @@ window.onload = function init() {
 			cardContent.innerText = catIndex.cards[cardIndex];
 			if (cardIndex < 9) {
 				fcNum.innerText = '0' + (cardIndex + 1);
+				TweenLite.to(cardContent, 1, { x: -300, opacity: 1 });
 			} else {
 				fcNum.innerText = cardIndex + 1;
+				TweenLite.to(cardContent, 1, { x: -300, opacity: 1 });
 			}
 		} else {
 			return;
@@ -447,9 +449,11 @@ window.onload = function init() {
 			cardContent.innerText = catIndex.cards[cardIndex];
 			if (cardIndex < 9) {
 				fcNum.innerText = '0' + (cardIndex + 1);
+				TweenLite.to(cardContent, 1, { x: 300, opacity: 1 });
 			} else {
 				fcNum.innerText = cardIndex + 1;
 				leftBtn.css = 'opacity: 0.1';
+				TweenLite.to(cardContent, 1, { x: 300, opacity: 1 });
 			}
 		} else {
 			return;

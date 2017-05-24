@@ -53,15 +53,8 @@ window.onload = (function init() {
 	 * Code to create the database that will store the decks
 	 */
 
-	let flashcardsDB = (function() {
-		let flashcardsDB = {};
-		let datastore = null;
-
-		// flashcards: Add methods for interacting with the database here.
-
-		// Export the tDB object.
-		return flashcardsDB;
-	}());
+import "flashcardsDB";
+import "flashcardsDB.addNewCategory";
 
 
 	var db;
@@ -257,34 +250,7 @@ window.onload = (function init() {
 
 	}, false);
 
-	flashcardsDB.addNewCategory = function(e) {
-		var name = newCategoryInput.value;
 
-		console.log("About to add " + name);
-
-		var transaction = db.transaction(["categories"], "readwrite");
-		var store = transaction.objectStore("categories");
-
-		//Define a category object
-		var category = {
-			name: name,
-			created: new Date(),
-			cards: []
-		}
-
-		//Perform the add
-
-		var request = store.add(category);
-
-		request.onerror = function(e) {
-			console.log("Error", e.target.error.name);
-			//some type of error handler
-		}
-
-		request.onsuccess = function(e) {
-			console.log("Woot! Did it");
-		}
-	}
 
 
 	flashcardsDB.addNewCard = function(items) {
