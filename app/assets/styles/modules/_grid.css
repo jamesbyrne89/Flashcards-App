@@ -31,7 +31,7 @@
 }
 
 .grid-overlay a:hover {
-  background: #D5F9F3;
+  background: $fluroYellow;
   color: #000;
   cursor: pointer;
 }
