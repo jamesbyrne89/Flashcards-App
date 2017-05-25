@@ -15,6 +15,6 @@
 .flashcard-num__line {
   margin-top: 40px;
   width: 50px;
-  border: solid 2px #a9a9a9;
+  border: solid 2px $midGrey;
   margin-left: 0;
 }
