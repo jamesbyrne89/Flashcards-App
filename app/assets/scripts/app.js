@@ -26,17 +26,11 @@ window.onload = (function init() {
 	const fcRelTxt = document.getElementById('flashcard-relational-text');
 	const currentCat = document.getElementById('currentCat');
 	const addCardLabel = document.getElementById('addCardLabel');
-	const grid = document.getElementById('gridOverlay');
 	const leftBtn = document.getElementById('leftBtn');
 	const rightBtn = document.getElementById('rightBtn');
 	const noCardsMsg = document.getElementById('no-cards-message');
-	const filler = document.getElementById('filler');
-	const introText = document.getElementById('intro__title');
-	const fillerHolder = document.getElementById('filler-holder');
-	let current;
-	let currentCards;
-	let cardIndex;
-	let catIndex;
+
+	let current, currentCards, cardIndex, catIndex;
 
 
 	// Expand textarea when filled with content
@@ -119,8 +113,10 @@ window.onload = (function init() {
 		};
 
 		function showCardsGrid(items) {
-
 			// Intro animation
+			const filler = document.getElementById('filler');
+			const fillerHolder = document.getElementById('filler-holder');
+			const introText = document.getElementById('intro__title');
 			let tl = new TimelineLite();
 			let tl2 = new TimelineLite({
 				onComplete: buildGridMenu
@@ -166,6 +162,8 @@ window.onload = (function init() {
 				});
 
 			function buildGridMenu() {
+
+				const grid = document.getElementById('gridOverlay');
 				if (items.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
 						display: 'block',
@@ -362,7 +360,10 @@ window.onload = (function init() {
 	};
 
 
-	// Get all cards in the database (not filtered)
+	/*
+	Get all cards in the database (not filtered)
+	 */
+	
 	flashcardsDB.getCards = function(callback) {
 		console.log('Running getCards');
 		let transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
@@ -444,10 +445,12 @@ window.onload = (function init() {
 	};
 
 
-	/*
-	Get a random number within a range
-	*/
-
+	/**
+	 * Gets a random number within a range
+	 * @param  {number} min The lower end of the range
+	 * @param  {number} max The upper end of the range
+	 * @return {number}     A random number between the two given parameters
+	 */ 
 	function getRandomInt(min, max) {
 		min = Math.ceil(min);
 		max = Math.floor(max);
