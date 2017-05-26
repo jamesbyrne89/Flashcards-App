@@ -83,19 +83,13 @@ window.onload = (function init() {
 			}
 		};
 
-		function appendCardContent(clicked, items) {
-			console.log('Running appendCardContent');
-			console.log(items);
-			currentCat.innerText = clicked;
-			current = clicked;
-			console.log('clicked', clicked)
+		function fetchCards(clicked) {
+			console.log('Fetching cards...');
 			if (clicked) {
-				console.log('hello?')
-				currentCat.innerText = current;
 				// Loop through items to find current category
-				items.forEach(function(i) {
+				allItems.forEach(function(i) {
 					var x = i.name;
-					if (x === current) {
+					if (x === clicked) {
 						let content = i.cards[cardIndex];
 						// Show a random card
 						cardIndex = 0;
@@ -103,16 +97,37 @@ window.onload = (function init() {
 						catIndex = i;
 						currentCards = i.cards;
 						console.log('Current cards: ', currentCards)
-						fcNum.innerText = '0' + (cardIndex + 1);
-						cardContent.innerHTML = content;
+						appendCardContent(clicked, i.cards.length, cardIndex)
 					}
 				});
 
 			} else {
 				currentCat.innerText = '-';
 			}
-			if (!items) {
-				cardContent.innerHTML = "<p>There's nothing here.Add something.</p>";
+			if (!allItems) {
+				appendCardContent(current, 0);
+			}
+
+		};
+		/**
+		 * [appendCardContent description]
+		 * @param  {[type]} clicked    [description]
+		 * @param  {[type]} totalCards [description]
+		 * @return {[type]}            [description]
+		 */
+		function appendCardContent(clicked, totalCards, cardIndex) {
+			console.log('Running appendCardContent');
+			if (clicked) {
+				currentCat.innerText = clicked;
+			} else if (!clicked) {
+				currentCat.innerText = '-';
+			}
+			if (totalCards > 0) {
+				fcNum.innerText = '0' + (cardIndex + 1);
+				cardContent.innerHTML = content;
+			}
+			else if (totalCards === 0) {
+				cardContent.innerHTML = "<p>No cards.Add something.</p>";
 			}
 
 		};
@@ -198,9 +213,12 @@ window.onload = (function init() {
 								a.addEventListener('click', function(e) {
 
 									let clicked = this.innerText;
+
 									console.log(clicked)
-									// Show menu transition
+										// Show menu transition
 									menuTransition();
+									// Fetch cards
+									fetchCards(clicked);
 									// Append the content to the DOM
 									appendCardContent(clicked, items);
 
@@ -225,7 +243,7 @@ window.onload = (function init() {
 		};
 
 		openRequest.onsuccess = function(e) {
-		//	console.log("running onsuccess");
+			//	console.log("running onsuccess");
 			db = e.target.result;
 
 			/**
@@ -234,6 +252,7 @@ window.onload = (function init() {
 
 			flashcardsDB.getCards(function(items) {
 				allItems = items;
+				console.log(allItems)
 				console.log('Running getCards callback');
 
 				// Display all categories as a grid
@@ -825,6 +844,9 @@ window.onload = (function init() {
 
 				// Run a function that takes the category name you clicked on as a parameter
 				hideMenus();
+				// Fetch cards
+				fetchcards(clicked)
+				// Append content to the DOM
 				appendCardContent(clicked, items);
 
 			});
