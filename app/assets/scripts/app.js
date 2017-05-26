@@ -29,8 +29,8 @@ window.onload = (function init() {
 	const leftBtn = document.getElementById('leftBtn');
 	const rightBtn = document.getElementById('rightBtn');
 	const noCardsMsg = document.getElementById('no-cards-message');
-
-	let current, currentCards, cardIndex, catIndex;
+	const grid = document.getElementById('gridOverlay');
+	let current, currentCards, cardIndex, catIndex, allItems;
 
 
 	// Expand textarea when filled with content
@@ -84,20 +84,25 @@ window.onload = (function init() {
 		};
 
 		function appendCardContent(clicked, items) {
-			console.log('Running appendCardContent')
-			console.log(items)
+			console.log('Running appendCardContent');
+			console.log(items);
+			currentCat.innerText = clicked;
 			current = clicked;
-
+			console.log('clicked', clicked)
 			if (clicked) {
+				console.log('hello?')
 				currentCat.innerText = current;
+				// Loop through items to find current category
 				items.forEach(function(i) {
 					var x = i.name;
 					if (x === current) {
 						let content = i.cards[cardIndex];
 						// Show a random card
-						cardIndex = getRandomInt(0, i.cards.length)
+						cardIndex = 0;
+						console.log(cardIndex)
 						catIndex = i;
 						currentCards = i.cards;
+						console.log('Current cards: ', currentCards)
 						fcNum.innerText = '0' + (cardIndex + 1);
 						cardContent.innerHTML = content;
 					}
@@ -163,7 +168,6 @@ window.onload = (function init() {
 
 			function buildGridMenu() {
 
-				const grid = document.getElementById('gridOverlay');
 				if (items.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
 						display: 'block',
@@ -192,11 +196,13 @@ window.onload = (function init() {
 							if (li.innerText !== '') {
 
 								a.addEventListener('click', function(e) {
-									let clicked = e.target.innerText;
-									currentCat.innerText = clicked;
+
+									let clicked = this.innerText;
+									console.log(clicked)
+									// Show menu transition
 									menuTransition();
 									// Append the content to the DOM
-									appendCardContent(clicked, items)
+									appendCardContent(clicked, items);
 
 
 								})
@@ -219,7 +225,7 @@ window.onload = (function init() {
 		};
 
 		openRequest.onsuccess = function(e) {
-			console.log("running onsuccess");
+		//	console.log("running onsuccess");
 			db = e.target.result;
 
 			/**
@@ -227,6 +233,7 @@ window.onload = (function init() {
 			 */
 
 			flashcardsDB.getCards(function(items) {
+				allItems = items;
 				console.log('Running getCards callback');
 
 				// Display all categories as a grid
@@ -278,8 +285,8 @@ window.onload = (function init() {
 		};
 
 		openRequest.onerror = function(e) {
-			Alert('Error accessing the database')
-				//Do something for the error
+			Alert('Error accessing the database');
+			//Do something for the error
 		}
 
 	}, false);
@@ -297,7 +304,7 @@ window.onload = (function init() {
 			name: name,
 			created: new Date(),
 			cards: []
-		}
+		};
 
 		//Perform the add
 		var request = store.add(category);
@@ -305,17 +312,17 @@ window.onload = (function init() {
 		request.onerror = function(e) {
 			console.log("Error", e.target.error.name);
 			//some type of error handler
-		}
+		};
 
 		request.onsuccess = function(e) {
 			console.log("Woot! Did it");
-		}
+		};
 	};
 
 
 	flashcardsDB.addNewCard = function(items) {
 
-		current = currentCat.innerText
+		current = currentCat.innerText;
 		let cardsArr;
 		// Get the current category depending on which menu item was clicked
 		console.log('Unfiltered: ' + items)
@@ -324,7 +331,7 @@ window.onload = (function init() {
 				cardsArr = items[i].cards;
 				console.log(cardsArr)
 
-				console.log('Added card!')
+				console.log('Added card!');
 			}
 		};
 		let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
@@ -363,7 +370,7 @@ window.onload = (function init() {
 	/*
 	Get all cards in the database (not filtered)
 	 */
-	
+
 	flashcardsDB.getCards = function(callback) {
 		console.log('Running getCards');
 		let transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
@@ -371,9 +378,7 @@ window.onload = (function init() {
 		let items = [];
 
 		transaction.oncomplete = function(evt) {
-
 			callback(items);
-			console.log(items);
 		};
 
 		let cursorRequest = store.openCursor();
@@ -450,7 +455,7 @@ window.onload = (function init() {
 	 * @param  {number} min The lower end of the range
 	 * @param  {number} max The upper end of the range
 	 * @return {number}     A random number between the two given parameters
-	 */ 
+	 */
 	function getRandomInt(min, max) {
 		min = Math.ceil(min);
 		max = Math.floor(max);
@@ -509,29 +514,26 @@ window.onload = (function init() {
 	// Grab the previous card in the array
 	function prevCard() {
 		console.log(cardIndex)
-		if (cardIndex <= currentCards.length && cardIndex > 0) {
-			cardIndex -= 1;
-			console.log(currentCards.length)
-			slideLeft();
-			cardContent.innerText = catIndex.cards[cardIndex];
-			if (cardIndex < 9) {
-				fcNum.innerText = '0' + (cardIndex + 1);
-				TweenLite.to(cardContent, 1, {
-					x: 300,
-					opacity: 1
-				})
-			} else {
-				fcNum.innerText = (cardIndex + 1);
-				leftBtn.css = ('opacity: 0.1')
-				TweenLite.to(cardContent, 1, {
-					x: 300,
-					opacity: 1
-				})
-			}
+		console.log(cardIndex !== 'undefined')
+		cardIndex -= 1;
+		console.log('yes')
+		slideLeft();
+		cardContent.innerText = catIndex.cards[cardIndex];
+		if (cardIndex < 9) {
+			fcNum.innerText = '0' + (cardIndex + 1);
+			TweenLite.to(cardContent, 1, {
+				x: 300,
+				opacity: 1
+			})
 		} else {
-			return;
+			fcNum.innerText = (cardIndex + 1);
+			leftBtn.css = ('opacity: 0.1')
+			TweenLite.to(cardContent, 1, {
+				x: 300,
+				opacity: 1
+			})
 		}
-	}
+	};
 
 	function showMenus() {
 
@@ -819,11 +821,11 @@ window.onload = (function init() {
 			a.appendChild(li);
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
-				let clicked = e.target.innerText;
+				let clicked = this.innerText;
 
 				// Run a function that takes the category name you clicked on as a parameter
 				hideMenus();
-				appendCardContent(clicked, items)
+				appendCardContent(clicked, items);
 
 			});
 		}
@@ -834,9 +836,16 @@ window.onload = (function init() {
 
 	// Event listeners
 
-	menuBtn.addEventListener('click', showMenus);
+	menuBtn.addEventListener('click', showMenus, false);
 	menuOverlay.addEventListener('click', hideMenus, false);
-	leftBtn.addEventListener('click', slideLeft, false);
+	leftBtn.addEventListener('click', function() {
+		console.log('cardIndex', cardIndex)
+		if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
+			slideLeft();
+		} else {
+			return;
+		}
+	}, false);
 	rightBtn.addEventListener('click', slideRight, false);
 	addCategoryBtn.addEventListener('click', function(e) {
 		e.stopPropagation();
@@ -906,12 +915,11 @@ window.onload = (function init() {
 		modalTxt.innerText = `Are you sure you want to create the ${newCategoryInput.value} category?`;
 		confirmBtn.innerText = 'Submit';
 		cancelBtn.innerText = 'Cancel';
-
 		btnHolder.appendChild(confirmBtn);
 		btnHolder.appendChild(cancelBtn);
 		frag.appendChild(modalTxt);
 		frag.appendChild(btnHolder);
-		body.appendChild(modalOverlay)
+		body.appendChild(modalOverlay);
 		modalOverlay.appendChild(modal);
 		modal.appendChild(frag);
 
@@ -930,18 +938,20 @@ window.onload = (function init() {
 		});
 
 		modalOverlay.addEventListener('click', function() {
-			console.log('closed overlay')
 			e.stopPropagation();
 			TweenLite.to(modalOverlay, 0.2, {
 				display: 'none'
-			});
+			}, false);
 		});
 
-		confirmBtn.addEventListener('click', function() {
+		confirmBtn.addEventListener('click', function(e) {
+			e.stopPropagation();
+			flashcardsDB.getCards(function(items) {
+				console.log('Running getCards callback');
 
-			flashcardsDB.addNewCategory();
-			updateCategoryMenu();
-			
+				flashcardsDB.addNewCategory();
+				updateCategoryMenu();
+			});
 
 
 			function confirm() {
@@ -991,5 +1001,7 @@ window.onload = (function init() {
 			});
 		});
 	}
+
+
 
 })();

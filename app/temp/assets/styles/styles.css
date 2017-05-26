@@ -129,7 +129,7 @@ button::-moz-focus-inner {
   
 }
 button:focus {
-  outline: #DDE603;
+  outline: #e6ef00;
 }
 html {
   overflow: hidden;
@@ -149,10 +149,10 @@ overflow-x: none;
     opacity: 0;
   }
 ::-moz-selection {
-  background-color: #DDE603;
+  background-color: #e6ef00;
 }
 ::selection {
-  background-color: #DDE603;
+  background-color: #e6ef00;
 }
 .input {
   background: transparent;
@@ -166,7 +166,7 @@ overflow-x: none;
 }
 .input:focus {
   outline: none;
-  border: solid 1px #DDE603;
+  border: solid 1px #e6ef00;
 }
 a {
   color: white;
@@ -285,7 +285,7 @@ a {
   height: 100vh;
   position: absolute;
   right: 0;
-  background-color: #DDE603;
+  background-color: #e6ef00;
   z-index: 300;
 }
 .menu-inner {
@@ -347,7 +347,7 @@ a {
           align-items: center;
 }
 .grid-overlay a:hover {
-  background: #DDE603;
+  background: #e6ef00;
   color: #000;
   cursor: pointer;
 }

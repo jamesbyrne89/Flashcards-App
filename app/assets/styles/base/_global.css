@@ -148,7 +148,7 @@ button::-moz-focus-inner {
 }
 
 button:focus {
-  outline: $fluroYellow;
+  outline: $primaryHighlight;
 }
 
 html {
@@ -171,7 +171,7 @@ overflow-x: none;
   }
 
 ::selection {
-  background-color: $fluroYellow;
+  background-color: $primaryHighlight;
 }
 
 .input {
@@ -187,7 +187,7 @@ overflow-x: none;
 
 .input:focus {
   outline: none;
-  border: solid 1px $fluroYellow;
+  border: solid 1px $primaryHighlight;
 }
 
 a {

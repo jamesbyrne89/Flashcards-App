@@ -27,17 +27,14 @@ window.onload = function init() {
 	var fcRelTxt = document.getElementById('flashcard-relational-text');
 	var currentCat = document.getElementById('currentCat');
 	var addCardLabel = document.getElementById('addCardLabel');
-	var grid = document.getElementById('gridOverlay');
 	var leftBtn = document.getElementById('leftBtn');
 	var rightBtn = document.getElementById('rightBtn');
 	var noCardsMsg = document.getElementById('no-cards-message');
-	var filler = document.getElementById('filler');
-	var introText = document.getElementById('intro__title');
-	var fillerHolder = document.getElementById('filler-holder');
-	var current = void 0;
-	var currentCards = void 0;
-	var cardIndex = void 0;
-	var catIndex = void 0;
+
+	var current = void 0,
+	    currentCards = void 0,
+	    cardIndex = void 0,
+	    catIndex = void 0;
 
 	// Expand textarea when filled with content
 	newCardInput.onkeyup = function (e) {
@@ -115,8 +112,10 @@ window.onload = function init() {
 		};
 
 		function showCardsGrid(items) {
-
 			// Intro animation
+			var filler = document.getElementById('filler');
+			var fillerHolder = document.getElementById('filler-holder');
+			var introText = document.getElementById('intro__title');
 			var tl = new TimelineLite();
 			var tl2 = new TimelineLite({
 				onComplete: buildGridMenu
@@ -159,6 +158,8 @@ window.onload = function init() {
 			});
 
 			function buildGridMenu() {
+
+				var grid = document.getElementById('gridOverlay');
 				if (items.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
 						display: 'block',
@@ -187,6 +188,7 @@ window.onload = function init() {
 							if (li.innerText !== '') {
 
 								a.addEventListener('click', function (e) {
+									console.log(this.innerText);
 									var clicked = e.target.innerText;
 									currentCat.innerText = clicked;
 									menuTransition();
@@ -345,7 +347,10 @@ window.onload = function init() {
 		};
 	};
 
-	// Get all cards in the database (not filtered)
+	/*
+ Get all cards in the database (not filtered)
+  */
+
 	flashcardsDB.getCards = function (callback) {
 		console.log('Running getCards');
 		var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
@@ -423,10 +428,12 @@ window.onload = function init() {
 		};
 	};
 
-	/*
- Get a random number within a range
- */
-
+	/**
+  * Gets a random number within a range
+  * @param  {number} min The lower end of the range
+  * @param  {number} max The upper end of the range
+  * @return {number}     A random number between the two given parameters
+  */
 	function getRandomInt(min, max) {
 		min = Math.ceil(min);
 		max = Math.floor(max);
@@ -539,7 +546,7 @@ window.onload = function init() {
   				frag.appendChild(a);
   				li.addEventListener('click', function(e) {
   					let clicked = e.target.innerText;
-  							hideMenus();
+  						hideMenus();
   					// Run a function that takes the category name you clicked on as a parameter
   					appendCardContent(clicked, items)
   				});
