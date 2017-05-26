@@ -83,6 +83,9 @@ window.onload = (function init() {
 			}
 		};
 
+		/*
+		Takes in the selected category and gets all the cards for that category from the database
+		 */
 		function fetchCards(clicked) {
 			console.log('Fetching cards...');
 			if (clicked) {
@@ -93,7 +96,6 @@ window.onload = (function init() {
 						let content = i.cards[cardIndex];
 						// Show a random card
 						cardIndex = 0;
-						console.log(cardIndex)
 						catIndex = i;
 						currentCards = i.cards;
 						console.log('Current cards: ', currentCards)
@@ -105,15 +107,15 @@ window.onload = (function init() {
 				currentCat.innerText = '-';
 			}
 			if (!allItems) {
-				appendCardContent(current, 0);
+				appendCardContent(current, 0, null);
 			}
 
 		};
 		/**
-		 * [appendCardContent description]
-		 * @param  {[type]} clicked    [description]
-		 * @param  {[type]} totalCards [description]
-		 * @return {[type]}            [description]
+		 * Appends the cards found in the fetchCards function to the DOM
+		 * @param  {String} clicked    The current category
+		 * @param  {Number} totalCards Total number of cards in the array for the current category
+		 * @param  {Number} cardIndex Index of the selected card within the cards array
 		 */
 		function appendCardContent(clicked, totalCards, cardIndex) {
 			console.log('Running appendCardContent');
@@ -125,14 +127,15 @@ window.onload = (function init() {
 			if (totalCards > 0) {
 				fcNum.innerText = '0' + (cardIndex + 1);
 				cardContent.innerHTML = content;
-			}
-			else if (totalCards === 0) {
+			} else if (totalCards === 0) {
 				cardContent.innerHTML = "<p>No cards.Add something.</p>";
 			}
-
 		};
 
-		function showCardsGrid(items) {
+		/*
+		Show all categories as a grid
+		 */
+		function showCardsGrid(allItems) {
 			// Intro animation
 			const filler = document.getElementById('filler');
 			const fillerHolder = document.getElementById('filler-holder');
@@ -181,9 +184,12 @@ window.onload = (function init() {
 					delay: 0.1
 				});
 
+			/*
+			If there are items in the database, append them to the grid
+			 */
 			function buildGridMenu() {
 
-				if (items.length === 0) {
+				if (allItems.length === 0) {
 					TweenLite.to(noCardsMsg, 0.7, {
 						display: 'block',
 						opacity: 1,
@@ -201,13 +207,13 @@ window.onload = (function init() {
 				} else {
 					grid.addEventListener('click', hideCardsGrid, false);
 
-					for (obj in items) {
-						if (items[obj].hasOwnProperty('name')) {
+					for (obj in allItems) {
+						if (allItems[obj].hasOwnProperty('name')) {
 							let a = document.createElement('a');
 							let li = document.createElement('li');
 
 							li.setAttribute('class', 'grid__item');
-							li.innerText = items[obj].name;
+							li.innerText = allItems[obj].name;
 							if (li.innerText !== '') {
 
 								a.addEventListener('click', function(e) {
@@ -220,7 +226,7 @@ window.onload = (function init() {
 									// Fetch cards
 									fetchCards(clicked);
 									// Append the content to the DOM
-									appendCardContent(clicked, items);
+								//	appendCardContent(clicked, allItems);
 
 
 								})
@@ -268,8 +274,8 @@ window.onload = (function init() {
 
 
 			submitCardBtn.addEventListener('click', function(e) {
-				/**
-				 * Grab all the cards from the database
+				/*
+				Grab all the cards from the database
 				 */
 				flashcardsDB.getCards(function(items) {
 					console.log(items)
@@ -486,11 +492,9 @@ window.onload = (function init() {
 	*/
 
 	function nextCard() {
-		slideRight()
-		console.log(cardIndex)
+
 		if (cardIndex < currentCards.length && cardIndex >= 0) {
 			cardIndex += 1;
-			console.log(currentCards.length)
 			cardContent.innerText = catIndex.cards[cardIndex];
 			if (cardIndex < 9) {
 				fcNum.innerText = '0' + (cardIndex + 1);
@@ -532,11 +536,7 @@ window.onload = (function init() {
 
 	// Grab the previous card in the array
 	function prevCard() {
-		console.log(cardIndex)
-		console.log(cardIndex !== 'undefined')
 		cardIndex -= 1;
-		console.log('yes')
-		slideLeft();
 		cardContent.innerText = catIndex.cards[cardIndex];
 		if (cardIndex < 9) {
 			fcNum.innerText = '0' + (cardIndex + 1);
@@ -559,43 +559,9 @@ window.onload = (function init() {
 		const tl = new TimelineLite();
 		const tl2 = new TimelineLite();
 
-
-
 		flashcardsDB.getCards(function(items) {
 			updateCategoryMenu(items)
 		});
-		/**
-					let frag = document.createDocumentFragment();
-					let menuInner = document.getElementById('menu-inner');
-					menuInner.innerHTML='';
-					for (let i = 0; i < items.length; i++) {
-						
-						let a = document.createElement('a');
-						let li = document.createElement('li');
-						let length;
-						li.setAttribute('class', 'menu__item');
-						a.setAttribute('data-category', items[i].name);
-						if (items[i].cards.length) {
-							length = 0;
-						} else {
-							length = items[i].cards.length;
-						};
-						li.innerHTML = `<span>${items[i].name}</span>
-						<span class="menu__item__num">${length} cards</span>`;
-						a.appendChild(li);
-						frag.appendChild(a);
-						li.addEventListener('click', function(e) {
-							let clicked = e.target.innerText;
-
-							hideMenus();
-							// Run a function that takes the category name you clicked on as a parameter
-							appendCardContent(clicked, items)
-						});
-						console.log('Appending frag...');
-						menuInner.appendChild(frag);
-					}
-				});
-		**/
 
 		tl.to(menuOverlay, 0, {
 			display: 'flex',
@@ -634,14 +600,14 @@ window.onload = (function init() {
 	};
 
 	function hideMenus() {
-		console.log('Running hideMenus')
+
 		const tl = new TimelineLite();
 		const tl2 = new TimelineLite();
 		const tl3 = new TimelineLite();
 		const addCategoryMenu = document.getElementById("tertiary-menu-one");
 		const menuInner = document.getElementById('menu-inner')
-			// Animation
-
+		
+		// Animation
 		tl.to(menu, 0.1, {
 			opacity: 0
 		}).to(menu, 0, {
@@ -692,6 +658,9 @@ window.onload = (function init() {
 
 	};
 
+	/*
+	Show the menu transition animation
+	 */
 	function menuTransition() {
 
 		const slider = document.createElement('div');
@@ -724,6 +693,7 @@ window.onload = (function init() {
 		});
 	};
 
+	// Display the page to add a new category
 	function showCategoryInput() {
 		console.log('Running showCategoryInput');
 		const tl = new TimelineLite();
@@ -759,6 +729,7 @@ window.onload = (function init() {
 		});
 	};
 
+	// Display the page to add a new card to the current category
 	function showCardInput() {
 		let current = currentCat.innerText;
 		const tl = new TimelineLite();
@@ -811,7 +782,7 @@ window.onload = (function init() {
 
 	};
 	/**
-	 * [updateCategoryMenu description]
+	 * Updates the category list with all categories in the database
 	 * @param  {object} items The object store from the database
 	 * @return {[type]}       [description]
 	 */
@@ -842,10 +813,12 @@ window.onload = (function init() {
 			li.addEventListener('click', function(e) {
 				let clicked = this.innerText;
 
-				// Run a function that takes the category name you clicked on as a parameter
+				// Hide all the menus
 				hideMenus();
+
 				// Fetch cards
-				fetchcards(clicked)
+				fetchCards(clicked);
+
 				// Append content to the DOM
 				appendCardContent(clicked, items);
 
@@ -856,19 +829,33 @@ window.onload = (function init() {
 	}
 
 
-	// Event listeners
-
+	// Add event listeners
 	menuBtn.addEventListener('click', showMenus, false);
 	menuOverlay.addEventListener('click', hideMenus, false);
 	leftBtn.addEventListener('click', function() {
-		console.log('cardIndex', cardIndex)
+		fetchCards();
 		if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
 			slideLeft();
-		} else {
+		}
+		if (cardIndex === 1) {
+			leftBtn.style.opacity = 0.2;
+		}
+		else {
 			return;
 		}
 	}, false);
-	rightBtn.addEventListener('click', slideRight, false);
+	rightBtn.addEventListener('click', function () {
+		fetchCards();
+		if (cardIndex <= currentCards.length - 2 && cardIndex > 0 && cardIndex !== 'undefined') {
+			slideLeft();
+		}
+		if (cardIndex === currentCards.length - 1) {
+			rightBtn.style.opacity = 0.2;
+		}
+		else {
+			return;
+		}
+	}, false);
 	addCategoryBtn.addEventListener('click', function(e) {
 		e.stopPropagation();
 		showCategoryInput();
@@ -878,9 +865,6 @@ window.onload = (function init() {
 		e.stopPropagation();
 		showCardInput();
 	});
-
-	// gridBtn.addEventListener('click', showCardsGrid);
-	// 
 
 	document.body.onkeyup = function(e) {
 		if (e.keyCode === 39) {
@@ -975,7 +959,7 @@ window.onload = (function init() {
 				updateCategoryMenu();
 			});
 
-
+			// Show a confirmation message when new category is added
 			function confirm() {
 				const newCatMenuInner = document.getElementById('newCategoryInner');
 				let confirmation = document.createElement('span');
@@ -999,6 +983,7 @@ window.onload = (function init() {
 
 		});
 
+		// Close the modal
 		cancelBtn.addEventListener('click', function(e) {
 			e.stopPropagation();
 
