@@ -30,7 +30,8 @@ window.onload = (function init() {
 	const rightBtn = document.getElementById('rightBtn');
 	const noCardsMsg = document.getElementById('no-cards-message');
 	const grid = document.getElementById('gridOverlay');
-	let current, currentCards, cardIndex, catIndex, allItems;
+	let current, currentCards, catIndex, allItems;
+	let cardIndex = 0;
 
 
 	// Expand textarea when filled with content
@@ -95,11 +96,10 @@ window.onload = (function init() {
 					if (x === clicked) {
 						let content = i.cards[cardIndex];
 						// Show a random card
-						cardIndex = 0;
 						catIndex = i;
 						currentCards = i.cards;
 						console.log('Current cards: ', currentCards)
-						appendCardContent(clicked, i.cards.length, cardIndex)
+						appendCardContent(clicked, i.cards.length, cardIndex);
 					}
 				});
 
@@ -111,6 +111,34 @@ window.onload = (function init() {
 			}
 
 		};
+
+
+			leftBtn.addEventListener('click', function() {
+		fetchCards();
+		console.log(allItems)
+		console.log(cardIndex)
+		if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
+			slideLeft();
+		}
+		if (cardIndex === 1) {
+			leftBtn.style.opacity = 0.2;
+		}
+		else {
+			return;
+		}
+	}, false);
+	rightBtn.addEventListener('click', function () {
+		fetchCards();
+		if (cardIndex <= currentCards.length - 2 && cardIndex > 0 && cardIndex !== 'undefined') {
+			slideLeft();
+		}
+		if (cardIndex === currentCards.length - 1) {
+			rightBtn.style.opacity = 0.2;
+		}
+		else {
+			return;
+		}
+	}, false);
 		/**
 		 * Appends the cards found in the fetchCards function to the DOM
 		 * @param  {String} clicked    The current category
@@ -832,30 +860,7 @@ window.onload = (function init() {
 	// Add event listeners
 	menuBtn.addEventListener('click', showMenus, false);
 	menuOverlay.addEventListener('click', hideMenus, false);
-	leftBtn.addEventListener('click', function() {
-		fetchCards();
-		if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
-			slideLeft();
-		}
-		if (cardIndex === 1) {
-			leftBtn.style.opacity = 0.2;
-		}
-		else {
-			return;
-		}
-	}, false);
-	rightBtn.addEventListener('click', function () {
-		fetchCards();
-		if (cardIndex <= currentCards.length - 2 && cardIndex > 0 && cardIndex !== 'undefined') {
-			slideLeft();
-		}
-		if (cardIndex === currentCards.length - 1) {
-			rightBtn.style.opacity = 0.2;
-		}
-		else {
-			return;
-		}
-	}, false);
+
 	addCategoryBtn.addEventListener('click', function(e) {
 		e.stopPropagation();
 		showCategoryInput();

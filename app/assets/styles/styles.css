@@ -11,11 +11,11 @@
 .wrap {
   padding: 1em;
   display: inline-block;
-  float: left;
   margin-left: 300px;
   height: 100vh;
   min-width: 70vw;
   flex-grow: 1;
+  
 }
 
 .wrapper {
