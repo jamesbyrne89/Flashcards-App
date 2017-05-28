@@ -84,7 +84,7 @@ window.onload = (function init() {
 			}
 		};
 
-		
+
 		/*
 		Show all categories as a grid
 		 */
@@ -103,17 +103,17 @@ window.onload = (function init() {
 
 			TweenLite.to(introText, 0, {
 				opacity: 1,
-				delay: 1
+				delay: 0.8
 			});
 			TweenLite.to(introText, 0, {
 				opacity: 0,
-				delay: 3.6
+				delay: 3.4
 			});
 			TweenLite.to(fillerHolder, 0, {
 				display: 'none',
-				delay: 4
+				delay: 3.8
 			});
-			tl2.to(filler, 0.8, {
+			tl2.to(filler, 0.6, {
 					width: '100%',
 					ease: Power1.easeOut
 				})
@@ -427,88 +427,98 @@ window.onload = (function init() {
 		};
 	};
 
-/*
-		Takes in the selected category and gets all the cards for that category from the database
-		 */
-		function fetchCards(clicked, callback) {
-			current = clicked;
-			console.log('Fetching cards...');
-			console.log(allItems);
-			let content;
-			if (current) {
-				// Loop through items to find current category
-				var x;
-				allItems.forEach(function(i) {
-					x = i.name;
-					if (x === current) {
-						content = i.cards[0];
-							// Show a random card
-						catIndex = i;
-						currentCards = i.cards;
-						console.log(currentCards)
-						appendCardContent(current, currentCards, cardIndex);
-					}
-				});
-			}
-			if (!allItems) {
-
-				appendCardContent(current, null, null);
-			}
-		};
-
-
-		leftBtn.addEventListener('click', function() {
-			function checkForCard() {
-				if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
-					slideLeft();
+	/*
+			Takes in the selected category and gets all the cards for that category from the database
+			 */
+	function fetchCards(clicked, callback) {
+		console.log(callback)
+		console.log(arguments)
+		current = clicked;
+		console.log('Fetching cards...');
+		console.log(current);
+		if (current) {
+			// Loop through items to find current category
+			var x;
+			allItems.forEach(function(i) {
+				x = i.name;
+				if (x === current) {
+					content = i.cards[0];
+					catIndex = i;
+					currentCards = i.cards;
+					appendCardContent(current, currentCards, cardIndex);
 				}
-				if (cardIndex === 1) {
-					leftBtn.style.opacity = 0.2;
-				} else {
-					return;
-				}
+			});
+		} else {
+			appendCardContent(current, null, null);
+		}
 
-			}
+	};
 
-			fetchCards(checkForCard);
-		}, false);
-		rightBtn.addEventListener('click', function() {
-			function checkForCard() {
-				if (cardIndex <= currentCards.length - 2 && cardIndex > 0 && cardIndex !== 'undefined') {
-					slideLeft();
-				}
-				if (cardIndex === currentCards.length - 1) {
-					rightBtn.style.opacity = 0.2;
-				} else {
-					return;
-				}
-			}
-			fetchCards(checkForCard);
-		}, false);
-		/**
-		 * Appends the cards found in the fetchCards function to the DOM
-		 * @param  {String} clicked    The current category
-		 * @param  {Number} currentCards.length Total number of cards in the array for the current category
-		 * @param  {Number} cardIndex Index of the selected card within the cards array
-		 */
-		function appendCardContent(clicked, currentCards, cardIndex) {
-			if (clicked) {
-				currentCat.innerText = clicked;
-			} else if (!clicked) {
-				currentCat.innerText = '-';
-			}
-			if (currentCards.length > 0) {
-				fcNum.innerText = '0' + (cardIndex + 1);
-				cardContent.innerHTML = currentCards[0];
-			}
-			if (currentCards.length < 2){
-				leftBtn.style.opacity = 0.2;
-				rightBtn.style.opacity = 0.2;
-			}
-			else if (currentCards.length === 0 || currentCards === 'undefined') {
-				cardContent.innerHTML = "<p>No cards.Add something.</p>";
-			}
-		};
+
+	leftBtn.addEventListener('click', function() {
+		leftBtn.style.opacity = 1;
+		if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
+			TweenLite.to(cardContent, 1, {
+				x: -300,
+				opacity: 0,
+				onComplete: prevCard
+			});
+		}
+		if (cardIndex === 1) {
+			leftBtn.style.opacity = 0.2;
+		} else {
+			return;
+		}
+	}, false);
+
+
+	rightBtn.addEventListener('click', function() {
+		console.log(currentCards.length)
+		if (cardIndex <= currentCards.length - 2 && cardIndex !== 'undefined') {
+			console.log('first')
+			TweenLite.to(cardContent, 1, {
+				x: -300,
+				opacity: 0,
+				onComplete: nextCard
+			})
+		}
+		if (cardIndex === currentCards.length - 1) {
+			rightBtn.style.opacity = 0.2;
+		} 
+		if (currentCards.length <= 1) {
+			return;
+		}
+		else {
+			return;
+		}
+	}, false);
+
+
+	/**
+	 * Appends the cards found in the fetchCards function to the DOM
+	 * @param  {String} clicked    The current category
+	 * @param  {Number} currentCards.length Total number of cards in the array for the current category
+	 * @param  {Number} cardIndex Index of the selected card within the cards array
+	 */
+	function appendCardContent(clicked, currentCards, cardIndex) {
+
+		console.log('Running appendCardContent');
+		if (clicked) {
+			currentCat.innerText = clicked;
+		} else if (!clicked) {
+			currentCat.innerText = '-';
+		}
+		if (currentCards.length > 0) {
+			leftBtn.style.opacity = 0.2;
+			rightBtn.style.opacity = 1;			
+			fcNum.innerText = '0' + (cardIndex + 1);
+			cardContent.innerHTML = currentCards[0];
+		} else if (currentCards.length === 0 || currentCards === 'undefined') {
+			cardContent.innerHTML = "<p>No cards.Add something.</p>";
+			leftBtn.style.opacity = 0.2;
+			rightBtn.style.opacity = 0.2;
+		}
+	};
 
 	/**
 	 * Gets a random number within a range
@@ -527,20 +537,20 @@ window.onload = (function init() {
 	*/
 
 	function nextCard() {
-
+		console.log('Running nextCard');
 		if (cardIndex < currentCards.length && cardIndex >= 0) {
-			cardIndex += 1;
+			cardIndex++;
 			cardContent.innerText = catIndex.cards[cardIndex];
 			if (cardIndex < 9) {
 				fcNum.innerText = '0' + (cardIndex + 1);
 				TweenLite.to(cardContent, 1, {
-					x: -300,
+					x: 300,
 					opacity: 1
 				})
 			} else {
 				fcNum.innerText = (cardIndex + 1);
 				TweenLite.to(cardContent, 1, {
-					x: -300,
+					x: 300,
 					opacity: 1
 				})
 			}
@@ -549,28 +559,10 @@ window.onload = (function init() {
 		}
 	}
 
-	// Animate card left
-	function slideLeft() {
-		console.log('left')
-		TweenLite.to(cardContent, 1, {
-			x: -300,
-			opacity: 0,
-			onComplete: prevCard
-		})
-	}
-
-	// Animate card right
-	function slideRight() {
-		console.log('right')
-		TweenLite.to(cardContent, 1, {
-			x: 300,
-			opacity: 0,
-			onComplete: nextCard
-		})
-	}
 
 	// Grab the previous card in the array
 	function prevCard() {
+		console.log('running prevCard')
 		cardIndex -= 1;
 		cardContent.innerText = catIndex.cards[cardIndex];
 		if (cardIndex < 9) {
@@ -846,16 +838,15 @@ window.onload = (function init() {
 			a.appendChild(li);
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
-				console.log(this)
-				let clicked = this.getAttribute('data-category');
+
 				// Hide all the menus
 				hideMenus();
 
 				// Fetch cards
-				fetchCards(clicked);
+				fetchCards(this.getAttribute('data-category'));
 
 				// Append content to the DOM
-			//	appendCardContent(clicked, items);
+				//	appendCardContent(clicked, items);
 
 			});
 		}
