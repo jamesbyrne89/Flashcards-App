@@ -84,82 +84,7 @@ window.onload = (function init() {
 			}
 		};
 
-		/*
-		Takes in the selected category and gets all the cards for that category from the database
-		 */
-		function fetchCards(clicked) {
-			console.log('Fetching cards...');
-			if (clicked) {
-				// Loop through items to find current category
-				allItems.forEach(function(i) {
-					var x = i.name;
-					if (x === clicked) {
-						let content = i.cards[cardIndex];
-						// Show a random card
-						catIndex = i;
-						currentCards = i.cards;
-						console.log('Current cards: ', currentCards)
-						appendCardContent(clicked, i.cards.length, cardIndex);
-					}
-				});
-
-			} else {
-				currentCat.innerText = '-';
-			}
-			if (!allItems) {
-				appendCardContent(current, 0, null);
-			}
-
-		};
-
-
-			leftBtn.addEventListener('click', function() {
-		fetchCards();
-		console.log(allItems)
-		console.log(cardIndex)
-		if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
-			slideLeft();
-		}
-		if (cardIndex === 1) {
-			leftBtn.style.opacity = 0.2;
-		}
-		else {
-			return;
-		}
-	}, false);
-	rightBtn.addEventListener('click', function () {
-		fetchCards();
-		if (cardIndex <= currentCards.length - 2 && cardIndex > 0 && cardIndex !== 'undefined') {
-			slideLeft();
-		}
-		if (cardIndex === currentCards.length - 1) {
-			rightBtn.style.opacity = 0.2;
-		}
-		else {
-			return;
-		}
-	}, false);
-		/**
-		 * Appends the cards found in the fetchCards function to the DOM
-		 * @param  {String} clicked    The current category
-		 * @param  {Number} totalCards Total number of cards in the array for the current category
-		 * @param  {Number} cardIndex Index of the selected card within the cards array
-		 */
-		function appendCardContent(clicked, totalCards, cardIndex) {
-			console.log('Running appendCardContent');
-			if (clicked) {
-				currentCat.innerText = clicked;
-			} else if (!clicked) {
-				currentCat.innerText = '-';
-			}
-			if (totalCards > 0) {
-				fcNum.innerText = '0' + (cardIndex + 1);
-				cardContent.innerHTML = content;
-			} else if (totalCards === 0) {
-				cardContent.innerHTML = "<p>No cards.Add something.</p>";
-			}
-		};
-
+		
 		/*
 		Show all categories as a grid
 		 */
@@ -246,7 +171,7 @@ window.onload = (function init() {
 
 								a.addEventListener('click', function(e) {
 
-									let clicked = this.innerText;
+									let clicked = this.innerText.trim();
 
 									console.log(clicked)
 										// Show menu transition
@@ -254,7 +179,7 @@ window.onload = (function init() {
 									// Fetch cards
 									fetchCards(clicked);
 									// Append the content to the DOM
-								//	appendCardContent(clicked, allItems);
+									//	appendCardContent(clicked, allItems);
 
 
 								})
@@ -502,6 +427,83 @@ window.onload = (function init() {
 		};
 	};
 
+/*
+		Takes in the selected category and gets all the cards for that category from the database
+		 */
+		function fetchCards(clicked, callback) {
+			current = clicked;
+			console.log('Current category is ', current)
+			console.log('Fetching cards...');
+			console.log(allItems);
+			if (current) {
+				// Loop through items to find current category
+				var x;
+				allItems.forEach(function(i) {
+					x = i.name;
+					if (x === current) {
+						let content = i.cards[0];
+						console.log('content = ', content)
+							// Show a random card
+						catIndex = i;
+						currentCards = i.cards;
+						appendCardContent(current, i.cards.length, cardIndex);
+					}
+				});
+			}
+			if (!allItems) {
+				appendCardContent(current, 0, null);
+			}
+		};
+
+
+		leftBtn.addEventListener('click', function() {
+			function checkForCard() {
+				if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
+					slideLeft();
+				}
+				if (cardIndex === 1) {
+					leftBtn.style.opacity = 0.2;
+				} else {
+					return;
+				}
+
+			}
+
+			fetchCards(checkForCard);
+		}, false);
+		rightBtn.addEventListener('click', function() {
+			function checkForCard() {
+				if (cardIndex <= currentCards.length - 2 && cardIndex > 0 && cardIndex !== 'undefined') {
+					slideLeft();
+				}
+				if (cardIndex === currentCards.length - 1) {
+					rightBtn.style.opacity = 0.2;
+				} else {
+					return;
+				}
+			}
+			fetchCards(checkForCard);
+		}, false);
+		/**
+		 * Appends the cards found in the fetchCards function to the DOM
+		 * @param  {String} clicked    The current category
+		 * @param  {Number} totalCards Total number of cards in the array for the current category
+		 * @param  {Number} cardIndex Index of the selected card within the cards array
+		 */
+		function appendCardContent(clicked, totalCards, cardIndex) {
+			console.log('Running appendCardContent');
+			if (clicked) {
+				currentCat.innerText = clicked;
+			} else if (!clicked) {
+				currentCat.innerText = '-';
+			}
+			if (totalCards > 0) {
+				fcNum.innerText = '0' + (cardIndex + 1);
+				cardContent.innerHTML = content;
+			} else if (totalCards === 0) {
+				cardContent.innerHTML = "<p>No cards.Add something.</p>";
+			}
+		};
 
 	/**
 	 * Gets a random number within a range
@@ -588,7 +590,7 @@ window.onload = (function init() {
 		const tl2 = new TimelineLite();
 
 		flashcardsDB.getCards(function(items) {
-			updateCategoryMenu(items)
+			updateCategoryMenu(allItems)
 		});
 
 		tl.to(menuOverlay, 0, {
@@ -634,7 +636,7 @@ window.onload = (function init() {
 		const tl3 = new TimelineLite();
 		const addCategoryMenu = document.getElementById("tertiary-menu-one");
 		const menuInner = document.getElementById('menu-inner')
-		
+
 		// Animation
 		tl.to(menu, 0.1, {
 			opacity: 0
@@ -646,7 +648,7 @@ window.onload = (function init() {
 			display: 'none',
 			onComplete: function() {
 				menuInner.innerHTML = '';
-				updateCategoryMenu();
+				updateCategoryMenu(allItems);
 			}
 		})
 		tl2.to(menu2, 0.1, {
@@ -759,7 +761,7 @@ window.onload = (function init() {
 
 	// Display the page to add a new card to the current category
 	function showCardInput() {
-		let current = currentCat.innerText;
+		current = currentCat.innerText;
 		const tl = new TimelineLite();
 		const addCardMenu = document.getElementById("tertiary-menu-two");
 		addCardLabel.innerText = `Add a new card to ${current}:`;
@@ -839,8 +841,7 @@ window.onload = (function init() {
 			a.appendChild(li);
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
-				let clicked = this.innerText;
-
+				let clicked = this.innerText.trim();
 				// Hide all the menus
 				hideMenus();
 
@@ -961,7 +962,7 @@ window.onload = (function init() {
 				console.log('Running getCards callback');
 
 				flashcardsDB.addNewCategory();
-				updateCategoryMenu();
+				updateCategoryMenu(allItems);
 			});
 
 			// Show a confirmation message when new category is added
