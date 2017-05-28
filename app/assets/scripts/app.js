@@ -432,26 +432,27 @@ window.onload = (function init() {
 		 */
 		function fetchCards(clicked, callback) {
 			current = clicked;
-			console.log('Current category is ', current)
 			console.log('Fetching cards...');
 			console.log(allItems);
+			let content;
 			if (current) {
 				// Loop through items to find current category
 				var x;
 				allItems.forEach(function(i) {
 					x = i.name;
 					if (x === current) {
-						let content = i.cards[0];
-						console.log('content = ', content)
+						content = i.cards[0];
 							// Show a random card
 						catIndex = i;
 						currentCards = i.cards;
-						appendCardContent(current, i.cards.length, cardIndex);
+						console.log(currentCards)
+						appendCardContent(current, currentCards, cardIndex);
 					}
 				});
 			}
 			if (!allItems) {
-				appendCardContent(current, 0, null);
+
+				appendCardContent(current, null, null);
 			}
 		};
 
@@ -487,20 +488,24 @@ window.onload = (function init() {
 		/**
 		 * Appends the cards found in the fetchCards function to the DOM
 		 * @param  {String} clicked    The current category
-		 * @param  {Number} totalCards Total number of cards in the array for the current category
+		 * @param  {Number} currentCards.length Total number of cards in the array for the current category
 		 * @param  {Number} cardIndex Index of the selected card within the cards array
 		 */
-		function appendCardContent(clicked, totalCards, cardIndex) {
-			console.log('Running appendCardContent');
+		function appendCardContent(clicked, currentCards, cardIndex) {
 			if (clicked) {
 				currentCat.innerText = clicked;
 			} else if (!clicked) {
 				currentCat.innerText = '-';
 			}
-			if (totalCards > 0) {
+			if (currentCards.length > 0) {
 				fcNum.innerText = '0' + (cardIndex + 1);
-				cardContent.innerHTML = content;
-			} else if (totalCards === 0) {
+				cardContent.innerHTML = currentCards[0];
+			}
+			if (currentCards.length < 2){
+				leftBtn.style.opacity = 0.2;
+				rightBtn.style.opacity = 0.2;
+			}
+			else if (currentCards.length === 0 || currentCards === 'undefined') {
 				cardContent.innerHTML = "<p>No cards.Add something.</p>";
 			}
 		};
@@ -825,7 +830,7 @@ window.onload = (function init() {
 			let li = document.createElement('li');
 			let length;
 			li.setAttribute('class', 'menu__item');
-			a.setAttribute('data-category', items[i].name);
+			li.setAttribute('data-category', items[i].name);
 			if (!items[i].cards.length) {
 				length = 0;
 			} else {
@@ -841,7 +846,8 @@ window.onload = (function init() {
 			a.appendChild(li);
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
-				let clicked = this.innerText.trim();
+				console.log(this)
+				let clicked = this.getAttribute('data-category');
 				// Hide all the menus
 				hideMenus();
 
@@ -849,7 +855,7 @@ window.onload = (function init() {
 				fetchCards(clicked);
 
 				// Append content to the DOM
-				appendCardContent(clicked, items);
+			//	appendCardContent(clicked, items);
 
 			});
 		}
