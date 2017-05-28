@@ -456,39 +456,27 @@ window.onload = (function init() {
 
 
 	leftBtn.addEventListener('click', function() {
-		leftBtn.style.opacity = 1;
-		if (cardIndex <= currentCards.length && cardIndex > 0 && cardIndex !== 'undefined') {
+		if (currentCards.length > 1) {
 			TweenLite.to(cardContent, 1, {
 				x: -300,
 				opacity: 0,
 				onComplete: prevCard
 			});
 		}
-		if (cardIndex === 1) {
-			leftBtn.style.opacity = 0.2;
-		} else {
+ else {
 			return;
 		}
 	}, false);
 
 
 	rightBtn.addEventListener('click', function() {
-		console.log(currentCards.length)
-		if (cardIndex <= currentCards.length - 2 && cardIndex !== 'undefined') {
-			console.log('first')
+		if (currentCards.length > 1) {
 			TweenLite.to(cardContent, 1, {
 				x: -300,
 				opacity: 0,
 				onComplete: nextCard
 			})
-		}
-		if (cardIndex === currentCards.length - 1) {
-			rightBtn.style.opacity = 0.2;
-		} 
-		if (currentCards.length <= 1) {
-			return;
-		}
-		else {
+		} else {
 			return;
 		}
 	}, false);
@@ -509,14 +497,19 @@ window.onload = (function init() {
 			currentCat.innerText = '-';
 		}
 		if (currentCards.length > 0) {
-			leftBtn.style.opacity = 0.2;
-			rightBtn.style.opacity = 1;			
 			fcNum.innerText = '0' + (cardIndex + 1);
 			cardContent.innerHTML = currentCards[0];
+				leftBtn.style.opacity = 1;
+			rightBtn.style.opacity = 1;			
 		} else if (currentCards.length === 0 || currentCards === 'undefined') {
+			console.log('yo')
 			cardContent.innerHTML = "<p>No cards.Add something.</p>";
 			leftBtn.style.opacity = 0.2;
 			rightBtn.style.opacity = 0.2;
+		}
+		else {
+			leftBtn.style.opacity = 1;
+			rightBtn.style.opacity = 1;			
 		}
 	};
 
@@ -538,7 +531,7 @@ window.onload = (function init() {
 
 	function nextCard() {
 		console.log('Running nextCard');
-		if (cardIndex < currentCards.length && cardIndex >= 0) {
+		if (cardIndex < currentCards.length - 1) {
 			cardIndex++;
 			cardContent.innerText = catIndex.cards[cardIndex];
 			if (cardIndex < 9) {
@@ -546,16 +539,23 @@ window.onload = (function init() {
 				TweenLite.to(cardContent, 1, {
 					x: 300,
 					opacity: 1
-				})
+				});
 			} else {
 				fcNum.innerText = (cardIndex + 1);
 				TweenLite.to(cardContent, 1, {
 					x: 300,
 					opacity: 1
-				})
+				});
 			}
-		} else {
-			return;
+		}
+		else if (cardIndex === currentCards.length - 1) {
+			cardIndex = 0;
+			cardContent.innerText = catIndex.cards[cardIndex];
+				fcNum.innerText = '0' + (cardIndex + 1);
+				TweenLite.to(cardContent, 1, {
+					x: 300,
+					opacity: 1
+				});			
 		}
 	}
 
@@ -563,6 +563,7 @@ window.onload = (function init() {
 	// Grab the previous card in the array
 	function prevCard() {
 		console.log('running prevCard')
+		if (cardIndex > 0) {
 		cardIndex -= 1;
 		cardContent.innerText = catIndex.cards[cardIndex];
 		if (cardIndex < 9) {
@@ -579,6 +580,25 @@ window.onload = (function init() {
 				opacity: 1
 			})
 		}
+	}
+	else if (cardIndex === 0) {
+		cardIndex = currentCards.length - 1;
+		cardContent.innerText = catIndex.cards[cardIndex];
+		if (cardIndex < 9) {
+			fcNum.innerText = '0' + (cardIndex + 1);
+			TweenLite.to(cardContent, 1, {
+				x: 300,
+				opacity: 1
+			})
+		} else {
+			fcNum.innerText = (cardIndex + 1);
+			leftBtn.css = ('opacity: 0.1')
+			TweenLite.to(cardContent, 1, {
+				x: 300,
+				opacity: 1
+			})
+		}		
+	}
 	};
 
 	function showMenus() {
