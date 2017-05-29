@@ -159,6 +159,8 @@ background:  #000;
 min-height: 100vh;
 color: #F8FAFA;
 font-family: 'roboto mono';
+position: relative;
+z-index: 10;
 }
 
  .hidden {

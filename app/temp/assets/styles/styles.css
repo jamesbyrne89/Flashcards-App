@@ -139,6 +139,8 @@ background:  #000;
 min-height: 100vh;
 color: #F8FAFA;
 font-family: 'roboto mono';
+position: relative;
+z-index: 10;
 }
 .hidden {
     display: none;
@@ -282,8 +284,9 @@ a {
   height: 100vh;
   position: absolute;
   right: 0;
+  top: 0;
   background-color: #e6ef00;
-  z-index: 300;
+  z-index: 400;
 }
 .menu-inner {
   max-height: 50vh;
@@ -307,7 +310,7 @@ a {
     -webkit-box-pack: center;
         -ms-flex-pack: center;
             justify-content: center;
-    bottom: 0;
+    top: 0;
     left: 0;
     background: black;
     color: #fff;
@@ -328,15 +331,15 @@ a {
     padding-top: 15px;
 }
 .grid-overlay a {
-  width: 25vw;
+  width: 20%;
   height: 50vh;
   transition: all 0.7s;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-flex: 0;
-      -ms-flex: 0 0 25vw;
-          flex: 0 0 25vw;
+      -ms-flex: 0 0 25%;
+          flex: 0 0 25%;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;

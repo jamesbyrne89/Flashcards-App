@@ -171,13 +171,10 @@ window.onload = (function init() {
 
 								a.addEventListener('click', function(e) {
 
-									let clicked = this.innerText.trim();
-
-									console.log(clicked)
 										// Show menu transition
 									menuTransition();
 									// Fetch cards
-									fetchCards(clicked);
+									fetchCards(this.innerText.trim());
 									// Append the content to the DOM
 									//	appendCardContent(clicked, allItems);
 
@@ -202,7 +199,7 @@ window.onload = (function init() {
 		};
 
 		openRequest.onsuccess = function(e) {
-			//	console.log("running onsuccess");
+			console.log("Connected to database");
 			db = e.target.result;
 
 			/**
@@ -211,14 +208,9 @@ window.onload = (function init() {
 
 			flashcardsDB.getCards(function(items) {
 				allItems = items;
-				console.log(allItems)
-				console.log('Running getCards callback');
 
 				// Display all categories as a grid
 				showCardsGrid(items);
-
-				// Display initial content
-				appendCardContent();
 
 				// Update menus
 				updateCategoryMenu(items);
@@ -489,7 +481,7 @@ window.onload = (function init() {
 	 * @param  {Number} cardIndex Index of the selected card within the cards array
 	 */
 	function appendCardContent(clicked, currentCards, cardIndex) {
-
+		console.log(currentCards)
 		console.log('Running appendCardContent');
 		if (clicked) {
 			currentCat.innerText = clicked;
@@ -607,7 +599,7 @@ window.onload = (function init() {
 		const tl2 = new TimelineLite();
 
 		flashcardsDB.getCards(function(items) {
-			updateCategoryMenu(allItems)
+			updateCategoryMenu(items);
 		});
 
 		tl.to(menuOverlay, 0, {
@@ -710,12 +702,9 @@ window.onload = (function init() {
 	 */
 	function menuTransition() {
 
-		const slider = document.createElement('div');
+		const slider = document.getElementById('menu-transition');
 		const tl = new TimelineLite();
-
-		slider.classList.add('menu-transition');
-		document.body.appendChild(slider);
-
+		console.log('Running transition')
 		tl.to(slider, 0.3, {
 				width: '100vw'
 			})
@@ -724,7 +713,8 @@ window.onload = (function init() {
 				delay: 0.3
 			})
 			.to(slider, 0, {
-				display: 'none'
+				width: '0px',
+				opacity: 1
 			});
 		TweenLite.to(line1, 0.2, {
 			height: '0',
@@ -858,13 +848,13 @@ window.onload = (function init() {
 			a.appendChild(li);
 			frag.appendChild(a);
 			li.addEventListener('click', function(e) {
-
-				// Hide all the menus
-				hideMenus();
-
+				e.stopPropagation();
+				menuTransition();
 				// Fetch cards
 				fetchCards(this.getAttribute('data-category'));
 
+				// Show the menu again
+				showMenus();
 				// Append content to the DOM
 				//	appendCardContent(clicked, items);
 

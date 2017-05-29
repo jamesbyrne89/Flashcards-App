@@ -123,8 +123,9 @@
   height: 100vh;
   position: absolute;
   right: 0;
+  top: 0;
   background-color: $primaryHighlight;
-  z-index: 300;
+  z-index: 400;
 }
 
 .menu-inner {
