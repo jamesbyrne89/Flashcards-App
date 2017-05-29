@@ -158,7 +158,7 @@ window.onload = (function init() {
 						hideCardsGrid();
 					});
 				} else {
-					grid.addEventListener('click', hideCardsGrid, false);
+				//	grid.addEventListener('click', hideCardsGrid, false);
 
 					for (obj in allItems) {
 						if (allItems[obj].hasOwnProperty('name')) {
@@ -175,6 +175,7 @@ window.onload = (function init() {
 									menuTransition();
 									// Fetch cards
 									fetchCards(this.innerText.trim());
+									hideCardsGrid();
 									// Append the content to the DOM
 									//	appendCardContent(clicked, allItems);
 
@@ -481,7 +482,7 @@ window.onload = (function init() {
 	 * @param  {Number} cardIndex Index of the selected card within the cards array
 	 */
 	function appendCardContent(clicked, currentCards, cardIndex) {
-		console.log(currentCards)
+		console.log(arguments)
 		console.log('Running appendCardContent');
 		if (clicked) {
 			currentCat.innerText = clicked;
@@ -851,10 +852,13 @@ window.onload = (function init() {
 				e.stopPropagation();
 				menuTransition();
 				// Fetch cards
-				fetchCards(this.getAttribute('data-category'));
-
+			const _this = this.getAttribute('data-category');
+				setTimeout(function(){
+					fetchCards(_this);
+					showMenus();
+			}, 1000);
 				// Show the menu again
-				showMenus();
+				
 				// Append content to the DOM
 				//	appendCardContent(clicked, items);
 
