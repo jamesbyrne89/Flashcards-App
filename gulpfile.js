@@ -17,7 +17,8 @@ es2015 = require('babel-preset-es2015'),
 del = require('del'),
 debug = require('gulp-debug'),
 rev = require('gulp-rev'),
-beautify = require('gulp-jsbeautify');
+beautify = require('gulp-jsbeautify'),
+webpack = require('webpack');
 
 // Default task that runs on 'Gulp' command
 
@@ -77,7 +78,29 @@ gulp.task('cssInject', ['compilecss'], function(){
 
 });
 
+// Webpack
 
+gulp.task('bundle', function(callback){
+	webpack(require('./webpack.config.js'), function(err, stats){
+		if(err) {
+			console.log(err.toString());
+		}
+		console.log(stats.toString());
+		callback();
+		});
+	});
+
+// rebundle scripts when changes are made
+
+watch('app/assets/scripts/**/*',['bundle'], function(){
+  gulp.start('rebundle');
+});
+
+// Reload browsersync
+
+gulp.task('rebundle', function(){
+	browserSync.reload();
+	});
 
 // Optimise images
 gulp.task('optimiseImages', function(){

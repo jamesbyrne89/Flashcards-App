@@ -1,5 +1,6 @@
 window.onload = (function init() {
 
+console.log('Testing Webpack')
 
 	// Declare global variables
 
