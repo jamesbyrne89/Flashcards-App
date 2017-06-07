@@ -34,14 +34,24 @@ console.log('Testing Webpack')
 
 
 
-	const state = function () {
+	const model = (function () {
 		let current, currentCards, catIndex, allItems;
 		let cardIndex = 0;
 
-		this.getAllItems = function() {
+		const _getAllItems = function _getAllItems() {
+			console.log(allItems)
 			return allItems;
 		}
-	}
+		const _setAllItems = function _setAllItems(items) {
+			allItems = items;
+		}
+		return {
+			getAllItems: _getAllItems,
+			setAllItems: _setAllItems
+		}
+
+	})();
+	console.log(model.getAllItems())
 
 	// Expand textarea when filled with content
 	newCardInput.onkeyup = function(e) {
@@ -217,8 +227,9 @@ console.log('Testing Webpack')
 			 */
 
 			flashcardsDB.getCards(function(items) {
-				allItems = items;
-
+				console.log(model.getAllItems())
+				model.setAllItems(items);
+				console.log(model.getAllItems())
 				// Display all categories as a grid
 				showCardsGrid(items);
 
