@@ -55,7 +55,6 @@ gulp.start('cssInject');
 //});
 
 // Live reload browserSync
-
 watch('app/index.html', function(){
   browserSync.reload();
 });
@@ -71,7 +70,6 @@ gulp.task('compilecss', function(){
 });
 
 // Injects compiled CSS into page
-
 gulp.task('cssInject', ['compilecss'], function(){
   return gulp.src('app/assets/styles/styles.css')
   .pipe(browserSync.stream());
@@ -79,7 +77,6 @@ gulp.task('cssInject', ['compilecss'], function(){
 });
 
 // Webpack
-
 gulp.task('bundle', function(callback){
 	webpack(require('./webpack.config.js'), function(err, stats){
 		if(err) {
@@ -91,14 +88,12 @@ gulp.task('bundle', function(callback){
 	});
 
 // rebundle scripts when changes are made
-
-watch('app/assets/scripts/**/*',['bundle'], function(){
+watch('app/assets/scripts/**/*.js',['bundle'], function(){
   gulp.start('rebundle');
 });
 
 // Reload browsersync
-
-gulp.task('rebundle', function(){
+gulp.task('rebundle', ['bundle'], function(){
 	browserSync.reload();
 	});
 
@@ -134,7 +129,6 @@ gulp.task('compressScripts', ['babel', 'deleteDistFolder'], function(){
 });
 
 // Grab any other files
-
 gulp.task('copyGeneralFiles', ['deleteDistFolder'], function() {
   var pathsToCopy = [
     './app/**/*',
@@ -152,11 +146,9 @@ gulp.task('copyGeneralFiles', ['deleteDistFolder'], function() {
 });
 
 // Build final
-
 gulp.task('build', ['deleteDistFolder', 'copyGeneralFiles', 'optimiseImages', 'usemin']);
 
 // Usemin
-
 gulp.task('usemin', ['deleteDistFolder', 'compilecss'], function(){
   return gulp.src('app/index.html')
   .pipe(usemin({
