@@ -1,6 +1,5 @@
 window.onload = (function init() {
 
-console.log('Testing Webpack')
 
 	// Declare global variables
 
@@ -34,7 +33,7 @@ console.log('Testing Webpack')
 
 
 
-	const model = (function () {
+	const model = (function() {
 		let current, currentCards, catIndex, allItems;
 		let cardIndex = 0;
 
@@ -75,13 +74,40 @@ console.log('Testing Webpack')
 		return flashcardsDB;
 	}());
 
+	const model = function model() {
 
-	var db;
+		var db;
 
-	flashcardsDB.indexedDBOk = function() {
-		return "indexedDB" in window;
+		const _setupDatabase = function _setupDatabase() {
+			return "indexedDB" in window;
+		};
+
+		const _addNewCategory = function _addNewCategory(e) {
+		var name = newCategoryInput.value;
+		var transaction = db.transaction(["categories"], "readwrite");
+		var store = transaction.objectStore("categories");
+
+		//Define a category object
+		var category = {
+			name: name,
+			created: new Date(),
+			cards: []
+		};
+
+		//Perform the add
+		var request = store.add(category);
+
+		request.onerror = function(e) {
+			console.log("Error", e.target.error.name);
+			//some type of error handler
+		};
+
+		request.onsuccess = function(e) {
+			console.log("Woot! Did it");
+		};
 	};
 
+	const _checkDomLoaded = function _checkDomLoaded() {
 	document.addEventListener("DOMContentLoaded", function() {
 
 		//No support? Go in the corner and pout.
@@ -102,6 +128,150 @@ console.log('Testing Webpack')
 				//});
 			}
 		};
+
+	}
+
+		/*
+	Get all cards in the database (not filtered)
+	 */
+
+	const _getCards = function _getCards(callback) {
+		let transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
+		let store = transaction.objectStore("categories");
+		let items = [];
+
+		transaction.oncomplete = function(evt) {
+			callback(items);
+		};
+
+		let cursorRequest = store.openCursor();
+
+		cursorRequest.onerror = function(error) {
+			console.log(error);
+		};
+
+		cursorRequest.onsuccess = function(evt) {
+			var cursor = evt.target.result;
+			if (cursor) {
+				items.push(cursor.value);
+				cursor.continue();
+			}
+
+		};
+	};
+
+	const _addNewCard = function _addNewCard(items) {
+
+		current = currentCat.innerText;
+		let cardsArr;
+		// Get the current category depending on which menu item was clicked
+		console.log('Unfiltered: ' + items)
+		for (let i = 0; i < items.length; i++) {
+			if (items[i].name === current) {
+				cardsArr = items[i].cards;
+				console.log(cardsArr)
+
+				console.log('Added card!');
+			}
+		};
+		let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
+		console.log('cardsArr=', cardsArr)
+		cardsArr.push(lb);
+		newCardInput.value = '';
+
+
+		// Updates the database with the new input
+
+		let title = current;
+
+		let transaction = db.transaction(['categories'], 'readwrite');
+		let objectStore = transaction.objectStore('categories');
+
+		objectStore.openCursor().onsuccess = function(event) {
+			let cursor = event.target.result;
+			if (cursor) {
+				if (cursor.value.name === current) {
+					let updateData = cursor.value;
+
+					updateData.cards = cardsArr;
+					let request = cursor.update(updateData);
+					request.onsuccess = function() {
+						console.log('A better album year?');
+					};
+				};
+				cursor.continue();
+			} else {
+				console.log('Entries displayed.');
+			}
+		};
+	};
+
+	const _deleteEverything = function _deleteEverything() {
+		// open a read/write db transaction, ready for deleting the data
+		var transaction = db.transaction(["categories"], "readwrite");
+
+		// report on the success of opening the transaction
+		transaction.oncomplete = function(event) {
+			console.log('Transaction completed: database modification finished.');
+		};
+
+
+		transaction.onerror = function(event) {
+			console.log('Transaction not opened due to error: ' + transaction.error);
+		};
+
+		// create an object store on the transaction
+		var objectStore = transaction.objectStore("categories");
+
+		// Delete the specified record out of the object store
+		var objectStoreRequest = objectStore.clear();
+
+		objectStoreRequest.onsuccess = function(event) {
+			// report the success of our delete operation
+			console.log('Record deleted.');
+		};
+	};
+
+	const _deleteRecord = function _deleteRecord(variable) {
+		// open a read/write db transaction, ready for deleting the data
+		var transaction = db.transaction(["categories"], "readwrite");
+
+		// report on the success of opening the transaction
+		transaction.oncomplete = function(event) {
+			console.log('Transaction completed: database modification finished.');
+		};
+
+
+		transaction.onerror = function(event) {
+			console.log('Transaction not opened due to error: ' + transaction.error);
+		};
+
+		// create an object store on the transaction
+		var objectStore = transaction.objectStore("categories");
+
+		// Delete the specified record out of the object store
+		var objectStoreRequest = objectStore.delete(variable);
+
+		objectStoreRequest.onsuccess = function(event) {
+			// report the success of our delete operation
+			console.log('Record deleted.');
+		};
+	};
+
+
+		return {
+			setupDatabase: _setupDatabase,
+			addNewCategory: _addNewCategory,
+			checkDomLoaded: _checkDomLoaded,
+			getCards: _getCards,
+			addNew: _addNewCard,
+			deleteRecord: _deleteRecord,
+			deleteEverything: _deleteEverything
+		}
+
+	}
+
+
 
 
 		/*
@@ -230,7 +400,7 @@ console.log('Testing Webpack')
 				console.log(model.getAllItems())
 				model.setAllItems(items);
 				console.log(model.getAllItems())
-				// Display all categories as a grid
+					// Display all categories as a grid
 				showCardsGrid(items);
 
 				// Update menus
@@ -282,163 +452,11 @@ console.log('Testing Webpack')
 
 	}, false);
 
-	flashcardsDB.addNewCategory = function(e) {
-		var name = newCategoryInput.value;
-
-		console.log("About to add " + name);
-
-		var transaction = db.transaction(["categories"], "readwrite");
-		var store = transaction.objectStore("categories");
-
-		//Define a category object
-		var category = {
-			name: name,
-			created: new Date(),
-			cards: []
-		};
-
-		//Perform the add
-		var request = store.add(category);
-
-		request.onerror = function(e) {
-			console.log("Error", e.target.error.name);
-			//some type of error handler
-		};
-
-		request.onsuccess = function(e) {
-			console.log("Woot! Did it");
-		};
-	};
 
 
-	flashcardsDB.addNewCard = function(items) {
-
-		current = currentCat.innerText;
-		let cardsArr;
-		// Get the current category depending on which menu item was clicked
-		console.log('Unfiltered: ' + items)
-		for (let i = 0; i < items.length; i++) {
-			if (items[i].name === current) {
-				cardsArr = items[i].cards;
-				console.log(cardsArr)
-
-				console.log('Added card!');
-			}
-		};
-		let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
-		console.log('cardsArr=', cardsArr)
-		cardsArr.push(lb);
-		newCardInput.value = '';
 
 
-		// Updates the database with the new input
 
-		let title = current;
-
-		let transaction = db.transaction(['categories'], 'readwrite');
-		let objectStore = transaction.objectStore('categories');
-
-		objectStore.openCursor().onsuccess = function(event) {
-			let cursor = event.target.result;
-			if (cursor) {
-				if (cursor.value.name === current) {
-					let updateData = cursor.value;
-
-					updateData.cards = cardsArr;
-					let request = cursor.update(updateData);
-					request.onsuccess = function() {
-						console.log('A better album year?');
-					};
-				};
-				cursor.continue();
-			} else {
-				console.log('Entries displayed.');
-			}
-		};
-	};
-
-
-	/*
-	Get all cards in the database (not filtered)
-	 */
-
-	flashcardsDB.getCards = function(callback) {
-		console.log('Running getCards');
-		let transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
-		let store = transaction.objectStore("categories");
-		let items = [];
-
-		transaction.oncomplete = function(evt) {
-			callback(items);
-		};
-
-		let cursorRequest = store.openCursor();
-
-		cursorRequest.onerror = function(error) {
-			console.log(error);
-		};
-
-		cursorRequest.onsuccess = function(evt) {
-			var cursor = evt.target.result;
-			if (cursor) {
-				items.push(cursor.value);
-				cursor.continue();
-			}
-
-		};
-	};
-
-	flashcardsDB.deleteEverything = function() {
-		// open a read/write db transaction, ready for deleting the data
-		var transaction = db.transaction(["categories"], "readwrite");
-
-		// report on the success of opening the transaction
-		transaction.oncomplete = function(event) {
-			console.log('Transaction completed: database modification finished.');
-		};
-
-
-		transaction.onerror = function(event) {
-			console.log('Transaction not opened due to error: ' + transaction.error);
-		};
-
-		// create an object store on the transaction
-		var objectStore = transaction.objectStore("categories");
-
-		// Delete the specified record out of the object store
-		var objectStoreRequest = objectStore.clear();
-
-		objectStoreRequest.onsuccess = function(event) {
-			// report the success of our delete operation
-			console.log('Record deleted.');
-		};
-	};
-
-	flashcardsDB.deleteRecord = function(variable) {
-		// open a read/write db transaction, ready for deleting the data
-		var transaction = db.transaction(["categories"], "readwrite");
-
-		// report on the success of opening the transaction
-		transaction.oncomplete = function(event) {
-			console.log('Transaction completed: database modification finished.');
-		};
-
-
-		transaction.onerror = function(event) {
-			console.log('Transaction not opened due to error: ' + transaction.error);
-		};
-
-		// create an object store on the transaction
-		var objectStore = transaction.objectStore("categories");
-
-		// Delete the specified record out of the object store
-		var objectStoreRequest = objectStore.delete(variable);
-
-		objectStoreRequest.onsuccess = function(event) {
-			// report the success of our delete operation
-			console.log('Record deleted.');
-		};
-	};
 
 	/*
 			Takes in the selected category and gets all the cards for that category from the database
