@@ -1,5 +1,10 @@
 window.onload = (function init() {
 
+
+/**
+ *  MODEL
+ */
+
 	(function model() {
 
 			var db;
@@ -194,6 +199,11 @@ window.onload = (function init() {
 
 			})();
 
+
+	/**
+	 *  CONTROLLER
+	 */
+
 		(function controller() {
 
 
@@ -227,6 +237,31 @@ window.onload = (function init() {
 
 				function _addEvents() {
 					document.addEventListener("DOMContentLoaded", _openDatabase);
+
+					leftBtn.addEventListener('click', function() {
+						if (currentCards.length > 1) {
+							TweenLite.to(cardContent, 1, {
+								x: -300,
+								opacity: 0,
+								onComplete: prevCard
+							});
+						} else {
+							return;
+						}
+					}, false);
+
+
+					rightBtn.addEventListener('click', function() {
+						if (currentCards.length > 1) {
+							TweenLite.to(cardContent, 1, {
+								x: -300,
+								opacity: 0,
+								onComplete: nextCard
+							})
+						} else {
+							return;
+						}
+					}, false);
 				}
 
 
@@ -234,6 +269,10 @@ window.onload = (function init() {
 				_addEvents();
 
 			}
+
+
+
+
 
 
 			(function() {
@@ -276,6 +315,11 @@ window.onload = (function init() {
 				return flashcardsDB;
 			}());
 
+
+
+/**
+ *  VIEW
+ */
 
 
 			function view() {
@@ -401,62 +445,63 @@ window.onload = (function init() {
 				}
 			};
 
-			openRequest.onsuccess = function(e) {
-				console.log("Connected to database");
-				db = e.target.result;
 
-				/**
-				 * Grab all the cards from the database
+
+			submitCardBtn.addEventListener('click', function(e) {
+				/*
+				Grab all the cards from the database
 				 */
-
 				flashcardsDB.getCards(function(items) {
-					console.log(model.getAllItems())
-					model.setAllItems(items);
-					console.log(model.getAllItems())
-						// Display all categories as a grid
-					showCardsGrid(items);
-
-					// Update menus
-					updateCategoryMenu(items);
-
+					console.log(items)
+						// Update the database with the new card
+					flashcardsDB.addNewCard(items);
 				});
+				// Show confirmation that category has been added
+				(function confirm() {
+					const newCardMenuInner = document.getElementById('newCardInner');
+					let tl = new TimelineLite();
+					let confirmation = document.createElement('span');
 
+					confirmation.setAttribute('class', 'add-card__confirmation');
+					confirmation.innerText = `New card successfully added`;
+					newCardMenuInner.appendChild(confirmation);
 
-				submitCardBtn.addEventListener('click', function(e) {
-					/*
-					Grab all the cards from the database
-					 */
-					flashcardsDB.getCards(function(items) {
-						console.log(items)
-							// Update the database with the new card
-						flashcardsDB.addNewCard(items);
+					// Animations for confirmation message
+					tl.to(newCategoryInput, 0.05, {
+						opacity: 0
+					}).to(newCategoryInput, 0.1, {
+						opacity: 1,
+						delay: 0.1
 					});
-					// Show confirmation that category has been added
-					(function confirm() {
-						const newCardMenuInner = document.getElementById('newCardInner');
-						let tl = new TimelineLite();
-						let confirmation = document.createElement('span');
+					TweenLite.to(confirmation, 1, {
+						y: -15,
+						opacity: 1,
+						ease: Power1.easeOut
+					});
+				})();
 
-						confirmation.setAttribute('class', 'add-card__confirmation');
-						confirmation.innerText = `New card successfully added`;
-						newCardMenuInner.appendChild(confirmation);
+			});
+		};
 
-						// Animations for confirmation message
-						tl.to(newCategoryInput, 0.05, {
-							opacity: 0
-						}).to(newCategoryInput, 0.1, {
-							opacity: 1,
-							delay: 0.1
-						});
-						TweenLite.to(confirmation, 1, {
-							y: -15,
-							opacity: 1,
-							ease: Power1.easeOut
-						});
-					})();
+		openRequest.onsuccess = function(e) {
+			console.log("Connected to database");
+			db = e.target.result;
 
-				});
-			};
+			/**
+			 * Grab all the cards from the database
+			 */
+
+			flashcardsDB.getCards(function(items) {
+				console.log(model.getAllItems())
+				model.setAllItems(items);
+				console.log(model.getAllItems())
+					// Display all categories as a grid
+				showCardsGrid(items);
+
+				// Update menus
+				updateCategoryMenu(items);
+
+			});
 
 			openRequest.onerror = function(e) {
 				Alert('Error accessing the database');
@@ -491,31 +536,6 @@ window.onload = (function init() {
 
 	};
 
-
-	leftBtn.addEventListener('click', function() {
-		if (currentCards.length > 1) {
-			TweenLite.to(cardContent, 1, {
-				x: -300,
-				opacity: 0,
-				onComplete: prevCard
-			});
-		} else {
-			return;
-		}
-	}, false);
-
-
-	rightBtn.addEventListener('click', function() {
-		if (currentCards.length > 1) {
-			TweenLite.to(cardContent, 1, {
-				x: -300,
-				opacity: 0,
-				onComplete: nextCard
-			})
-		} else {
-			return;
-		}
-	}, false);
 
 
 	/**
