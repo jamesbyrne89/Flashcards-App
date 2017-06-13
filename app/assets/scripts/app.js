@@ -1,460 +1,469 @@
 window.onload = (function init() {
 
+	(function model() {
 
-	// Declare global variables
+			var db;
 
-	const menuBtn = document.getElementById('menu-btn');
-	const addCategoryBtn = document.getElementById('addCategory');
-	const addCardBtn = document.getElementById('addCard');
-	const submitCardBtn = document.getElementById('submitCard');
-	const menuOverlay = document.getElementById('menu-overlay');
-	const menu = document.getElementById('main-menu');
-	const menu2 = document.getElementById('secondary-menu');
-	const menu3 = document.getElementById('tertiary-menu-one');
-	const menu4 = document.getElementById('tertiary-menu-two');
-	const catMenu = document.getElementById('categories-menu');
-	const line1 = document.getElementById('vert-line-1');
-	const line2 = document.getElementById('vert-line-2');
-	const menuBar1 = document.getElementById('menu-bar-one');
-	const menuBar2 = document.getElementById('menu-bar-two');
-	const menuBar3 = document.getElementById('menu-bar-three');
-	const backBtn = document.getElementById('backBtn');
-	const newCategoryInput = document.getElementById('addCategoryInput');
-	const newCardInput = document.getElementById('addCardInput');
-	const cardContent = document.getElementById('card-content');
-	const fcNum = document.getElementById('flashcard-num');
-	const fcRelTxt = document.getElementById('flashcard-relational-text');
-	const currentCat = document.getElementById('currentCat');
-	const addCardLabel = document.getElementById('addCardLabel');
-	const leftBtn = document.getElementById('leftBtn');
-	const rightBtn = document.getElementById('rightBtn');
-	const noCardsMsg = document.getElementById('no-cards-message');
-	const grid = document.getElementById('gridOverlay');
+			function _setupDatabase() {
+				return "indexedDB" in window;
+			};
 
+			function _addNewCategory(e) {
+				var name = newCategoryInput.value;
+				var transaction = db.transaction(["categories"], "readwrite");
+				var store = transaction.objectStore("categories");
 
+				//Define a category object
+				var category = {
+					name: name,
+					created: new Date(),
+					cards: []
+				};
 
-	const model = (function() {
-		let current, currentCards, catIndex, allItems;
-		let cardIndex = 0;
+				//Perform the add
+				var request = store.add(category);
 
-		const _getAllItems = function _getAllItems() {
-			console.log(allItems)
-			return allItems;
-		}
-		const _setAllItems = function _setAllItems(items) {
-			allItems = items;
-		}
-		return {
-			getAllItems: _getAllItems,
-			setAllItems: _setAllItems
-		}
+				request.onerror = function(e) {
+					console.log("Error", e.target.error.name);
+					//some type of error handler
+				};
 
-	})();
-	console.log(model.getAllItems())
+				request.onsuccess = function(e) {
+					console.log("Woot! Did it");
+				};
+			};
 
-	// Expand textarea when filled with content
-	newCardInput.onkeyup = function(e) {
-		console.log(this)
-		if (this.clientHeight < this.scrollHeight) {
-			this.style.height = this.scrollHeight + 'px';
-		}
-	};
+			function _checkDomLoaded() {
 
+				//No support? Go in the corner and pout.
+				if (!flashcardsDB.indexedDBOk) return;
 
-	/*
-	Code to create the database that will store the decks
-	*/
-	let flashcardsDB = (function() {
-		let flashcardsDB = {};
-		let datastore = null;
+				var openRequest = indexedDB.open("idarticle_categories", 1);
 
-		// flashcards: Add methods for interacting with the database here.
+				openRequest.onupgradeneeded = function(e) {
+					var thisDB = e.target.result;
 
-		// Export the tDB object.
-		return flashcardsDB;
-	}());
+					if (!thisDB.objectStoreNames.contains("categories")) {
+						thisDB.createObjectStore("categories", {
+							autoIncrement: true
+						});
+						// I want to be able to search categories by name later
+						//os.createIndex("categoryNames", "name", {
+						//	unique: false
+						//});
+					}
+				};
 
-	const model = function model() {
-
-		var db;
-
-		const _setupDatabase = function _setupDatabase() {
-			return "indexedDB" in window;
-		};
-
-		const _addNewCategory = function _addNewCategory(e) {
-		var name = newCategoryInput.value;
-		var transaction = db.transaction(["categories"], "readwrite");
-		var store = transaction.objectStore("categories");
-
-		//Define a category object
-		var category = {
-			name: name,
-			created: new Date(),
-			cards: []
-		};
-
-		//Perform the add
-		var request = store.add(category);
-
-		request.onerror = function(e) {
-			console.log("Error", e.target.error.name);
-			//some type of error handler
-		};
-
-		request.onsuccess = function(e) {
-			console.log("Woot! Did it");
-		};
-	};
-
-	const _checkDomLoaded = function _checkDomLoaded() {
-	document.addEventListener("DOMContentLoaded", function() {
-
-		//No support? Go in the corner and pout.
-		if (!flashcardsDB.indexedDBOk) return;
-
-		var openRequest = indexedDB.open("idarticle_categories", 1);
-
-		openRequest.onupgradeneeded = function(e) {
-			var thisDB = e.target.result;
-
-			if (!thisDB.objectStoreNames.contains("categories")) {
-				thisDB.createObjectStore("categories", {
-					autoIncrement: true
-				});
-				// I want to be able to search categories by name later
-				//os.createIndex("categoryNames", "name", {
-				//	unique: false
-				//});
-			}
-		};
-
-	}
-
-		/*
+				/*
 	Get all cards in the database (not filtered)
 	 */
 
-	const _getCards = function _getCards(callback) {
-		let transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
-		let store = transaction.objectStore("categories");
-		let items = [];
+				function _getCards(callback) {
+					var transaction = db.transaction("categories", IDBTransaction.READ_ONLY);
+					var store = transaction.objectStore("categories");
+					var items = [];
 
-		transaction.oncomplete = function(evt) {
-			callback(items);
-		};
+					transaction.oncomplete = function(evt) {
+						callback(items);
+					};
 
-		let cursorRequest = store.openCursor();
+					var cursorRequest = store.openCursor();
 
-		cursorRequest.onerror = function(error) {
-			console.log(error);
-		};
+					cursorRequest.onerror = function(error) {
+						console.log(error);
+					};
 
-		cursorRequest.onsuccess = function(evt) {
-			var cursor = evt.target.result;
-			if (cursor) {
-				items.push(cursor.value);
-				cursor.continue();
-			}
+					cursorRequest.onsuccess = function(evt) {
+						var cursor = evt.target.result;
+						if (cursor) {
+							items.push(cursor.value);
+							cursor.continue();
+						}
 
-		};
-	};
-
-	const _addNewCard = function _addNewCard(items) {
-
-		current = currentCat.innerText;
-		let cardsArr;
-		// Get the current category depending on which menu item was clicked
-		console.log('Unfiltered: ' + items)
-		for (let i = 0; i < items.length; i++) {
-			if (items[i].name === current) {
-				cardsArr = items[i].cards;
-				console.log(cardsArr)
-
-				console.log('Added card!');
-			}
-		};
-		let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
-		console.log('cardsArr=', cardsArr)
-		cardsArr.push(lb);
-		newCardInput.value = '';
-
-
-		// Updates the database with the new input
-
-		let title = current;
-
-		let transaction = db.transaction(['categories'], 'readwrite');
-		let objectStore = transaction.objectStore('categories');
-
-		objectStore.openCursor().onsuccess = function(event) {
-			let cursor = event.target.result;
-			if (cursor) {
-				if (cursor.value.name === current) {
-					let updateData = cursor.value;
-
-					updateData.cards = cardsArr;
-					let request = cursor.update(updateData);
-					request.onsuccess = function() {
-						console.log('A better album year?');
 					};
 				};
-				cursor.continue();
-			} else {
-				console.log('Entries displayed.');
+
+				function _addNewCard(items) {
+
+					current = currentCat.innerText;
+					let cardsArr;
+					// Get the current category depending on which menu item was clicked
+					console.log('Unfiltered: ' + items)
+					for (let i = 0; i < items.length; i++) {
+						if (items[i].name === current) {
+							cardsArr = items[i].cards;
+							console.log(cardsArr)
+
+							console.log('Added card!');
+						}
+					};
+					let lb = newCardInput.value.replace(/(\n)+/g, '<br>');
+					console.log('cardsArr=', cardsArr)
+					cardsArr.push(lb);
+					newCardInput.value = '';
+
+
+					// Updates the database with the new input
+
+					let title = current;
+
+					let transaction = db.transaction(['categories'], 'readwrite');
+					let objectStore = transaction.objectStore('categories');
+
+					objectStore.openCursor().onsuccess = function(event) {
+						let cursor = event.target.result;
+						if (cursor) {
+							if (cursor.value.name === current) {
+								let updateData = cursor.value;
+
+								updateData.cards = cardsArr;
+								let request = cursor.update(updateData);
+								request.onsuccess = function() {
+									console.log('A better album year?');
+								};
+							};
+							cursor.continue();
+						} else {
+							console.log('Entries displayed.');
+						}
+					};
+				};
+
+				function _deleteEverything() {
+					// open a read/write db transaction, ready for deleting the data
+					var transaction = db.transaction(["categories"], "readwrite");
+
+					// report on the success of opening the transaction
+					transaction.oncomplete = function(event) {
+						console.log('Transaction completed: database modification finished.');
+					};
+
+
+					transaction.onerror = function(event) {
+						console.log('Transaction not opened due to error: ' + transaction.error);
+					};
+
+					// create an object store on the transaction
+					var objectStore = transaction.objectStore("categories");
+
+					// Delete the specified record out of the object store
+					var objectStoreRequest = objectStore.clear();
+
+					objectStoreRequest.onsuccess = function(event) {
+						// report the success of our delete operation
+						console.log('Record deleted.');
+					};
+				};
+
+				function _deleteRecord(variable) {
+					// open a read/write db transaction, ready for deleting the data
+					var transaction = db.transaction(["categories"], "readwrite");
+
+					// report on the success of opening the transaction
+					transaction.oncomplete = function(event) {
+						console.log('Transaction completed: database modification finished.');
+					};
+
+
+					transaction.onerror = function(event) {
+						console.log('Transaction not opened due to error: ' + transaction.error);
+					};
+
+					// create an object store on the transaction
+					var objectStore = transaction.objectStore("categories");
+
+					// Delete the specified record out of the object store
+					var objectStoreRequest = objectStore.delete(variable);
+
+					objectStoreRequest.onsuccess = function(event) {
+						// report the success of our delete operation
+						console.log('Record deleted.');
+					};
+				};
+
+
+				return {
+					setupDatabase: _setupDatabase,
+					addNewCategory: _addNewCategory,
+					checkDomLoaded: _checkDomLoaded,
+					getCards: _getCards,
+					addNew: _addNewCard,
+					deleteRecord: _deleteRecord,
+					deleteEverything: _deleteEverything
+				}
+
+			})();
+
+		(function controller() {
+
+
+				const menuBtn = document.getElementById('menu-btn');
+				const addCategoryBtn = document.getElementById('addCategory');
+				const addCardBtn = document.getElementById('addCard');
+				const submitCardBtn = document.getElementById('submitCard');
+				const menuOverlay = document.getElementById('menu-overlay');
+				const menu = document.getElementById('main-menu');
+				const menu2 = document.getElementById('secondary-menu');
+				const menu3 = document.getElementById('tertiary-menu-one');
+				const menu4 = document.getElementById('tertiary-menu-two');
+				const catMenu = document.getElementById('categories-menu');
+				const line1 = document.getElementById('vert-line-1');
+				const line2 = document.getElementById('vert-line-2');
+				const menuBar1 = document.getElementById('menu-bar-one');
+				const menuBar2 = document.getElementById('menu-bar-two');
+				const menuBar3 = document.getElementById('menu-bar-three');
+				const backBtn = document.getElementById('backBtn');
+				const newCategoryInput = document.getElementById('addCategoryInput');
+				const newCardInput = document.getElementById('addCardInput');
+				const cardContent = document.getElementById('card-content');
+				const fcNum = document.getElementById('flashcard-num');
+				const fcRelTxt = document.getElementById('flashcard-relational-text');
+				const currentCat = document.getElementById('currentCat');
+				const addCardLabel = document.getElementById('addCardLabel');
+				const leftBtn = document.getElementById('leftBtn');
+				const rightBtn = document.getElementById('rightBtn');
+				const noCardsMsg = document.getElementById('no-cards-message');
+				const grid = document.getElementById('gridOverlay');
+
+				function _addEvents() {
+					document.addEventListener("DOMContentLoaded", _openDatabase);
+				}
+
+
+
+				_addEvents();
+
 			}
-		};
-	};
-
-	const _deleteEverything = function _deleteEverything() {
-		// open a read/write db transaction, ready for deleting the data
-		var transaction = db.transaction(["categories"], "readwrite");
-
-		// report on the success of opening the transaction
-		transaction.oncomplete = function(event) {
-			console.log('Transaction completed: database modification finished.');
-		};
 
 
-		transaction.onerror = function(event) {
-			console.log('Transaction not opened due to error: ' + transaction.error);
-		};
+			(function() {
+				let current, currentCards, catIndex, allItems;
+				let cardIndex = 0;
 
-		// create an object store on the transaction
-		var objectStore = transaction.objectStore("categories");
+				const _getAllItems = function _getAllItems() {
+					console.log(allItems)
+					return allItems;
+				}
+				const _setAllItems = function _setAllItems(items) {
+					allItems = items;
+				}
+				return {
+					getAllItems: _getAllItems,
+					setAllItems: _setAllItems
+				}
 
-		// Delete the specified record out of the object store
-		var objectStoreRequest = objectStore.clear();
+			})(); console.log(model.getAllItems())
 
-		objectStoreRequest.onsuccess = function(event) {
-			// report the success of our delete operation
-			console.log('Record deleted.');
-		};
-	};
+			// Expand textarea when filled with content
+			newCardInput.onkeyup = function(e) {
+				console.log(this)
+				if (this.clientHeight < this.scrollHeight) {
+					this.style.height = this.scrollHeight + 'px';
+				}
+			};
 
-	const _deleteRecord = function _deleteRecord(variable) {
-		// open a read/write db transaction, ready for deleting the data
-		var transaction = db.transaction(["categories"], "readwrite");
-
-		// report on the success of opening the transaction
-		transaction.oncomplete = function(event) {
-			console.log('Transaction completed: database modification finished.');
-		};
-
-
-		transaction.onerror = function(event) {
-			console.log('Transaction not opened due to error: ' + transaction.error);
-		};
-
-		// create an object store on the transaction
-		var objectStore = transaction.objectStore("categories");
-
-		// Delete the specified record out of the object store
-		var objectStoreRequest = objectStore.delete(variable);
-
-		objectStoreRequest.onsuccess = function(event) {
-			// report the success of our delete operation
-			console.log('Record deleted.');
-		};
-	};
-
-
-		return {
-			setupDatabase: _setupDatabase,
-			addNewCategory: _addNewCategory,
-			checkDomLoaded: _checkDomLoaded,
-			getCards: _getCards,
-			addNew: _addNewCard,
-			deleteRecord: _deleteRecord,
-			deleteEverything: _deleteEverything
-		}
-
-	}
-
-
-
-
-		/*
-		Show all categories as a grid
-		 */
-		function showCardsGrid() {
-			// Intro animation
-			const filler = document.getElementById('filler');
-			const fillerHolder = document.getElementById('filler-holder');
-			const introText = document.getElementById('intro__title');
-			let tl = new TimelineLite();
-			let tl2 = new TimelineLite({
-				onComplete: buildGridMenu
-			});
-			let frag = document.createDocumentFragment();
-			let menuInner = document.getElementById('menu-inner');
-			const addFirstCat = document.getElementById('add-first-cat');
-
-			TweenLite.to(introText, 0, {
-				opacity: 1,
-				delay: 0.8
-			});
-			TweenLite.to(introText, 0, {
-				opacity: 0,
-				delay: 3.4
-			});
-			TweenLite.to(fillerHolder, 0, {
-				display: 'none',
-				delay: 3.8
-			});
-			tl2.to(filler, 0.6, {
-					width: '100%',
-					ease: Power1.easeOut
-				})
-				.to(filler, 0.6, {
-					width: '0px',
-					right: '0',
-					left: 'auto',
-					ease: Circ.easeOut,
-					delay: 0.2
-				})
-				.to(filler, 0.4, {
-					width: '100%',
-					ease: Circ.easeOut,
-					delay: 1.5
-				})
-				.to(filler, 0.2, {
-					width: '0px',
-					left: '0',
-					right: 'auto',
-					ease: Circ.easeOut,
-					delay: 0.1
-				});
 
 			/*
-			If there are items in the database, append them to the grid
-			 */
-			function buildGridMenu() {
+			Code to create the database that will store the decks
+			*/
+			let flashcardsDB = (function() {
+				let flashcardsDB = {};
+				let datastore = null;
 
-				if (allItems.length === 0) {
-					TweenLite.to(noCardsMsg, 0.7, {
-						display: 'block',
-						opacity: 1,
-						y: -15,
-						delay: 0.6
-					});
-					addFirstCat.addEventListener('click', function() {
-						tl.to(menuOverlay, 0, {
-							display: 'flex',
-							opacity: 0.95
-						});
-						showCategoryInput();
-						hideCardsGrid();
-					});
-				} else {
-					//	grid.addEventListener('click', hideCardsGrid, false);
+				// flashcards: Add methods for interacting with the database here.
 
-					for (obj in allItems) {
-						if (allItems[obj].hasOwnProperty('name')) {
-							let a = document.createElement('a');
-							let li = document.createElement('li');
-
-							li.setAttribute('class', 'grid__item');
-							li.innerText = allItems[obj].name;
-							if (li.innerText !== '') {
-
-								a.addEventListener('click', function(e) {
-
-									// Show menu transition
-									menuTransition();
-									// Fetch cards
-									fetchCards(this.innerText.trim());
-									hideCardsGrid();
-									// Append the content to the DOM
-									//	appendCardContent(clicked, allItems);
+				// Export the tDB object.
+				return flashcardsDB;
+			}());
 
 
-								})
-							} else {
-								return;
-							};
-							a.appendChild(li);
-							frag.appendChild(a);
-						}
-					}
+
+			function view() {
+
+				function introAnimation() {
+
 				}
-				gridOverlay.appendChild(frag);
 
 
-				TweenLite.to(grid, 0.7, {
-					y: -20,
-					ease: Power1.easeOut
-				});
+
 			}
-		};
-
-		openRequest.onsuccess = function(e) {
-			console.log("Connected to database");
-			db = e.target.result;
-
-			/**
-			 * Grab all the cards from the database
+			/*
+			Show all categories as a grid
 			 */
-
-			flashcardsDB.getCards(function(items) {
-				console.log(model.getAllItems())
-				model.setAllItems(items);
-				console.log(model.getAllItems())
-					// Display all categories as a grid
-				showCardsGrid(items);
-
-				// Update menus
-				updateCategoryMenu(items);
-
-			});
-
-
-			submitCardBtn.addEventListener('click', function(e) {
-				/*
-				Grab all the cards from the database
-				 */
-				flashcardsDB.getCards(function(items) {
-					console.log(items)
-						// Update the database with the new card
-					flashcardsDB.addNewCard(items);
+			function showCardsGrid() {
+				// Intro animation
+				const filler = document.getElementById('filler');
+				const fillerHolder = document.getElementById('filler-holder');
+				const introText = document.getElementById('intro__title');
+				let tl = new TimelineLite();
+				let tl2 = new TimelineLite({
+					onComplete: buildGridMenu
 				});
-				// Show confirmation that category has been added
-				(function confirm() {
-					const newCardMenuInner = document.getElementById('newCardInner');
-					let tl = new TimelineLite();
-					let confirmation = document.createElement('span');
+				let frag = document.createDocumentFragment();
+				let menuInner = document.getElementById('menu-inner');
+				const addFirstCat = document.getElementById('add-first-cat');
 
-					confirmation.setAttribute('class', 'add-card__confirmation');
-					confirmation.innerText = `New card successfully added`;
-					newCardMenuInner.appendChild(confirmation);
-
-					// Animations for confirmation message
-					tl.to(newCategoryInput, 0.05, {
-						opacity: 0
-					}).to(newCategoryInput, 0.1, {
-						opacity: 1,
+				TweenLite.to(introText, 0, {
+					opacity: 1,
+					delay: 0.8
+				});
+				TweenLite.to(introText, 0, {
+					opacity: 0,
+					delay: 3.4
+				});
+				TweenLite.to(fillerHolder, 0, {
+					display: 'none',
+					delay: 3.8
+				});
+				tl2.to(filler, 0.6, {
+						width: '100%',
+						ease: Power1.easeOut
+					})
+					.to(filler, 0.6, {
+						width: '0px',
+						right: '0',
+						left: 'auto',
+						ease: Circ.easeOut,
+						delay: 0.2
+					})
+					.to(filler, 0.4, {
+						width: '100%',
+						ease: Circ.easeOut,
+						delay: 1.5
+					})
+					.to(filler, 0.2, {
+						width: '0px',
+						left: '0',
+						right: 'auto',
+						ease: Circ.easeOut,
 						delay: 0.1
 					});
-					TweenLite.to(confirmation, 1, {
-						y: -15,
-						opacity: 1,
+
+				/*
+				If there are items in the database, append them to the grid
+				 */
+				function buildGridMenu() {
+
+					if (allItems.length === 0) {
+						TweenLite.to(noCardsMsg, 0.7, {
+							display: 'block',
+							opacity: 1,
+							y: -15,
+							delay: 0.6
+						});
+						addFirstCat.addEventListener('click', function() {
+							tl.to(menuOverlay, 0, {
+								display: 'flex',
+								opacity: 0.95
+							});
+							showCategoryInput();
+							hideCardsGrid();
+						});
+					} else {
+						//	grid.addEventListener('click', hideCardsGrid, false);
+
+						for (obj in allItems) {
+							if (allItems[obj].hasOwnProperty('name')) {
+								let a = document.createElement('a');
+								let li = document.createElement('li');
+
+								li.setAttribute('class', 'grid__item');
+								li.innerText = allItems[obj].name;
+								if (li.innerText !== '') {
+
+									a.addEventListener('click', function(e) {
+
+										// Show menu transition
+										menuTransition();
+										// Fetch cards
+										fetchCards(this.innerText.trim());
+										hideCardsGrid();
+										// Append the content to the DOM
+										//	appendCardContent(clicked, allItems);
+
+
+									})
+								} else {
+									return;
+								};
+								a.appendChild(li);
+								frag.appendChild(a);
+							}
+						}
+					}
+					gridOverlay.appendChild(frag);
+
+
+					TweenLite.to(grid, 0.7, {
+						y: -20,
 						ease: Power1.easeOut
 					});
-				})();
+				}
+			};
 
-			});
-		};
+			openRequest.onsuccess = function(e) {
+				console.log("Connected to database");
+				db = e.target.result;
 
-		openRequest.onerror = function(e) {
-			Alert('Error accessing the database');
-			//Do something for the error
-		}
+				/**
+				 * Grab all the cards from the database
+				 */
 
-	}, false);
+				flashcardsDB.getCards(function(items) {
+					console.log(model.getAllItems())
+					model.setAllItems(items);
+					console.log(model.getAllItems())
+						// Display all categories as a grid
+					showCardsGrid(items);
+
+					// Update menus
+					updateCategoryMenu(items);
+
+				});
 
 
+				submitCardBtn.addEventListener('click', function(e) {
+					/*
+					Grab all the cards from the database
+					 */
+					flashcardsDB.getCards(function(items) {
+						console.log(items)
+							// Update the database with the new card
+						flashcardsDB.addNewCard(items);
+					});
+					// Show confirmation that category has been added
+					(function confirm() {
+						const newCardMenuInner = document.getElementById('newCardInner');
+						let tl = new TimelineLite();
+						let confirmation = document.createElement('span');
 
+						confirmation.setAttribute('class', 'add-card__confirmation');
+						confirmation.innerText = `New card successfully added`;
+						newCardMenuInner.appendChild(confirmation);
 
+						// Animations for confirmation message
+						tl.to(newCategoryInput, 0.05, {
+							opacity: 0
+						}).to(newCategoryInput, 0.1, {
+							opacity: 1,
+							delay: 0.1
+						});
+						TweenLite.to(confirmation, 1, {
+							y: -15,
+							opacity: 1,
+							ease: Power1.easeOut
+						});
+					})();
+
+				});
+			};
+
+			openRequest.onerror = function(e) {
+				Alert('Error accessing the database');
+				//Do something for the error
+			}
+
+		}, false);
 
 
 
