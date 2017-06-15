@@ -1,9 +1,9 @@
 window.onload = (function init() {
 
 
-/**
- *  MODEL
- */
+	/**
+	 *  MODEL
+	 */
 
 	(function model() {
 
@@ -200,9 +200,9 @@ window.onload = (function init() {
 			})();
 
 
-	/**
-	 *  CONTROLLER
-	 */
+		/**
+		 *  CONTROLLER
+		 */
 
 		(function controller() {
 
@@ -265,13 +265,18 @@ window.onload = (function init() {
 				}
 
 
+				
+				return {
+					start: () => {
+						updateView.introAnimation();
+					}
+				}
+
+
 
 				_addEvents();
 
-			}
-
-
-
+			})();
 
 
 
@@ -317,28 +322,72 @@ window.onload = (function init() {
 
 
 
-/**
- *  VIEW
- */
+			/**
+			 *  VIEW
+			 */
 
 
-			function view() {
+			(function updateView() {
 
-				function introAnimation() {
-
+				function _introAnimation() {
+					const filler = document.getElementById('filler');
+					const fillerHolder = document.getElementById('filler-holder');
+					const introText = document.getElementById('intro__title');
+					TweenLite.to(introText, 0, {
+						opacity: 1,
+						delay: 0.8
+					});
+					TweenLite.to(introText, 0, {
+						opacity: 0,
+						delay: 3.4
+					});
+					TweenLite.to(fillerHolder, 0, {
+						display: 'none',
+						delay: 3.8
+					});
+					tl2.to(filler, 0.6, {
+							width: '100%',
+							ease: Power1.easeOut
+						})
+						.to(filler, 0.6, {
+							width: '0px',
+							right: '0',
+							left: 'auto',
+							ease: Circ.easeOut,
+							delay: 0.2
+						})
+						.to(filler, 0.4, {
+							width: '100%',
+							ease: Circ.easeOut,
+							delay: 1.5
+						})
+						.to(filler, 0.2, {
+							width: '0px',
+							left: '0',
+							right: 'auto',
+							ease: Circ.easeOut,
+							delay: 0.1
+						});
 				}
 
+				return {
+					introAnimation: _introAnimation
+				}
+
+			})();
 
 
-			}
+
+
+
+
+
 			/*
 			Show all categories as a grid
 			 */
 			function showCardsGrid() {
 				// Intro animation
-				const filler = document.getElementById('filler');
-				const fillerHolder = document.getElementById('filler-holder');
-				const introText = document.getElementById('intro__title');
+
 				let tl = new TimelineLite();
 				let tl2 = new TimelineLite({
 					onComplete: buildGridMenu
@@ -347,41 +396,7 @@ window.onload = (function init() {
 				let menuInner = document.getElementById('menu-inner');
 				const addFirstCat = document.getElementById('add-first-cat');
 
-				TweenLite.to(introText, 0, {
-					opacity: 1,
-					delay: 0.8
-				});
-				TweenLite.to(introText, 0, {
-					opacity: 0,
-					delay: 3.4
-				});
-				TweenLite.to(fillerHolder, 0, {
-					display: 'none',
-					delay: 3.8
-				});
-				tl2.to(filler, 0.6, {
-						width: '100%',
-						ease: Power1.easeOut
-					})
-					.to(filler, 0.6, {
-						width: '0px',
-						right: '0',
-						left: 'auto',
-						ease: Circ.easeOut,
-						delay: 0.2
-					})
-					.to(filler, 0.4, {
-						width: '100%',
-						ease: Circ.easeOut,
-						delay: 1.5
-					})
-					.to(filler, 0.2, {
-						width: '0px',
-						left: '0',
-						right: 'auto',
-						ease: Circ.easeOut,
-						delay: 0.1
-					});
+
 
 				/*
 				If there are items in the database, append them to the grid
