@@ -1,4 +1,4 @@
-window.onload = (function init() {
+
 
 
 	/**
@@ -328,8 +328,7 @@ window.onload = (function init() {
 						if (allItems[obj].hasOwnProperty('name')) {
 							let a = document.createElement('a');
 							let li = document.createElement('li');
-
-							li.setAttribute('class', 'grid__item');
+							li.className = 'grid__item';
 							li.innerText = allItems[obj].name;
 							if (li.innerText !== '') {
 
@@ -340,8 +339,6 @@ window.onload = (function init() {
 									// Fetch cards
 									fetchCards(this.innerText.trim());
 									hideCardsGrid();
-
-
 
 								})
 							} else {
@@ -480,8 +477,7 @@ window.onload = (function init() {
 				const newCardMenuInner = document.getElementById('newCardInner');
 				let tl = new TimelineLite();
 				let confirmation = document.createElement('span');
-
-				confirmation.setAttribute('class', 'add-card__confirmation');
+				confirmation.className = 'add-card__confirmation';
 				confirmation.innerText = `New card successfully added`;
 				newCardMenuInner.appendChild(confirmation);
 
@@ -916,7 +912,7 @@ function updateCategoryMenu(items) {
 		let a = document.createElement('a');
 		let li = document.createElement('li');
 		let length;
-		li.setAttribute('class', 'menu__item');
+		li.className = 'menu__item';
 		li.setAttribute('data-category', items[i].name);
 		if (!items[i].cards.length) {
 			length = 0;
@@ -949,7 +945,7 @@ function updateCategoryMenu(items) {
 		});
 	}
 	menuInner.appendChild(frag);
-	catMenu.setAttribute('class', 'relational-menu')
+	catMenu.className = 'relational-menu';
 }
 
 
@@ -985,13 +981,12 @@ function modal() {
 	const confirmBtn = document.createElement('button');
 	const cancelBtn = document.createElement('button');
 	const modalTxt = document.createElement('span');
-
-	confirmBtn.setAttribute('class', 'btn-submit');
-	cancelBtn.setAttribute('class', 'btn-submit');
-	btnHolder.setAttribute('class', 'wrapper');
-	modalTxt.setAttribute('class', 'modal-text');
-	modal.setAttribute('class', 'confirmation-modal');
-	modalOverlay.setAttribute('class', 'modal-overlay');
+	confirmBtn.className = 'btn-submit';
+	cancelBtn.className = 'btn-submit';
+	btnHolder.className = 'wrapper';
+	modalTxt.className = 'modal-text';
+	modal.className = 'confirmation-modal';
+	modalOverlay.className = 'modal-overlay';
 
 	modalTxt.innerText = `Are you sure you want to create the ${newCategoryInput.value} category?`;
 	confirmBtn.innerText = 'Submit';
@@ -1038,7 +1033,7 @@ function modal() {
 		function confirm() {
 			const newCatMenuInner = document.getElementById('newCategoryInner');
 			let confirmation = document.createElement('span');
-			confirmation.setAttribute('class', 'add-category__confirmation');
+			confirmation.className = 'add-category__confirmation';
 			confirmation.innerText = `${newCategoryInput.value} category successfully added`;
 			newCatMenuInner.appendChild(confirmation);
 			const tl = new TimelineLite();
@@ -1070,6 +1065,7 @@ function modal() {
 		TweenLite.to(modalTxt, 0.1, {
 			opacity: 0
 		});
+
 		TweenLite.to(btnHolder, 0.1, {
 			opacity: 0
 		});
@@ -1084,6 +1080,6 @@ function modal() {
 	});
 }
 
+// Start controller
 
-
-})();
+controller.start();
