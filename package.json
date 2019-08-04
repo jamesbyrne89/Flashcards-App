@@ -4,7 +4,7 @@
   "description": "",
   "main": "gulpfile.js",
   "dependencies": {
-    "clipboard": "^1.6.0",
+    "clipboard": "^2.0.4",
     "gulp": "^3.9.1"
   },
   "devDependencies": {
