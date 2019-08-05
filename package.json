@@ -30,7 +30,7 @@
     "postcss-mixins": "^5.4.1",
     "postcss-nested": "^1.0.0",
     "postcss-simple-vars": "^3.0.0",
-    "webpack": "^2.6.1"
+    "webpack": "^4.39.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
